@@ -1,36 +1,43 @@
 import React from 'react';
+import '../css/Categories.css';
+import forhim from '../assets/images/1.png'; // Add this CSS file for styles
+import forher from '../assets/images/2.png'; // Add this CSS file for styles
+import forkids from '../assets/images/9.png'; // Add this CSS file for styles
 
 function Categories() {
-  // Example categories: For Him, For Her, For Kids
   const categories = [
     {
       title: 'For Him',
       description: 'Bold, confident scents crafted for men',
-      img: 'https://via.placeholder.com/200',
+      img: forhim,
     },
     {
       title: 'For Her',
       description: 'Elegant, timeless fragrances for women',
-      img: 'https://via.placeholder.com/200',
+      img: forher,
     },
     {
       title: 'For Kids',
       description: 'Gentle, playful scents for the little ones',
-      img: 'https://via.placeholder.com/200',
+      img: forkids,
     },
   ];
 
   return (
-    <section className="categories" id="categories">
-      <h2>Find Your Perfect Scent</h2>
-      <div className="categories__grid">
-        {categories.map((cat, index) => (
-          <div className="categories__item" key={index}>
-            <img src={cat.img} alt={cat.title} />
-            <h3>{cat.title}</h3>
-            <p>{cat.description}</p>
-          </div>
-        ))}
+    <section className="categories-section py-5 bg-white text-center" id="categories">
+      <h2 className="mb-5">Find Your Perfect Scent</h2>
+      <div className="container">
+        <div className="row justify-content-center">
+          {categories.map((cat, index) => (
+            <div className="col-10 col-sm-6 col-md-4 mb-4" key={index}>
+              <div className="category-card p-3 shadow-sm h-100">
+                <img src={cat.img} alt={cat.title} className="img-fluid rounded-circle mb-3 category-img" />
+                <h4 className="mb-2">{cat.title}</h4>
+                <p className="text-muted">{cat.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

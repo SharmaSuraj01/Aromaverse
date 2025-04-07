@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@400;600&display=swap');
+
+.footer {
+    font-family: 'Poppins', sans-serif;
+    background-color: #000;
+    color: #fff;
+  }
+.footer h5,
+.footer h6 {
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.footer ul li {
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.footer ul li:hover {
+  text-decoration: underline;
+  color: #d1d1d1;
+}
+
+.footer input {
+  background-color: transparent;
+  border: 1px solid #ccc;
+  color: white;
+}
+
+.footer input::placeholder {
+  color: #aaa;
+}

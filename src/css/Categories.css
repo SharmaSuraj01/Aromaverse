@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@400;600&display=swap');
+.categories-section h2 {
+   
+  
+    font-weight: 600;
+  }
+  
+  .category-card {
+    border-radius: 16px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #fff;
+  }
+  
+  .category-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    background-color: rgb(236, 228, 228);
+  }
+  
+  .category-img {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .category-card:hover .category-img {
+    transform: scale(1.05);
+  }
+  

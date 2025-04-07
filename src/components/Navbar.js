@@ -1,27 +1,137 @@
-import React from 'react';
-import { FaSearch, FaBell } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import '../css/NavbarCustom.css';
+import logo from '../assets/images/logo.png'; // Replace with actual logo path
 
+const Navbar = () => {
+  const [showSearchOverlay, setShowSearchOverlay] = useState(false);
 
-function Navbar() {
+  const toggleSearchOverlay = () => setShowSearchOverlay(!showSearchOverlay);
+  const closeSearchOverlay = () => setShowSearchOverlay(false);
+
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') closeSearchOverlay();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
+
   return (
-    <nav className="navbar">
-      <div className="navbar__logo">Kizu Perfumes</div>
-      <ul className="navbar__links">
-        <li><a href="#featured">Featured</a></li>
-        <li><a href="#categories">Shop</a></li>
-        <li><a href="#signature">Signature</a></li>
-        <li><a href="#testimonials">Testimonials</a></li>
-        <div className="navbar__right-icons">
-        <FaSearch className="navbar__icon" />
-        <FaBell className="navbar__icon" />
-      </div>
-      </ul>
-      {/* <div className="navbar__right-icons">
-        <FaSearch className="navbar__icon" />
-        <FaBell className="navbar__icon" />
-      </div> */}
-    </nav>
+    <>
+      <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top custom-navbar shadow-sm">
+        <div className="container-fluid px-4">
+          {/* Toggler */}
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarContent"
+            aria-controls="navbarContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
+
+          {/* Logo */}
+          <a className="navbar-brand d-lg-block me-4" href="/">
+            <img src={logo} alt="Kizu Perfumes" className="logo-img" />
+          </a>
+
+          {/* Mobile Icons */}
+          <div className="d-lg-none d-flex gap-2 ms-auto">
+            <button className="btn btn-link text-dark" onClick={toggleSearchOverlay}>
+              <i className="bi bi-search fs-5"></i>
+            </button>
+            <div className="dropdown">
+              <button
+                className="btn btn-link text-dark"
+                id="mobileUserMenu"
+                data-bs-toggle="dropdown"
+              >
+                <i className="bi bi-person fs-5"></i>
+              </button>
+              <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="mobileUserMenu">
+                <li><a className="dropdown-item" href="/login">Login</a></li>
+                <li><a className="dropdown-item" href="/register">Register</a></li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Nav Links + Desktop Icons */}
+          <div className="collapse navbar-collapse" id="navbarContent">
+            <ul className="navbar-nav mx-auto nav-center-custom">
+              <li className="nav-item px-2">
+                <a className="nav-link active" href="/home">HOME</a>
+              </li>
+              <li className="nav-item dropdown px-2">
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  id="collectionsDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                >
+                  COLLECTIONS
+                </a>
+                <ul className="dropdown-menu" aria-labelledby="collectionsDropdown">
+                  <li><a className="dropdown-item" href="/collections/floral">FOR HIM</a></li>
+                  <li><a className="dropdown-item" href="/collections/woody">FOR HER</a></li>
+                  <li><a className="dropdown-item" href="/collections/oud">FOR KIDS</a></li>
+                </ul>
+              </li>
+              <li className="nav-item px-2">
+                <a className="nav-link" href="/best-sellers">BEST SELLERS</a>
+              </li>
+              <li className="nav-item px-2">
+                <a className="nav-link active" href="/home">YEARLY SAMPLE SUBSCRIPTION</a>
+              </li>
+            </ul>
+
+            {/* Desktop Icons */}
+            <div className="d-none d-lg-flex align-items-center gap-3 ms-3">
+              <button className="btn btn-link text-dark" onClick={toggleSearchOverlay}>
+                <i className="bi bi-search fs-5"></i>
+              </button>
+              <div className="dropdown">
+                <button
+                  className="btn btn-link text-dark"
+                  id="desktopUserMenu"
+                  data-bs-toggle="dropdown"
+                >
+                  <i className="bi bi-person fs-5"></i>
+                </button>
+                <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="desktopUserMenu">
+                  <li><a className="dropdown-item" href="/login">Login</a></li>
+                  <li><a className="dropdown-item" href="/register">Register</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Search Overlay */}
+      {showSearchOverlay && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex justify-content-center align-items-center"
+          style={{ zIndex: 1055 }}
+          onClick={closeSearchOverlay}
+        >
+          <input
+            type="text"
+            className="form-control w-75"
+            placeholder="Search for perfumes..."
+            style={{ maxWidth: '600px', fontSize: '1.25rem' }}
+            onClick={(e) => e.stopPropagation()}
+            autoFocus
+          />
+        </div>
+      )}
+    </>
   );
-}
+};
 
 export default Navbar;
