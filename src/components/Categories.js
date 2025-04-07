@@ -32,7 +32,7 @@ function Categories() {
             <div className="col-10 col-sm-6 col-md-4 mb-4" key={index}>
               <div className="category-card p-3 shadow-sm h-100">
                 <img src={cat.img} alt={cat.title} className="img-fluid rounded-circle mb-3 category-img" />
-                <h4 className="mb-2">{cat.title}</h4>
+                <h4 className="mb-2 category-title">{cat.title}</h4>
                 <p className="text-muted">{cat.description}</p>
               </div>
             </div>

@@ -1,31 +1,50 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@400;600&display=swap');
+
+/* Section Heading */
 .categories-section h2 {
-   
-  
-    font-weight: 600;
-  }
-  
-  .category-card {
-    border-radius: 16px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background: #fff;
-  }
-  
-  .category-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    background-color: rgb(236, 228, 228);
-  }
-  
-  .category-img {
-    width: 160px;
-    height: 160px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-  
-  .category-card:hover .category-img {
-    transform: scale(1.05);
-  }
-  
+  color: #000; /* Pure Black */
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+}
+
+/* Card Styles */
+.category-card {
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+}
+
+.category-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  background-color: #f5f5f5;
+}
+
+/* Image Styles */
+.category-img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-img {
+  transform: scale(1.05);
+}
+
+.category-title {
+  color: #000;
+  font-weight: 600;
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 0.5px;
+  text-transform: capitalize;
+}
+.category-card h4 {
+  color: #000; /* Pure Black */
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  letter-spacing: 0.5px;
+}

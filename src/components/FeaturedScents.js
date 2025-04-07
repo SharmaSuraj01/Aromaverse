@@ -32,7 +32,7 @@ function FeaturedScents() {
 
   return (
     <section className="text-center py-5 bg-light" id="featured">
-      <h2 className="mb-4">Best Sellers</h2>
+      <h2 className="best-seller-heading text-center mb-5">Best Sellers</h2>
       <div className="container position-relative">
 
         <button className="carousel-btn left" onClick={() => scroll('left')}>

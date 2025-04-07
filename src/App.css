@@ -1,16 +1,69 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@400;600&display=swap');
-/* Apply Poppins to the whole app */
-body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #fff;
-  color: #333;
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --primary-color: #1F2937;
+  --secondary-color: #D97706;
+  --text-color: #F3F4F6;
+  --accent-color: #C084FC;
+  --border-radius: 12px;
+  --transition: all 0.3s ease-in-out;
 }
 
-/* Headings use Playfair Display for elegance */
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--text-color);
+  background-color: #0F172A;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* Heading Premium Look */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Playfair Display', serif;
-  font-weight: 700;
-  color: #111;
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+/* Global Link Styling */
+a {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--secondary-color);
+}
+
+/* Button Styling */
+button {
+  border: none;
+  padding: 10px 24px;
+  background-color: var(--secondary-color);
+  color: #fff;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+button:hover {
+  background-color: #b45309;
+}
+
+/* Card, Image, Icon Smooth Transition */
+.card, img, svg, .icon {
+  transition: var(--transition);
+}
+
+/* Utility Class for Section Padding */
+.section-padding {
+  padding: 60px 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }

@@ -1,8 +1,10 @@
 .signature-img-wrapper img {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .signature-img-wrapper img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  }
-  
+  transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out, filter 0.4s ease-in-out;
+  border-radius: 12px; /* Optional: smooth edges */
+}
+
+.signature-img-wrapper img:hover {
+  transform: scale(1.08) rotate(1deg);  /* Slight rotation for dynamic feel */
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.05) contrast(1.1); /* Slight pop in color */
+}

@@ -1,111 +1,123 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@400;600&display=swap');
+
+/* Carousel Container */
 .carousel-container {
-    display: flex;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    gap: 1rem;
-    padding-bottom: 10px;
-    font-family: 'Poppins', sans-serif;
-  
-    scroll-snap-type: x mandatory;
-  }
-  
-  .carousel-container::-webkit-scrollbar {
-    display: none;
-  }
-  
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  gap: 1rem;
+  padding-bottom: 10px;
+  font-family: 'Poppins', sans-serif;
+  scroll-snap-type: x mandatory;
+}
+
+.carousel-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Carousel Card */
+.carousel-card {
+  flex: 0 0 32%;
+  scroll-snap-align: start;
+}
+
+@media (max-width: 991px) {
   .carousel-card {
-    flex: 0 0 32%;
-    scroll-snap-align: start;
+    flex: 0 0 48%;
   }
-  
-  @media (max-width: 991px) {
-    .carousel-card {
-      flex: 0 0 48%;
-    }
+}
+
+@media (max-width: 767px) {
+  .carousel-card {
+    flex: 0 0 100%;
   }
-  
-  @media (max-width: 767px) {
-    .carousel-card {
-      flex: 0 0 100%;
-    }
+}
+
+/* Featured Card */
+.featured-card {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.featured-card:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Image Wrapper with Hover Effect */
+.img-hover-wrap {
+  overflow: hidden;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+}
+
+.img-hover-wrap img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  padding: 12px;
+  border-radius: 12px;
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+/* Shine Effect */
+.img-hover-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
+  transform: skewX(-25deg);
+}
+
+.featured-card:hover .img-hover-wrap::after {
+  animation: shine 0.75s forwards;
+}
+
+@keyframes shine {
+  to {
+    left: 125%;
   }
-  
-  .featured-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #fff;
-  }
-  
-  .featured-card:hover {
-    transform: translateY(-5px) scale(1.03);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
-  }
-  
-  .img-hover-wrap {
-    overflow: hidden;
-    border-radius: 12px;
-    position: relative;
-    cursor: pointer;
-  }
-  
-  .img-hover-wrap img {
-    transition: transform 0.4s ease, filter 0.4s ease;
-    width: 100%;
-    max-height: 300px;
-    object-fit: contain;
-    padding: 12px;
-    border-radius: 12px;
-  }
-  
-  /* Sparkling shine on hover */
-  .img-hover-wrap::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -75%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(120deg, rgba(255,255,255,0.4), rgba(255,255,255,0));
-    transform: skewX(-25deg);
-  }
-  
-  .featured-card:hover .img-hover-wrap::after {
-    animation: shine 0.75s forwards;
-  }
-  
-  @keyframes shine {
-    to {
-      left: 125%;
-    }
-  }
-  
-  /* Arrows */
-  .carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: #000;
-    color: white;
-    border: none;
-    padding: 0.6rem 1rem;
-    font-size: 1.5rem;
-    z-index: 2;
-    cursor: pointer;
-    border-radius: 50%;
-    opacity: 0.8;
-  }
-  
-  .carousel-btn:hover {
-    opacity: 1;
-  }
-  
-  .carousel-btn.left {
-    left: -15px;
-  }
-  
-  .carousel-btn.right {
-    right: -15px;
-  }
-  
+}
+
+/* Carousel Navigation Buttons */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1rem;
+  font-size: 1.5rem;
+  z-index: 2;
+  cursor: pointer;
+  border-radius: 50%;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.carousel-btn:hover {
+  opacity: 1;
+}
+
+.carousel-btn.left {
+  left: -15px;
+}
+
+.carousel-btn.right {
+  right: -15px;
+}
+
+/* Best Sellers Heading */
+.best-seller-heading {
+  color: #000;  /* Pure Black */
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+  letter-spacing: 0.5px;
+}
