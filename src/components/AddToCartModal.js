@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import for routing
 import '../css/AddToCartModal.css';
 
 const AddToCartModal = ({ cartItems, onClose, onUpdateQty, onRemove }) => {
   const modalRef = useRef();
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -23,6 +25,11 @@ const AddToCartModal = ({ cartItems, onClose, onUpdateQty, onRemove }) => {
         item.qty,
     0
   );
+
+  const handleCheckout = () => {
+    onClose(); // Close modal
+    navigate('/checkout', { state: { cartItems, total } }); // Navigate with cart data
+  };
 
   return (
     <div className="modal-overlay">
@@ -55,7 +62,9 @@ const AddToCartModal = ({ cartItems, onClose, onUpdateQty, onRemove }) => {
         {cartItems.length > 0 && (
           <div className="modal-footer">
             <p className="modal-total">Total: ₹{total.toLocaleString()}</p>
-            <button className="checkout-btn">Checkout Now</button>
+            <button className="checkout-btn" onClick={handleCheckout}>
+              Checkout Now
+            </button>
           </div>
         )}
       </div>
