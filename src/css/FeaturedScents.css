@@ -5,46 +5,82 @@
   display: flex;
   overflow-x: auto;
   scroll-behavior: smooth;
-  gap: 1rem;
-  padding-bottom: 10px;
-  font-family: 'Poppins', sans-serif;
+  gap: 20px;
+  padding: 10px 0;
   scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+
+  /* Hide scrollbar */
+  scrollbar-width: none; /* Firefox */
 }
 
 .carousel-container::-webkit-scrollbar {
-  display: none;
+  display: none; /* Chrome, Safari, Edge */
 }
 
-/* Carousel Card */
+
 .carousel-card {
-  flex: 0 0 32%;
-  scroll-snap-align: start;
+  flex: 0 0 25%; /* 100 / 4 = 25% */
+  max-width: 25%;
+  transition: transform 0.3s ease;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 992px) {
   .carousel-card {
-    flex: 0 0 48%;
+    flex: 0 0 33.33%; /* 3 per row on medium */
+    max-width: 33.33%;
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .carousel-card {
-    flex: 0 0 100%;
+    flex: 0 0 50%; /* 2 per row on small */
+    max-width: 50%;
   }
 }
+
+@media (max-width: 480px) {
+  .carousel-card {
+    flex: 0 0 100%; /* 1 per row on mobile */
+    max-width: 100%;
+  }
+}
+
 
 /* Featured Card */
 .featured-card {
-  border-radius: 12px;
+  position: relative;
+  border-radius: 16px;
   overflow: hidden;
-  background: #fff;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
-.featured-card:hover {
-  transform: translateY(-5px) scale(1.03);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+/* Sliding white border effect */
+.featured-card::before {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid white;
+  border-radius: 16px;
+  transition: top 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
 }
+
+.featured-card:hover::before {
+  top: 0;
+}
+
+/* Keep image and content under the border */
+.img-hover-wrap,
+.card-body {
+  position: relative;
+  z-index: 0;
+}
+
 
 /* Image Wrapper with Hover Effect */
 .img-hover-wrap {

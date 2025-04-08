@@ -25,7 +25,8 @@ function FeaturedScents() {
   const scroll = (direction) => {
     const { current } = scrollRef;
     if (current) {
-      const scrollAmount = current.offsetWidth / 3;
+      const scrollAmount = current.offsetWidth / 2.5; // Instead of /3
+
       current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth',

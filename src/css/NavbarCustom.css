@@ -179,3 +179,47 @@ a {
   font-family: 'Poppins', sans-serif;  /* Navbar font jaise */
   margin-top: 10px;
 }
+
+
+.search-container {
+  position: relative;
+}
+
+/* Search Input Animation */
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.search-input {
+  width: 200px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: white;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  animation: slideFadeIn 0.3s ease forwards;
+}
+
+/* On smaller screens */
+@media (max-width: 768px) {
+  .search-input {
+    width: 160px;
+    font-size: 13px;
+    box-shadow: none;
+  }
+}
+.search-input:focus {
+  outline: none;
+  border-color: #999;
+  box-shadow: 0 0 0 2px rgba(230, 57, 70, 0.2); /* subtle red ring */
+}

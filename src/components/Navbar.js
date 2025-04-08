@@ -125,32 +125,27 @@ const Navbar = () => {
       {/* Desktop Icons */}
       <div className="d-none d-lg-flex align-items-center gap-3 ms-3">
 
-  {/* Search Icon with Toggle Input */}
-  <div className="position-relative">
-    <button
-      className="btn btn-link text-dark"
-      onClick={() => setShowSearchBox(!showSearchBox)}  // Toggle Logic
-    >
-      <i className="bi bi-search fs-5"></i>
-    </button>
+{/* Search Icon + Input (Unified Responsive) */}
+<div className="search-container d-flex align-items-center position-relative">
+  <button
+    className="btn btn-link text-dark p-0"
+    onClick={() => setShowSearchBox((prev) => !prev)}
+  >
+    <i className="bi bi-search fs-5"></i>
+  </button>
 
-    {showSearchBox && (
-      <input
-        type="text"
-        className="form-control position-absolute"
-        placeholder="Search..."
-        style={{
-          top: '100%',
-          right: 0,
-          width: '200px',
-          marginTop: '8px',
-          borderRadius: '8px',
-          zIndex: 1000,
-        }}
-        autoFocus
-      />
-    )}
-  </div>
+  {showSearchBox && (
+    <input
+      type="text"
+      className="form-control search-input ms-2"
+      placeholder="Search..."
+      autoFocus
+    />
+  )}
+</div>
+
+
+
 
   {/* User Icon Dropdown */}
   <div className="dropdown">
