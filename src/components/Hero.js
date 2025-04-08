@@ -1,7 +1,7 @@
 import React from 'react';
 import Slider from 'react-slick';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';  
-import heroVideo from '../assets/images/ad.mp4';
+
 import heroImage2 from '../assets/images/scent2.jpg';
 import heroImage3 from '../assets/images/scent3.jpg';
 import '../css/Hero.css';
@@ -30,7 +30,7 @@ function Hero() {
   }
 
   const slides = [
-    { type: 'video', src: heroVideo },
+    // { type: 'video', src: heroVideo },
     { type: 'image', src: heroImage2 },
     { type: 'image', src: heroImage3 }
   ];
