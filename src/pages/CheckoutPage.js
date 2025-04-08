@@ -1,24 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useLocation } from 'react-router-dom';
-
+import { useLocation, useNavigate } from 'react-router-dom';
+import { auth } from '../firebase';
 
 const CheckoutPage = () => {
   const location = useLocation();
-const cartItems = location.state?.cartItems || [];
-const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
-const tax = Math.round(subtotal * 0.15); // For example, 15% tax
-const total = subtotal + tax;
+  const navigate = useNavigate();
+
+  const cartItems = location.state?.cartItems || [];
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const tax = Math.round(subtotal * 0.15);
+  const total = subtotal + tax;
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handlePayment = () => {
-    alert('Redirecting to Razorpay...');
-    // Razorpay redirect code goes here
+    if (user) {
+      alert('Redirecting to Razorpay...');
+      // 🔒 TODO: Razorpay integration
+    } else {
+      navigate('/login');
+    }
   };
 
   return (
     <div className="container my-5">
       <div className="row g-4">
-        {/* Left: Contact & Shipping */}
+        {/* LEFT: Contact & Shipping */}
         <div className="col-md-7">
           <h2 className="mb-4">Checkout</h2>
 
@@ -48,8 +63,9 @@ const total = subtotal + tax;
                 <input type="text" className="form-control" placeholder="City" required />
               </div>
               <div className="col-md-4 mb-3">
-                <select className="form-select" required>
-                  <option value="">Uttar Pradesh</option>
+                <select className="form-select" required defaultValue="">
+                  <option value="" disabled>Select State</option>
+                  <option>Uttar Pradesh</option>
                   <option>Delhi</option>
                   <option>Maharashtra</option>
                 </select>
@@ -78,39 +94,46 @@ const total = subtotal + tax;
           </form>
         </div>
 
-        {/* Right: Order Summary */}
+        {/* RIGHT: Order Summary */}
         <div className="col-md-5">
           <div className="bg-light p-4 rounded shadow-sm">
             <h5 className="mb-4">Order Summary</h5>
-            {cartItems.map((item) => (
-  <div key={item.id} className="d-flex mb-3">
-    <img src={item.img} alt={item.name} className="img-thumbnail me-3" style={{ width: '80px' }} />
-    <div>
-      <p className="mb-1 fw-semibold">{item.name}</p>
-      <small className="text-muted">Qty: {item.qty}</small>
-      <p className="fw-bold mt-2">₹{item.price * item.qty}</p>
-    </div>
-  </div>
-))}
 
+            {cartItems.length === 0 ? (
+              <p className="text-muted">Your cart is empty.</p>
+            ) : (
+              cartItems.map((item) => (
+                <div key={item.id} className="d-flex mb-3">
+                  <img
+                    src={item.img}
+                    alt={item.name}
+                    className="img-thumbnail me-3"
+                    style={{ width: '80px' }}
+                  />
+                  <div>
+                    <p className="mb-1 fw-semibold">{item.name}</p>
+                    <small className="text-muted">Qty: {item.qty}</small>
+                    <p className="fw-bold mt-2">₹{item.price * item.qty}</p>
+                  </div>
+                </div>
+              ))
+            )}
 
             <hr />
+            <div className="d-flex justify-content-between">
+              <span>Subtotal</span>
+              <span>₹{subtotal.toLocaleString()}</span>
+            </div>
+            <div className="d-flex justify-content-between">
+              <span>Shipping</span>
+              <span><small>Enter address</small></span>
+            </div>
             <hr />
-<div className="d-flex justify-content-between">
-  <span>Subtotal</span>
-  <span>₹{subtotal.toLocaleString()}</span>
-</div>
-<div className="d-flex justify-content-between">
-  <span>Shipping</span>
-  <span><small>Enter address</small></span>
-</div>
-<hr />
-<div className="d-flex justify-content-between fw-bold">
-  <span>Total</span>
-  <span>₹{total.toLocaleString()}</span>
-</div>
-<small className="text-muted">Including ₹{tax.toLocaleString()} in taxes</small>
-
+            <div className="d-flex justify-content-between fw-bold">
+              <span>Total</span>
+              <span>₹{total.toLocaleString()}</span>
+            </div>
+            <small className="text-muted">Including ₹{tax.toLocaleString()} in taxes</small>
           </div>
         </div>
       </div>
