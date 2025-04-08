@@ -1,8 +1,8 @@
 import React from 'react';
 import '../css/Categories.css';
-import forhim from '../assets/images/1.png'; // Add this CSS file for styles
-import forher from '../assets/images/2.png'; // Add this CSS file for styles
-import forkids from '../assets/images/9.png'; // Add this CSS file for styles
+import forhim from '../assets/images/forhim.jpg'; // Add this CSS file for styles
+import forher from '../assets/images/forher.jpg'; // Add this CSS file for styles
+import forkids from '../assets/images/forkid.jpg'; // Add this CSS file for styles
 
 function Categories() {
   const categories = [

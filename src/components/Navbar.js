@@ -3,9 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../css/NavbarCustom.css';
 import logo from '../assets/images/logo.png'; // Replace with actual logo path
-import forHim from '../assets/images/1.png';
-import forHer from '../assets/images/2.png';
-import forKids from '../assets/images/3.png';
+import forHim from '../assets/images/forhim.jpg';
+import forHer from '../assets/images/forher.jpg';
+import forKids from '../assets/images/forkid.jpg';
 
 const Navbar = () => {
   const [showSearchOverlay, setShowSearchOverlay] = useState(false);
