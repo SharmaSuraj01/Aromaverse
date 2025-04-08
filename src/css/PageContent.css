@@ -1,0 +1,33 @@
+.page-wrapper {
+    background-color: #fff;
+    min-height: 100vh;
+    padding: 60px 20px;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .page-title {
+    text-align: center;
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 40px;
+    font-family: 'Playfair Display', serif;
+    color: #222;
+    letter-spacing: 1.5px;
+    position: relative;
+  }
+  
+  .page-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background-color: #e63946;
+    margin: 10px auto 0;
+    border-radius: 4px;
+  }
+  
+  /* Remove default blue bg */
+  .custom-bg {
+    background-color: #fff !important;
+  }
+  

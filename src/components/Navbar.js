@@ -6,6 +6,8 @@ import logo from '../assets/images/logo.png'; // Replace with actual logo path
 import forHim from '../assets/images/forhim.jpg';
 import forHer from '../assets/images/forher.jpg';
 import forKids from '../assets/images/forkid.jpg';
+import { Link } from 'react-router-dom';
+
 
 const Navbar = () => {
   const [showSearchOverlay, setShowSearchOverlay] = useState(false);
@@ -76,42 +78,34 @@ const Navbar = () => {
       <ul className="navbar-nav mx-auto nav-center-custom">
 
         <li className="nav-item px-2">
-          <a className="nav-link active" href="/home">HOME</a>
+        <a className="nav-link active" href="/">HOME</a>
         </li>
-
         <li className="nav-item mega-dropdown px-2 position-relative">
-          <a
-            className="nav-link"
-            href="/collections"
-            onClick={(e) => e.preventDefault()}
-          >
-            COLLECTIONS
-          </a>
-
+          <span className="nav-link dropdown-toggle">COLLECTIONS</span>
           <div className="collections-dropdown-content">
             <div className="collection-list">
-              <a href="/collections/him">FOR HIM</a>
-              <a href="/collections/her">FOR HER</a>
-              <a href="/collections/kids">FOR KIDS</a>
+              <Link to="/for-him">FOR HIM</Link>
+              <Link to="/for-her">FOR HER</Link>
+              <Link to="/for-kids">FOR KIDS</Link>
             </div>
-
             <div className="collection-preview">
-              <div className="collection-card">
-                <img src={forHim} alt="For Him" />
-                <p>For Him</p>
-              </div>
-              <div className="collection-card">
-                <img src={forHer} alt="For Her" />
-                <p>For Her</p>
-              </div>
-              <div className="collection-card">
-                <img src={forKids} alt="For Kids" />
-                <p>For Kids</p>
-              </div>
+            <Link to="/for-him" className="collection-card">
+  <img src={forHim} alt="For Him" />
+  <p>For Him</p>
+</Link>
+
+<Link to="/for-her" className="collection-card">
+  <img src={forHer} alt="For Her" />
+  <p>For Her</p>
+</Link>
+
+<Link to="/for-kids" className="collection-card">
+  <img src={forKids} alt="For Kids" />
+  <p>For Kids</p>
+</Link>
             </div>
           </div>
         </li>
-
         <li className="nav-item px-2">
           <a className="nav-link" href="/best-sellers">BEST SELLERS</a>
         </li>

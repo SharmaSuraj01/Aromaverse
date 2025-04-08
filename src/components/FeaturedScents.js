@@ -8,19 +8,23 @@ import scent5 from '../assets/images/9.png';
 import scent6 from '../assets/images/2.png';
 import '../css/FeaturedScents.css';
 
-function FeaturedScents() {
+function FeaturedScents({ filterGender }) {
   const scrollRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const [cartItems, setCartItems] = useState([]);
 
   const scents = [
-    { id: 1, name: 'KZ Black', price: 999, img: scent1 },
-    { id: 2, name: 'KZ Seduced', price: 1299, img: scent2 },
-    { id: 3, name: 'KZ Sports', price: 1499, img: scent3 },
-    { id: 4, name: 'KZ Marine', price: 1599, img: scent4 },
-    { id: 5, name: 'KZ Breeze', price: 1099, img: scent5 },
-    { id: 6, name: 'KZ Wild', price: 1199, img: scent6 },
+    { id: 1, name: 'KZ Black', price: 999, img: scent1, gender: 'him' },
+    { id: 2, name: 'KZ Seduced', price: 1299, img: scent2, gender: 'her' },
+    { id: 3, name: 'KZ Sports', price: 1499, img: scent3, gender: 'him' },
+    { id: 4, name: 'KZ Marine', price: 1599, img: scent4, gender: 'her' },
+    { id: 5, name: 'KZ Breeze', price: 1099, img: scent5, gender: 'kids' },
+    { id: 6, name: 'KZ Wild', price: 1199, img: scent6, gender: 'kids' },
   ];
+
+  const filteredScents = filterGender
+    ? scents.filter((scent) => scent.gender === filterGender)
+    : scents;
 
   const scroll = (direction) => {
     const { current } = scrollRef;
@@ -44,6 +48,7 @@ function FeaturedScents() {
     }
     setShowModal(true);
   };
+
   const updateQty = (index, newQty) => {
     if (newQty < 1) return;
     const updatedItems = [...cartItems];
@@ -52,15 +57,19 @@ function FeaturedScents() {
   };
 
   return (
-    <section className="text-center py-5 bg-light" id="featured">
-      <h2 className="best-seller-heading text-center mb-5">Best Sellers</h2>
+    <section className="text-center py-5 custom-bg" id="featured">
+      <h2 className="best-seller-heading text-center mb-5">
+        {filterGender
+          ? `Best Sellers - For ${filterGender.charAt(0).toUpperCase() + filterGender.slice(1)}`
+          : 'Best Sellers'}
+      </h2>
       <div className="container position-relative">
         <button className="carousel-btn left" onClick={() => scroll('left')}>
           &#8592;
         </button>
 
         <div className="carousel-container" ref={scrollRef}>
-          {scents.map((scent) => (
+          {filteredScents.map((scent) => (
             <div key={scent.id} className="carousel-card">
               <div className="card h-100 border-0 shadow-sm featured-card">
                 <div className="img-hover-wrap">
