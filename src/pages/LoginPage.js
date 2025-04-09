@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { auth } from '../firebase';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import AuthLayout from './AuthLayout';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const handleLogin = async (e) => {
@@ -15,50 +16,64 @@ const LoginPage = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/checkout');
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider());
+      navigate('/checkout');
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: '500px' }}>
-      {/* KZ Logo */}
-      <div className="text-center mb-4">
-        <img src="/logo.png" alt="KZ Logo" style={{ width: '100px' }} />
-      </div>
-
-      <h2 className="text-center mb-4">Login</h2>
-
+    <AuthLayout>
       <form onSubmit={handleLogin}>
         {error && <div className="alert alert-danger">{error}</div>}
 
         <div className="mb-3">
-          <label htmlFor="email">Email address</label>
-          <input
-            type="email"
-            className="form-control"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <label>Email</label>
+          <input type="email" className="form-control" value={email}
+            onChange={(e) => setEmail(e.target.value)} required />
         </div>
 
         <div className="mb-3">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <label>Password</label>
+          <div className="input-group">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              className="form-control"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
         </div>
 
-        <button type="submit" className="btn btn-dark w-100">Login</button>
+        <div className="mb-3 text-end">
+          <small className="text-primary" style={{ cursor: 'pointer' }}>Forgot your password?</small>
+        </div>
+
+        <button type="submit" className="btn btn-dark w-100 mb-3">Login</button>
+
+        <div className="text-center text-muted mb-2">OR</div>
+
+        <button type="button" className="btn btn-outline-danger w-100" onClick={handleGoogleLogin}>
+          Continue with Google
+        </button>
       </form>
-    </div>
+    </AuthLayout>
   );
 };
 

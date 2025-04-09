@@ -1,28 +1,23 @@
 import React, { useState } from 'react';
 import { auth } from '../firebase';
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import AuthLayout from './AuthLayout';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
+    if (password !== confirm) return setError("Passwords don't match");
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCredential.user, { displayName: name });
+      await createUserWithEmailAndPassword(auth, email, password);
       navigate('/checkout');
     } catch (err) {
       setError(err.message);
@@ -30,9 +25,8 @@ const RegisterPage = () => {
   };
 
   const handleGoogleLogin = async () => {
-    const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithPopup(auth, new GoogleAuthProvider());
       navigate('/checkout');
     } catch (err) {
       setError(err.message);
@@ -40,72 +34,51 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: '500px' }}>
-      {/* Logo */}
-      <div className="text-center mb-4">
-        <img src="/logo.png" alt="KZ Logo" style={{ width: '100px' }} />
-      </div>
-
-      <h2 className="text-center mb-4">Register</h2>
-
+    <AuthLayout>
       <form onSubmit={handleRegister}>
         {error && <div className="alert alert-danger">{error}</div>}
 
         <div className="mb-3">
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            className="form-control"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+          <label>Email</label>
+          <input type="email" className="form-control" value={email}
+            onChange={(e) => setEmail(e.target.value)} required />
         </div>
 
         <div className="mb-3">
-          <label htmlFor="email">Email address</label>
-          <input
-            type="email"
-            className="form-control"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <label>Password</label>
+          <div className="input-group">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              className="form-control"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
         </div>
 
         <div className="mb-3">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input
-            type="password"
-            className="form-control"
-            id="confirmPassword"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
+          <label>Confirm Password</label>
+          <input type="password" className="form-control" value={confirm}
+            onChange={(e) => setConfirm(e.target.value)} required />
         </div>
 
         <button type="submit" className="btn btn-dark w-100 mb-3">Register</button>
 
+        <div className="text-center text-muted mb-2">OR</div>
+
         <button type="button" className="btn btn-outline-danger w-100" onClick={handleGoogleLogin}>
-          <i className="bi bi-google me-2"></i> Continue with Google
+          Continue with Google
         </button>
       </form>
-    </div>
+    </AuthLayout>
   );
 };
 

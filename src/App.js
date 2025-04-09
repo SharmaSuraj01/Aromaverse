@@ -20,6 +20,7 @@ import RegisterPage from './pages/RegisterPage';
 import ForHimPage from './components/ForHimPage';
 import ForHerPage from './components/ForHerPage';
 import ForKidsPage from './components/ForKidsPage';
+import CollectionPage from './pages/CollectionsPage';
 
 function App() {
   // eslint-disable-next-line no-unused-vars
@@ -59,6 +60,7 @@ function App() {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/collections/:category" element={<CollectionPage />} />
       </Routes>
     </div>
   );

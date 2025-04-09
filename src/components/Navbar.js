@@ -81,31 +81,33 @@ const Navbar = () => {
         <a className="nav-link active" href="/">HOME</a>
         </li>
         <li className="nav-item mega-dropdown px-2 position-relative">
-          <span className="nav-link dropdown-toggle">COLLECTIONS</span>
-          <div className="collections-dropdown-content">
-            <div className="collection-list">
-              <Link to="/for-him">FOR HIM</Link>
-              <Link to="/for-her">FOR HER</Link>
-              <Link to="/for-kids">FOR KIDS</Link>
-            </div>
-            <div className="collection-preview">
-            <Link to="/for-him" className="collection-card">
-  <img src={forHim} alt="For Him" />
-  <p>For Him</p>
-</Link>
+  <span className="nav-link dropdown-toggle">COLLECTIONS</span>
+  <div className="collections-dropdown-content">
+    <div className="collection-list">
+      <Link to="/collections/for-him">FOR HIM</Link>
+      <Link to="/collections/for-her">FOR HER</Link>
+      <Link to="/collections/kids">FOR KIDS</Link>
+    </div>
+    <div className="collection-preview">
+      <Link to="/collections/for-him" className="collection-card">
+        <img src={forHim} alt="For Him" />
+        <p>For Him</p>
+      </Link>
 
-<Link to="/for-her" className="collection-card">
-  <img src={forHer} alt="For Her" />
-  <p>For Her</p>
-</Link>
+      <Link to="/collections/for-her" className="collection-card">
+        <img src={forHer} alt="For Her" />
+        <p>For Her</p>
+      </Link>
 
-<Link to="/for-kids" className="collection-card">
-  <img src={forKids} alt="For Kids" />
-  <p>For Kids</p>
-</Link>
-            </div>
-          </div>
-        </li>
+      <Link to="/collections/kids" className="collection-card">
+        <img src={forKids} alt="For Kids" />
+        <p>For Kids</p>
+      </Link>
+    </div>
+  </div>
+</li>
+
+            
         <li className="nav-item px-2">
           <a className="nav-link" href="/best-sellers">BEST SELLERS</a>
         </li>

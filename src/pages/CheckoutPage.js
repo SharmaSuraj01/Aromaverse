@@ -14,17 +14,31 @@ const CheckoutPage = () => {
 
   const [user, setUser] = useState(null);
 
+  // Form state
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [pin, setPin] = useState('');
+  const [phone, setPhone] = useState('');
+
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-      setUser(currentUser);
-    });
+    const unsubscribe = auth.onAuthStateChanged(setUser);
     return () => unsubscribe();
   }, []);
 
   const handlePayment = () => {
+    // Only validate required fields
+    if (!email || !firstName || !address || !city || !state || !pin || !phone) {
+      alert('Please fill all required details before proceeding to payment.');
+      return;
+    }
+
     if (user) {
       alert('Redirecting to Razorpay...');
-      // 🔒 TODO: Razorpay integration
+      // TODO: integrate Razorpay here
     } else {
       navigate('/login');
     }
@@ -33,52 +47,129 @@ const CheckoutPage = () => {
   return (
     <div className="container my-5">
       <div className="row g-4">
-        {/* LEFT: Contact & Shipping */}
+        {/* Left Side Form */}
         <div className="col-md-7">
           <h2 className="mb-4">Checkout</h2>
-
           <form className="needs-validation">
             <h5>Contact Information</h5>
             <div className="mb-3">
-              <input type="email" className="form-control" placeholder="Email" required />
+              <label className="form-label">
+                Email <span className="text-danger">*</span>
+              </label>
+              <input
+                type="email"
+                className="form-control"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
 
             <h5 className="mt-4">Shipping Address</h5>
             <div className="row">
               <div className="col-md-6 mb-3">
-                <input type="text" className="form-control" placeholder="First name" required />
+                <label className="form-label">
+                  First name <span className="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="First name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
               </div>
               <div className="col-md-6 mb-3">
-                <input type="text" className="form-control" placeholder="Last name" required />
+                <label className="form-label">Last name</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
               </div>
             </div>
+
             <div className="mb-3">
-              <input type="text" className="form-control" placeholder="Address" required />
+              <label className="form-label">
+                Address <span className="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
+              />
             </div>
+
             <div className="mb-3">
-              <input type="text" className="form-control" placeholder="Apartment, suite, etc. (optional)" />
+              <label className="form-label">Apartment, suite, etc. (optional)</label>
+              <input type="text" className="form-control" placeholder="Apartment, suite, etc." />
             </div>
+
             <div className="row">
               <div className="col-md-6 mb-3">
-                <input type="text" className="form-control" placeholder="City" required />
+                <label className="form-label">
+                  City <span className="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="City"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  required
+                />
               </div>
               <div className="col-md-4 mb-3">
-                <select className="form-select" required defaultValue="">
-                  <option value="" disabled>Select State</option>
+                <label className="form-label">
+                  State <span className="text-danger">*</span>
+                </label>
+                <select
+                  className="form-select"
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                  required
+                >
+                  <option value="">Choose...</option>
                   <option>Uttar Pradesh</option>
                   <option>Delhi</option>
                   <option>Maharashtra</option>
                 </select>
               </div>
               <div className="col-md-2 mb-3">
-                <input type="text" className="form-control" placeholder="PIN" required />
+                <label className="form-label">
+                  PIN <span className="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="PIN"
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value)}
+                  required
+                />
               </div>
             </div>
-            <div className="mb-3">
-              <input type="tel" className="form-control" placeholder="Phone number for order updates" required />
-            </div>
 
-            <hr className="my-4" />
+            <div className="mb-3">
+              <label className="form-label">
+                Phone number <span className="text-danger">*</span>
+              </label>
+              <input
+                type="tel"
+                className="form-control"
+                placeholder="Phone number for order updates"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+            </div>
 
             <h5>Payment</h5>
             <div className="p-3 border rounded mb-3 bg-light">
@@ -94,31 +185,20 @@ const CheckoutPage = () => {
           </form>
         </div>
 
-        {/* RIGHT: Order Summary */}
+        {/* Right Side Order Summary */}
         <div className="col-md-5">
           <div className="bg-light p-4 rounded shadow-sm">
             <h5 className="mb-4">Order Summary</h5>
-
-            {cartItems.length === 0 ? (
-              <p className="text-muted">Your cart is empty.</p>
-            ) : (
-              cartItems.map((item) => (
-                <div key={item.id} className="d-flex mb-3">
-                  <img
-                    src={item.img}
-                    alt={item.name}
-                    className="img-thumbnail me-3"
-                    style={{ width: '80px' }}
-                  />
-                  <div>
-                    <p className="mb-1 fw-semibold">{item.name}</p>
-                    <small className="text-muted">Qty: {item.qty}</small>
-                    <p className="fw-bold mt-2">₹{item.price * item.qty}</p>
-                  </div>
+            {cartItems.map((item) => (
+              <div key={item.id} className="d-flex mb-3">
+                <img src={item.img} alt={item.name} className="img-thumbnail me-3" style={{ width: '80px' }} />
+                <div>
+                  <p className="mb-1 fw-semibold">{item.name}</p>
+                  <small className="text-muted">Qty: {item.qty}</small>
+                  <p className="fw-bold mt-2">₹{item.price * item.qty}</p>
                 </div>
-              ))
-            )}
-
+              </div>
+            ))}
             <hr />
             <div className="d-flex justify-content-between">
               <span>Subtotal</span>

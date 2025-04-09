@@ -157,3 +157,20 @@
   font-family: 'Playfair Display', serif;
   letter-spacing: 0.5px;
 }
+
+
+/* Scale card slightly on hover */
+.featured-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  z-index: 2;
+}
+
+/* Already has transition, but add smooth shadow effect too */
+.featured-card {
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.featured-card:hover .img-hover-wrap img {
+  transform: scale(1.05);
+  filter: brightness(1.05);
+}
