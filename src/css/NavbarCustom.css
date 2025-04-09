@@ -107,6 +107,7 @@
   text-transform: uppercase;
   transition: all 0.3s ease;
   font-family: 'Poppins', sans-serif;
+  text-decoration: none;
 }
 
 .collection-list a::after {
@@ -118,6 +119,7 @@
   bottom: -4px;
   background-color: #e63946;
   transition: all 0.4s ease;
+  display: none;
 }
 
 .collection-list a:hover {

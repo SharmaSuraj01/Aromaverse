@@ -24,11 +24,15 @@ import CollectionPage from './pages/CollectionsPage';
 import ShopPage from './pages/ShopPage';
 
 
+import AddToCartModal from './components/AddToCartModal';
+
 function App() {
-  // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(null);
   const location = useLocation();
   
+
+  const [cartItems, setCartItems] = useState([]);
+  const [showCartModal, setShowCartModal] = useState(false);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -39,17 +43,56 @@ function App() {
 
   const hideNavbar = location.pathname === '/login' || location.pathname === '/register';
 
+  const handleUpdateQty = (index, qty) => {
+    if (qty < 1) return;
+    const updatedCart = [...cartItems];
+    updatedCart[index].qty = qty;
+    setCartItems(updatedCart);
+  };
+
+  const handleRemove = (index) => {
+    const updatedCart = [...cartItems];
+    updatedCart.splice(index, 1);
+    setCartItems(updatedCart);
+  };
+
   return (
     <div className="App">
-      {!hideNavbar && <Navbar />}
-      
+      {!hideNavbar && (
+        <Navbar
+          cartItems={cartItems}
+          setShowCartModal={setShowCartModal}
+        />
+      )}
+
+      {showCartModal && (
+        <AddToCartModal
+          cartItems={cartItems}
+          onClose={() => setShowCartModal(false)}
+          onUpdateQty={handleUpdateQty}
+          onRemove={handleRemove}
+        />
+      )}
+
       <Routes>
         <Route
           path="/"
           element={
             <>
               <Hero />
-              <FeaturedScents />
+              <FeaturedScents
+                addToCart={(item) => {
+                  const existingIndex = cartItems.findIndex((i) => i.id === item.id);
+                  if (existingIndex !== -1) {
+                    const updated = [...cartItems];
+                    updated[existingIndex].qty += 1;
+                    setCartItems(updated);
+                  } else {
+                    setCartItems([...cartItems, { ...item, qty: 1 }]);
+                  }
+                  setShowCartModal(true);
+                }}
+              />
               <Categories />
               <SignatureCollection />
               <Testimonials />

@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import for routing
+import { useNavigate } from 'react-router-dom';
 import '../css/AddToCartModal.css';
 
 const AddToCartModal = ({ cartItems, onClose, onUpdateQty, onRemove }) => {
   const modalRef = useRef();
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -12,23 +12,30 @@ const AddToCartModal = ({ cartItems, onClose, onUpdateQty, onRemove }) => {
         onClose();
       }
     };
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
   }, [onClose]);
 
-  const total = cartItems.reduce(
-    (sum, item) =>
-      sum +
-      (typeof item.price === 'string'
-        ? parseInt(item.price.replace('₹', ''))
-        : item.price) *
-        item.qty,
-    0
-  );
+  const total = cartItems.reduce((sum, item) => {
+    const numericPrice = typeof item.price === 'string'
+      ? parseInt(item.price.replace(/[₹,]/g, ''))
+      : item.price;
+    return sum + numericPrice * item.qty;
+  }, 0);
 
   const handleCheckout = () => {
-    onClose(); // Close modal
-    navigate('/checkout', { state: { cartItems, total } }); // Navigate with cart data
+    onClose();
+    navigate('/checkout', { state: { cartItems, total } });
   };
 
   return (
@@ -47,7 +54,12 @@ const AddToCartModal = ({ cartItems, onClose, onUpdateQty, onRemove }) => {
                 <h5>{item.name}</h5>
                 <p className="modal-price">₹{item.price}</p>
                 <div className="qty-control">
-                  <button onClick={() => onUpdateQty(index, item.qty - 1)}>-</button>
+                  <button
+                    onClick={() => onUpdateQty(index, item.qty - 1)}
+                    disabled={item.qty === 1}
+                  >
+                    -
+                  </button>
                   <span>{item.qty}</span>
                   <button onClick={() => onUpdateQty(index, item.qty + 1)}>+</button>
                 </div>
