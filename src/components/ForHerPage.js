@@ -6,7 +6,7 @@ const ForHerPage = () => {
   return (
     <div className="page-wrapper">
       <h2 className="page-title">For Her</h2>
-      <FeaturedScents filterGender="her" />
+      <FeaturedScents filterGender="her" gridView={true} />
     </div>
   );
 };

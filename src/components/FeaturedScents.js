@@ -8,7 +8,7 @@ import scent5 from '../assets/images/9.png';
 import scent6 from '../assets/images/2.png';
 import '../css/FeaturedScents.css';
 
-function FeaturedScents({ filterGender }) {
+function FeaturedScents({ filterGender, gridView = false }) {
   const scrollRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
   const [cartItems, setCartItems] = useState([]);
@@ -29,8 +29,7 @@ function FeaturedScents({ filterGender }) {
   const scroll = (direction) => {
     const { current } = scrollRef;
     if (current) {
-      const scrollAmount = current.offsetWidth / 2.5; // Instead of /3
-
+      const scrollAmount = current.offsetWidth / 2.5;
       current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth',
@@ -64,14 +63,20 @@ function FeaturedScents({ filterGender }) {
           ? `Best Sellers - For ${filterGender.charAt(0).toUpperCase() + filterGender.slice(1)}`
           : 'Best Sellers'}
       </h2>
-      <div className="container position-relative">
-        <button className="carousel-btn left" onClick={() => scroll('left')}>
-          &#8592;
-        </button>
 
-        <div className="carousel-container" ref={scrollRef}>
+      <div className={`container ${gridView ? 'grid-wrapper' : 'position-relative'}`}>
+        {!gridView && (
+          <button className="carousel-btn left" onClick={() => scroll('left')}>
+            &#8592;
+          </button>
+        )}
+
+        <div
+          className={gridView ? 'grid-container' : 'carousel-container'}
+          ref={gridView ? null : scrollRef}
+        >
           {filteredScents.map((scent) => (
-            <div key={scent.id} className="carousel-card">
+            <div key={scent.id} className={gridView ? 'grid-card' : 'carousel-card'}>
               <div className="card h-100 border-0 shadow-sm featured-card">
                 <div className="img-hover-wrap">
                   <img src={scent.img} className="card-img-top" alt={scent.name} />
@@ -98,9 +103,11 @@ function FeaturedScents({ filterGender }) {
           ))}
         </div>
 
-        <button className="carousel-btn right" onClick={() => scroll('right')}>
-          &#8594;
-        </button>
+        {!gridView && (
+          <button className="carousel-btn right" onClick={() => scroll('right')}>
+            &#8594;
+          </button>
+        )}
       </div>
 
       {showModal && (
