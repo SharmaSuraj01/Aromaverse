@@ -7,11 +7,14 @@ import forHim from '../assets/images/forhim.jpg';
 import forHer from '../assets/images/forher.jpg';
 import forKids from '../assets/images/forkid.jpg';
 import { Link } from 'react-router-dom';
+import { useCart } from '../Context/CartContext';
 
 const Navbar = () => {
   const [showSearchOverlay, setShowSearchOverlay] = useState(false);
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(true); // mock auth state
+
+  const { cartItems, setShowCartModal } = useCart(); // using context
 
   const toggleSearchOverlay = () => setShowSearchOverlay(!showSearchOverlay);
   const closeSearchOverlay = () => setShowSearchOverlay(false);
@@ -29,6 +32,9 @@ const Navbar = () => {
     setIsLoggedIn(false);
   };
 
+  // Calculate total quantity in cart
+  const totalQty = cartItems.reduce((total, item) => total + item.qty, 0);
+
   return (
     <>
       <div>
@@ -38,6 +44,7 @@ const Navbar = () => {
 
         <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top custom-navbar shadow-sm">
           <div className="container-fluid px-4">
+            {/* Toggler */}
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
               <span className="navbar-toggler-icon"></span>
             </button>
@@ -46,10 +53,22 @@ const Navbar = () => {
               <img src={logo} alt="Kizu Perfumes" className="logo-img" />
             </a>
 
+            {/* Mobile Icons */}
             <div className="d-lg-none d-flex gap-2 ms-auto">
               <button className="btn btn-link text-dark" onClick={toggleSearchOverlay}>
                 <i className="bi bi-search fs-5"></i>
               </button>
+
+              {/* Mobile Cart Icon with Badge */}
+              <button className="btn btn-link text-dark position-relative" onClick={() => setShowCartModal(true)}>
+                <i className="bi bi-cart fs-5"></i>
+                {totalQty > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {totalQty}
+                  </span>
+                )}
+              </button>
+
               <div className="dropdown">
                 <button className="btn btn-link text-dark" id="mobileUserMenu" data-bs-toggle="dropdown">
                   <i className="bi bi-person fs-5"></i>
@@ -74,6 +93,7 @@ const Navbar = () => {
               </div>
             </div>
 
+            {/* Nav Links + Desktop Icons */}
             <div className="collapse navbar-collapse" id="navbarContent">
               <ul className="navbar-nav mx-auto nav-center-custom">
                 <li className="nav-item px-2">
@@ -110,10 +130,11 @@ const Navbar = () => {
                 </li>
 
                 <li className="nav-item px-2">
-                  <a className="nav-link" href="/yearly-sample-subscription">YEARLY SAMPLE SUBSCRIPTION</a>
+                  <Link to="/contact" className="nav-link">CONTACT US</Link>
                 </li>
               </ul>
 
+              {/* Desktop Icons */}
               <div className="d-none d-lg-flex align-items-center gap-3 ms-3">
                 <div className="search-container d-flex align-items-center position-relative">
                   <button className="btn btn-link text-dark p-0" onClick={() => setShowSearchBox(prev => !prev)}>
@@ -128,6 +149,16 @@ const Navbar = () => {
                     />
                   )}
                 </div>
+
+                {/* Desktop Cart Icon with Badge */}
+                <button className="btn btn-link text-dark position-relative" onClick={() => setShowCartModal(true)}>
+                  <i className="bi bi-cart fs-5"></i>
+                  {totalQty > 0 && (
+                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      {totalQty}
+                    </span>
+                  )}
+                </button>
 
                 <div className="dropdown">
                   <button className="btn btn-link text-dark" id="desktopUserMenu" data-bs-toggle="dropdown">
@@ -156,6 +187,7 @@ const Navbar = () => {
           </div>
         </nav>
 
+        {/* Search Overlay */}
         {showSearchOverlay && (
           <div
             className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex justify-content-center align-items-center"

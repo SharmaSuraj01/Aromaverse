@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// eslint-disable-next-line no-unused-vars
+import React, { useEffect, useState, useContext } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { auth } from './firebase';
 
@@ -23,16 +24,30 @@ import ForKidsPage from './components/ForKidsPage';
 import CollectionPage from './pages/CollectionsPage';
 import ShopPage from './pages/ShopPage';
 
+import ContactUs from './pages/ContactUs';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsAndConditions from './pages/TermsAndConditions';
+import RefundPolicy from './pages/RefundPolicy';
+import TermsOfService from './pages/TermsOfService';
 
 import AddToCartModal from './components/AddToCartModal';
+import { useCart } from './Context/CartContext';
+
 
 function App() {
+  // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(null);
   const location = useLocation();
-  
 
-  const [cartItems, setCartItems] = useState([]);
-  const [showCartModal, setShowCartModal] = useState(false);
+  const {
+    cartItems,
+    showCartModal,
+    setShowCartModal,
+    updateQty,
+    removeFromCart,
+  } = useCart();
+
+  const hideNavbar = location.pathname === '/login' || location.pathname === '/register';
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -40,21 +55,6 @@ function App() {
     });
     return () => unsubscribe();
   }, []);
-
-  const hideNavbar = location.pathname === '/login' || location.pathname === '/register';
-
-  const handleUpdateQty = (index, qty) => {
-    if (qty < 1) return;
-    const updatedCart = [...cartItems];
-    updatedCart[index].qty = qty;
-    setCartItems(updatedCart);
-  };
-
-  const handleRemove = (index) => {
-    const updatedCart = [...cartItems];
-    updatedCart.splice(index, 1);
-    setCartItems(updatedCart);
-  };
 
   return (
     <div className="App">
@@ -69,8 +69,8 @@ function App() {
         <AddToCartModal
           cartItems={cartItems}
           onClose={() => setShowCartModal(false)}
-          onUpdateQty={handleUpdateQty}
-          onRemove={handleRemove}
+          onUpdateQty={updateQty}
+          onRemove={removeFromCart}
         />
       )}
 
@@ -80,23 +80,10 @@ function App() {
           element={
             <>
               <Hero />
-              <FeaturedScents
-                addToCart={(item) => {
-                  const existingIndex = cartItems.findIndex((i) => i.id === item.id);
-                  if (existingIndex !== -1) {
-                    const updated = [...cartItems];
-                    updated[existingIndex].qty += 1;
-                    setCartItems(updated);
-                  } else {
-                    setCartItems([...cartItems, { ...item, qty: 1 }]);
-                  }
-                  setShowCartModal(true);
-                }}
-              />
+              <FeaturedScents />
               <Categories />
               <SignatureCollection />
               <Testimonials />
-              <Footer />
             </>
           }
         />
@@ -108,8 +95,13 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/collections/:category" element={<CollectionPage />} />
         <Route path="/shop" element={<ShopPage />} />
-
+        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/privacypolicy" element={<PrivacyPolicy />} />
+        <Route path="/TermsAndCOnditions" element={<TermsAndConditions />} />
+        <Route path="/RefundPolicy" element={<RefundPolicy />} />
+        <Route path="/TermsOfService" element={<TermsOfService />} />
       </Routes>
+      {!hideNavbar && <Footer />}
     </div>
   );
 }

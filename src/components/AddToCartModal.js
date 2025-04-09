@@ -7,29 +7,23 @@ const AddToCartModal = ({ cartItems, onClose, onUpdateQty, onRemove }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (modalRef.current && !modalRef.current.contains(e.target)) {
-        onClose();
-      }
-    };
     const handleEsc = (e) => {
       if (e.key === 'Escape') {
         onClose();
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('keydown', handleEsc);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEsc);
     };
   }, [onClose]);
 
   const total = cartItems.reduce((sum, item) => {
-    const numericPrice = typeof item.price === 'string'
-      ? parseInt(item.price.replace(/[₹,]/g, ''))
-      : item.price;
+    const numericPrice =
+      typeof item.price === 'string'
+        ? parseInt(item.price.replace(/[₹,]/g, ''))
+        : item.price;
     return sum + numericPrice * item.qty;
   }, 0);
 
@@ -39,8 +33,8 @@ const AddToCartModal = ({ cartItems, onClose, onUpdateQty, onRemove }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="cart-modal" ref={modalRef}>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="cart-modal" ref={modalRef} onClick={(e) => e.stopPropagation()}>
         <button className="close-btn" onClick={onClose}>×</button>
         <h3 className="modal-title">🛒 Your Cart</h3>
 

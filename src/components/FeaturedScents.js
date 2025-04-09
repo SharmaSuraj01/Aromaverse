@@ -10,12 +10,20 @@ import scent5 from '../assets/images/9.png';
 import scent6 from '../assets/images/2.png';
 
 import '../css/FeaturedScents.css';
+import { useCart } from '../Context/CartContext';
 
 function FeaturedScents({ filterGender }) {
   const scrollRef = useRef(null);
-  const [showModal, setShowModal] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null); // For modal
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const {
+    cartItems,
+    setShowCartModal,
+    addToCart,
+    updateQty,
+    removeFromCart,
+    showCartModal,
+  } = useCart();
 
   const scents = [
     { id: 1, name: 'KZ Black', price: 999, img: scent1, gender: 'him' },
@@ -31,22 +39,8 @@ function FeaturedScents({ filterGender }) {
     : scents;
 
   const handleAddToCart = (product) => {
-    const existingIndex = cartItems.findIndex((item) => item.id === product.id);
-    if (existingIndex > -1) {
-      const updatedItems = [...cartItems];
-      updatedItems[existingIndex].qty += 1;
-      setCartItems(updatedItems);
-    } else {
-      setCartItems([...cartItems, { ...product, qty: 1 }]);
-    }
-    setShowModal(true);
-  };
-
-  const updateQty = (index, newQty) => {
-    if (newQty < 1) return;
-    const updatedItems = [...cartItems];
-    updatedItems[index].qty = newQty;
-    setCartItems(updatedItems);
+    addToCart(product);
+    setShowCartModal(true);
   };
 
   const formatGender = (gender) => {
@@ -153,16 +147,12 @@ function FeaturedScents({ filterGender }) {
         )}
       </div>
 
-      {showModal && (
+      {showCartModal && (
         <AddToCartModal
           cartItems={cartItems}
-          onClose={() => setShowModal(false)}
+          onClose={() => setShowCartModal(false)}
           onUpdateQty={updateQty}
-          onRemove={(index) => {
-            const updated = [...cartItems];
-            updated.splice(index, 1);
-            setCartItems(updated);
-          }}
+          onRemove={removeFromCart}
         />
       )}
 

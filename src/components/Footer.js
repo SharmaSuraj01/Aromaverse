@@ -1,5 +1,6 @@
 import React from 'react';
 import '../css/Footer.css';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -25,10 +26,10 @@ const Footer = () => {
           <div className="col-md-3">
             <h6 className="text-uppercase mb-4">Customer Service</h6>
             <ul className="list-unstyled">
-              <li>Contact us</li>
-              <li>Support</li>
-              <li>Shipping</li>
-              <li>Returns and exchanges</li>
+              <li><Link to="/contact" className="text-white text-decoration-none">Contact us</Link></li>
+              <li><Link to="/support" className="text-white text-decoration-none">Support</Link></li>
+              <li><Link to="/shipping" className="text-white text-decoration-none">Shipping</Link></li>
+              <li><Link to="/returns" className="text-white text-decoration-none">Returns and exchanges</Link></li>
             </ul>
           </div>
 
@@ -36,10 +37,10 @@ const Footer = () => {
           <div className="col-md-3">
             <h6 className="text-uppercase mb-4">Policies</h6>
             <ul className="list-unstyled">
-              <li>Privacy policy</li>
-              <li>Terms and conditions</li>
-              <li>Refund policy</li>
-              <li>Terms of Service</li>
+              <li><Link to="/PrivacyPolicy" className="text-white text-decoration-none">Privacy Policy</Link></li>
+              <li><Link to="/TermsAndConditions" className="text-white text-decoration-none">Terms and conditions</Link></li>
+              <li><Link to="/RefundPolicy" className="text-white text-decoration-none">Refund Policy</Link></li>
+              <li><Link to="/TermsOfService" className="text-white text-decoration-none">Terms of service</Link></li>
             </ul>
           </div>
 

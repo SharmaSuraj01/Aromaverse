@@ -6,8 +6,6 @@
 
 .hero-slide {
   height: 85vh;
-  background-size: cover;
-  background-position: center center;
   position: relative;
 }
 
@@ -17,56 +15,37 @@
   height: 85vh;
   object-fit: cover;
   object-position: center;
-  padding: 0;
-  filter: brightness(0.9);
+  filter: brightness(0.85);
   transition: all 0.5s ease;
 }
 
-@media (max-width: 768px) {
-  .hero-slider {
-    height: 65vh;
-  }
-
-  .hero-slide,
-  .hero-slide img.slider-img,
-  .hero-slide video.slider-img {
-    height: 65vh;
-  }
-
-  .hero-slide img.slider-img,
-  .hero-slide video.slider-img {
-    padding: 20px 10px;
-  }
-}
-
-.btn-link i {
-  transition: all 0.3s ease;
-}
-
-.btn-link:hover i {
-  transform: scale(1.2);
-  color: #000;
-}
-
-/* Arrow Styling */
+/* Arrow Styling - Premium Look */
 .arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 5;
-  color: #fff;
-  font-size: 1.2rem;
-  cursor: pointer;
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 5px 10px;
-  border-radius: 50px;
-  transition: all 0.3s ease;
+  z-index: 10;
+  font-size: 1.6rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  padding: 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+/* Show on hover */
+.hero-slider:hover .arrow {
+  opacity: 1;
 }
 
 .arrow:hover {
   background-color: #c9a063;
   color: #000;
+  transform: translateY(-50%) scale(1.15);
   border-color: #c9a063;
 }
 
@@ -78,7 +57,7 @@
   right: 25px;
 }
 
-/* Slick Dots Custom */
+/* Slick dots customization */
 .slick-dots li button:before {
   color: #fff;
   font-size: 10px;
@@ -90,11 +69,34 @@
   opacity: 1;
 }
 
-/* Dark Overlay */
+/* Dark overlay */
 .hero-slide::after {
   content: "";
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.3);
   z-index: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-slider,
+  .hero-slide,
+  .hero-slide img.slider-img,
+  .hero-slide video.slider-img {
+    height: 65vh;
+  }
+
+  .arrow {
+    font-size: 1.3rem;
+    padding: 8px;
+  }
+
+  .arrow.prev {
+    left: 15px;
+  }
+
+  .arrow.next {
+    right: 15px;
+  }
 }
