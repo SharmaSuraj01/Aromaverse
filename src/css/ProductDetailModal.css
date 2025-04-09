@@ -1,0 +1,70 @@
+.product-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .product-modal {
+    background: white;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .product-modal-body {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  
+  .img-wrap img {
+    max-width: 300px;
+    border-radius: 8px;
+  }
+  
+  .info-wrap {
+    flex: 1;
+  }
+  
+  .price {
+    font-size: 1.3rem;
+    color: green;
+    font-weight: bold;
+  }
+  
+  .desc {
+    margin-top: 12px;
+    color: #555;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 1.5rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  

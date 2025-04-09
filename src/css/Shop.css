@@ -1,0 +1,20 @@
+.card-img-top {
+    transition: transform 0.4s ease;
+    object-fit: cover;
+    height: 280px;
+    border-radius: 8px;
+  }
+  
+  .card:hover .card-img-top {
+    transform: scale(1.07);
+    cursor: pointer;
+  }
+
+  /* Add in Shop.css */
+.btn-sm {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+  }
+  
+  

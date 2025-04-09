@@ -21,11 +21,14 @@ import ForHimPage from './components/ForHimPage';
 import ForHerPage from './components/ForHerPage';
 import ForKidsPage from './components/ForKidsPage';
 import CollectionPage from './pages/CollectionsPage';
+import ShopPage from './pages/ShopPage';
+
 
 function App() {
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(null);
   const location = useLocation();
+  
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -61,6 +64,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/collections/:category" element={<CollectionPage />} />
+        <Route path="/shop" element={<ShopPage />} />
+
       </Routes>
     </div>
   );
