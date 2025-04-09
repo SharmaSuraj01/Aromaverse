@@ -28,9 +28,13 @@
 }
 
 .logo-img {
-  max-height: 60px;
+  background: transparent !important; /* Ensures no background */
+  padding: 0;
+  margin: 0;
+  height: 50px; /* Adjust size as needed */
   object-fit: contain;
 }
+
 
 /* Nav Links */
 .nav-center-custom {
