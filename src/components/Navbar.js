@@ -12,9 +12,9 @@ import { useCart } from '../Context/CartContext';
 const Navbar = () => {
   const [showSearchOverlay, setShowSearchOverlay] = useState(false);
   const [showSearchBox, setShowSearchBox] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // mock auth state
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
-  const { cartItems, setShowCartModal } = useCart(); // using context
+  const { cartItems, setShowCartModal } = useCart();
 
   const toggleSearchOverlay = () => setShowSearchOverlay(!showSearchOverlay);
   const closeSearchOverlay = () => setShowSearchOverlay(false);
@@ -32,7 +32,6 @@ const Navbar = () => {
     setIsLoggedIn(false);
   };
 
-  // Calculate total quantity in cart
   const totalQty = cartItems.reduce((total, item) => total + item.qty, 0);
 
   return (
@@ -43,58 +42,64 @@ const Navbar = () => {
         </div>
 
         <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top custom-navbar shadow-sm">
-          <div className="container-fluid px-4">
-            {/* Toggler */}
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-              <span className="navbar-toggler-icon"></span>
-            </button>
+          <div className="container-fluid px-3 px-md-4">
 
-            <a className="navbar-brand d-lg-block me-4" href="/">
-              <img src={logo} alt="Kizu Perfumes" className="logo-img" />
-            </a>
-
-            {/* Mobile Icons */}
-            <div className="d-lg-none d-flex gap-2 ms-auto">
-              <button className="btn btn-link text-dark" onClick={toggleSearchOverlay}>
-                <i className="bi bi-search fs-5"></i>
+            {/* Mobile Layout */}
+            <div className="d-flex align-items-center justify-content-between w-100 d-lg-none">
+              <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span className="navbar-toggler-icon"></span>
               </button>
 
-              {/* Mobile Cart Icon with Badge */}
-              <button className="btn btn-link text-dark position-relative" onClick={() => setShowCartModal(true)}>
-                <i className="bi bi-cart fs-5"></i>
-                {totalQty > 0 && (
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    {totalQty}
-                  </span>
-                )}
-              </button>
+              <a className="navbar-brand mx-lg-0 mx-auto" href="/">
+                <img src={logo} alt="Kizu Perfumes" className="logo-img" />
+              </a>
 
-              <div className="dropdown">
-                <button className="btn btn-link text-dark" id="mobileUserMenu" data-bs-toggle="dropdown">
-                  <i className="bi bi-person fs-5"></i>
+              <div className="d-flex gap-2">
+                <button className="btn btn-link text-dark p-0" onClick={toggleSearchOverlay}>
+                  <i className="bi bi-search fs-5"></i>
                 </button>
-                <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="mobileUserMenu">
-                  {isLoggedIn ? (
-                    <>
-                      <li><a className="dropdown-item" href="/profile">My Profile</a></li>
-                      <li><a className="dropdown-item" href="/cart">My Cart</a></li>
-                      <li><a className="dropdown-item" href="/orders">My Orders</a></li>
-                      <li><a className="dropdown-item" href="/wishlist">Wishlist</a></li>
-                      <li><hr className="dropdown-divider" /></li>
-                      <li><button className="dropdown-item text-danger" onClick={handleLogout}>Logout</button></li>
-                    </>
-                  ) : (
-                    <>
-                      <li><a className="dropdown-item" href="/login">Login</a></li>
-                      <li><a className="dropdown-item" href="/register">Register</a></li>
-                    </>
+
+                <button className="btn btn-link text-dark position-relative p-0" onClick={() => setShowCartModal(true)}>
+                  <i className="bi bi-cart fs-5"></i>
+                  {totalQty > 0 && (
+                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      {totalQty}
+                    </span>
                   )}
-                </ul>
+                </button>
+
+                <div className="dropdown">
+                  <button className="btn btn-link text-dark p-0" id="mobileUserMenu" data-bs-toggle="dropdown">
+                    <i className="bi bi-person-circle fs-5"></i>
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="mobileUserMenu">
+                    {isLoggedIn ? (
+                      <>
+                        <li className="dropdown-header fw-semibold text-dark px-3">Welcome, User</li>
+                        <li><Link className="dropdown-item" to="/profile"><i className="bi bi-person me-2"></i>My Profile</Link></li>
+                        <li><Link className="dropdown-item" to="/cart"><i className="bi bi-cart-check me-2"></i>My Cart</Link></li>
+                        <li><Link className="dropdown-item" to="/orders"><i className="bi bi-box-seam me-2"></i>My Orders</Link></li>
+                        <li><Link className="dropdown-item" to="/wishlist"><i className="bi bi-heart me-2"></i>Wishlist</Link></li>
+                        <li><hr className="dropdown-divider" /></li>
+                        <li><button className="dropdown-item text-danger" onClick={handleLogout}><i className="bi bi-box-arrow-right me-2"></i>Logout</button></li>
+                      </>
+                    ) : (
+                      <>
+                        <li><Link className="dropdown-item" to="/login"><i className="bi bi-box-arrow-in-right me-2"></i>Login</Link></li>
+                        <li><Link className="dropdown-item" to="/register"><i className="bi bi-person-plus me-2"></i>Register</Link></li>
+                      </>
+                    )}
+                  </ul>
+                </div>
               </div>
             </div>
 
-            {/* Nav Links + Desktop Icons */}
-            <div className="collapse navbar-collapse" id="navbarContent">
+            {/* Desktop Logo - only visible on lg+ */}
+            <a className="navbar-brand d-none d-lg-block me-4" href="/">
+              <img src={logo} alt="Kizu Perfumes" className="logo-img" />
+            </a>
+
+            <div className="collapse navbar-collapse mt-2 mt-lg-0" id="navbarContent">
               <ul className="navbar-nav mx-auto nav-center-custom">
                 <li className="nav-item px-2">
                   <a className="nav-link active" href="/">HOME</a>
@@ -134,7 +139,6 @@ const Navbar = () => {
                 </li>
               </ul>
 
-              {/* Desktop Icons */}
               <div className="d-none d-lg-flex align-items-center gap-3 ms-3">
                 <div className="search-container d-flex align-items-center position-relative">
                   <button className="btn btn-link text-dark p-0" onClick={() => setShowSearchBox(prev => !prev)}>
@@ -150,8 +154,7 @@ const Navbar = () => {
                   )}
                 </div>
 
-                {/* Desktop Cart Icon with Badge */}
-                <button className="btn btn-link text-dark position-relative" onClick={() => setShowCartModal(true)}>
+                <button className="btn btn-link text-dark position-relative p-0" onClick={() => setShowCartModal(true)}>
                   <i className="bi bi-cart fs-5"></i>
                   {totalQty > 0 && (
                     <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
@@ -161,23 +164,24 @@ const Navbar = () => {
                 </button>
 
                 <div className="dropdown">
-                  <button className="btn btn-link text-dark" id="desktopUserMenu" data-bs-toggle="dropdown">
-                    <i className="bi bi-person fs-5"></i>
+                  <button className="btn btn-link text-dark p-0" id="desktopUserMenu" data-bs-toggle="dropdown">
+                    <i className="bi bi-person-circle fs-5"></i>
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="desktopUserMenu">
                     {isLoggedIn ? (
                       <>
-                        <li><a className="dropdown-item" href="/profile">My Profile</a></li>
-                        <li><a className="dropdown-item" href="/cart">My Cart</a></li>
-                        <li><a className="dropdown-item" href="/orders">My Orders</a></li>
-                        <li><a className="dropdown-item" href="/wishlist">Wishlist</a></li>
+                        <li className="dropdown-header fw-semibold text-dark px-3">Welcome, User</li>
+                        <li><Link className="dropdown-item" to="/profile"><i className="bi bi-person me-2"></i>My Profile</Link></li>
+                        <li><Link className="dropdown-item" to="/cart"><i className="bi bi-cart-check me-2"></i>My Cart</Link></li>
+                        <li><Link className="dropdown-item" to="/orders"><i className="bi bi-box-seam me-2"></i>My Orders</Link></li>
+                        <li><Link className="dropdown-item" to="/wishlist"><i className="bi bi-heart me-2"></i>Wishlist</Link></li>
                         <li><hr className="dropdown-divider" /></li>
-                        <li><button className="dropdown-item text-danger" onClick={handleLogout}>Logout</button></li>
+                        <li><button className="dropdown-item text-danger" onClick={handleLogout}><i className="bi bi-box-arrow-right me-2"></i>Logout</button></li>
                       </>
                     ) : (
                       <>
-                        <li><a className="dropdown-item" href="/login">Login</a></li>
-                        <li><a className="dropdown-item" href="/register">Register</a></li>
+                        <li><Link className="dropdown-item" to="/login"><i className="bi bi-box-arrow-in-right me-2"></i>Login</Link></li>
+                        <li><Link className="dropdown-item" to="/register"><i className="bi bi-person-plus me-2"></i>Register</Link></li>
                       </>
                     )}
                   </ul>
@@ -187,7 +191,6 @@ const Navbar = () => {
           </div>
         </nav>
 
-        {/* Search Overlay */}
         {showSearchOverlay && (
           <div
             className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex justify-content-center align-items-center"

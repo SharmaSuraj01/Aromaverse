@@ -32,6 +32,7 @@ import TermsOfService from './pages/TermsOfService';
 
 import AddToCartModal from './components/AddToCartModal';
 import { useCart } from './Context/CartContext';
+import ThankYouPage from './pages/ThankYouPage';
 
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
     cartItems,
     showCartModal,
     setShowCartModal,
+    setCartItems,
     updateQty,
     removeFromCart,
   } = useCart();
@@ -94,13 +96,25 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/collections/:category" element={<CollectionPage />} />
-        <Route path="/shop" element={<ShopPage />} />
+
+        <Route
+          path="/shop"
+          element={
+            <ShopPage
+              cartItems={cartItems}
+              setCartItems={setCartItems}
+              setShowCartModal={setShowCartModal}
+            />
+          }
+        />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/privacypolicy" element={<PrivacyPolicy />} />
         <Route path="/TermsAndCOnditions" element={<TermsAndConditions />} />
         <Route path="/RefundPolicy" element={<RefundPolicy />} />
         <Route path="/TermsOfService" element={<TermsOfService />} />
+        <Route path="/thank-you" element={<ThankYouPage />} />
       </Routes>
+
       {!hideNavbar && <Footer />}
     </div>
   );

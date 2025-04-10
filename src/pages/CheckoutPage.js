@@ -10,15 +10,11 @@ const CheckoutPage = () => {
   const initialCart = location.state?.cartItems || JSON.parse(localStorage.getItem('cart')) || [];
   const [cartItems, setCartItems] = useState(initialCart);
 
-  // Update localStorage when cartItems change
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const subtotal = useMemo(
-    () => cartItems.reduce((sum, item) => sum + item.price * item.qty, 0),
-    [cartItems]
-  );
+  const subtotal = useMemo(() => cartItems.reduce((sum, item) => sum + item.price * item.qty, 0), [cartItems]);
   const tax = useMemo(() => Math.round(subtotal * 0.15), [subtotal]);
   const total = useMemo(() => subtotal + tax, [subtotal, tax]);
 
@@ -33,22 +29,32 @@ const CheckoutPage = () => {
   const [pin, setPin] = useState('');
   const [phone, setPhone] = useState('');
   const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('razorpay');
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(setUser);
     return () => unsubscribe();
   }, []);
 
+  const allRequiredFilled = () =>
+    email && firstName && address && city && state && pin && phone;
+
   const handlePayment = () => {
-    if (!email || !firstName || !address || !city || !state || !pin || !phone) {
+    if (!allRequiredFilled()) {
       setShowErrorPopup(true);
       return;
     }
 
-    if (user) {
-      alert('Redirecting to Razorpay...');
-    } else {
+    if (!user) {
       navigate('/login');
+      return;
+    }
+
+    if (paymentMethod === 'razorpay') {
+      alert('Redirecting to Razorpay...');
+    } else if (paymentMethod === 'cod') {
+      localStorage.removeItem('cart');
+      navigate('/thank-you', { state: { orderSuccess: true, cartItems } });
     }
   };
 
@@ -62,20 +68,24 @@ const CheckoutPage = () => {
   return (
     <div className="container my-5">
       <div className="row g-4">
-        {/* Left Side Form */}
+        {/* Left Side - Shipping and Payment Form */}
         <div className="col-md-7">
           <h2 className="mb-4">Checkout</h2>
-          <form className="needs-validation">
+          <form>
             <h5>Contact Information</h5>
             <div className="mb-3">
-              <label className="form-label">Email <span className="text-danger">*</span></label>
+              <label className="form-label">
+                Email <span className="text-danger">*</span>
+              </label>
               <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
 
             <h5 className="mt-4">Shipping Address</h5>
             <div className="row">
               <div className="col-md-6 mb-3">
-                <label className="form-label">First name <span className="text-danger">*</span></label>
+                <label className="form-label">
+                  First name <span className="text-danger">*</span>
+                </label>
                 <input type="text" className="form-control" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
               </div>
               <div className="col-md-6 mb-3">
@@ -85,7 +95,9 @@ const CheckoutPage = () => {
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Address <span className="text-danger">*</span></label>
+              <label className="form-label">
+                Address <span className="text-danger">*</span>
+              </label>
               <input type="text" className="form-control" value={address} onChange={(e) => setAddress(e.target.value)} required />
             </div>
 
@@ -96,11 +108,15 @@ const CheckoutPage = () => {
 
             <div className="row">
               <div className="col-md-6 mb-3">
-                <label className="form-label">City <span className="text-danger">*</span></label>
+                <label className="form-label">
+                  City <span className="text-danger">*</span>
+                </label>
                 <input type="text" className="form-control" value={city} onChange={(e) => setCity(e.target.value)} required />
               </div>
               <div className="col-md-4 mb-3">
-                <label className="form-label">State <span className="text-danger">*</span></label>
+                <label className="form-label">
+                  State <span className="text-danger">*</span>
+                </label>
                 <select className="form-select" value={state} onChange={(e) => setState(e.target.value)} required>
                   <option value="">Choose...</option>
                   <option>Uttar Pradesh</option>
@@ -109,31 +125,59 @@ const CheckoutPage = () => {
                 </select>
               </div>
               <div className="col-md-2 mb-3">
-                <label className="form-label">PIN <span className="text-danger">*</span></label>
+                <label className="form-label">
+                  PIN <span className="text-danger">*</span>
+                </label>
                 <input type="text" className="form-control" value={pin} onChange={(e) => setPin(e.target.value)} required />
               </div>
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Phone number <span className="text-danger">*</span></label>
+              <label className="form-label">
+                Phone number <span className="text-danger">*</span>
+              </label>
               <input type="tel" className="form-control" value={phone} onChange={(e) => setPhone(e.target.value)} required />
             </div>
 
             <h5>Payment</h5>
             <div className="p-3 border rounded mb-3 bg-light">
-              <p className="mb-2">Razorpay Secure (UPI, Cards, Wallets, NetBanking)</p>
-              <small className="text-muted">
-                After clicking “Pay now”, you will be redirected to Razorpay to complete your purchase securely.
-              </small>
+              <div className="form-check mb-2">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="paymentMethod"
+                  id="razorpayOption"
+                  value="razorpay"
+                  checked={paymentMethod === 'razorpay'}
+                  onChange={() => setPaymentMethod('razorpay')}
+                />
+                <label className="form-check-label" htmlFor="razorpayOption">
+                  Razorpay Secure (UPI, Cards, Wallets, NetBanking)
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  name="paymentMethod"
+                  id="codOption"
+                  value="cod"
+                  checked={paymentMethod === 'cod'}
+                  onChange={() => setPaymentMethod('cod')}
+                />
+                <label className="form-check-label" htmlFor="codOption">
+                  Cash on Delivery (COD)
+                </label>
+              </div>
             </div>
 
             <button type="button" className="btn btn-dark w-100 py-2" onClick={handlePayment}>
-              Pay Now
+              {paymentMethod === 'cod' ? 'Place Order' : 'Pay Now'}
             </button>
           </form>
         </div>
 
-        {/* Right Side Order Summary */}
+        {/* Right Side - Order Summary */}
         <div className="col-md-5">
           <div className="bg-light p-4 rounded shadow-sm">
             <h5 className="mb-4">Order Summary</h5>
@@ -171,13 +215,18 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      {/* Centered Popup */}
+      {/* Error Popup */}
       {showErrorPopup && (
-        <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
           style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1055 }}
           onClick={() => setShowErrorPopup(false)}
         >
-          <div className="bg-white p-4 rounded shadow" style={{ maxWidth: '400px', width: '90%' }} onClick={(e) => e.stopPropagation()}>
+          <div
+            className="bg-white p-4 rounded shadow"
+            style={{ maxWidth: '400px', width: '90%' }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <h5 className="mb-3">Missing Required Fields</h5>
             <p>Please fill in all required details before proceeding to payment.</p>
             <button className="btn btn-dark w-100" onClick={() => setShowErrorPopup(false)}>
