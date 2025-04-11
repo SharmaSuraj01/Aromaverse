@@ -1,13 +1,15 @@
-// ThankYouPage.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useCart } from '../Context/CartContext';
 
 const ThankYouPage = () => {
   const navigate = useNavigate();
+  const { clearCart } = useCart();
 
   const handleContinueShopping = () => {
-    navigate('/');
+    clearCart();         // Clear cart only on button click
+    navigate('/');       // Navigate to home
   };
 
   return (

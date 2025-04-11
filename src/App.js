@@ -33,6 +33,9 @@ import TermsOfService from './pages/TermsOfService';
 import AddToCartModal from './components/AddToCartModal';
 import { useCart } from './Context/CartContext';
 import ThankYouPage from './pages/ThankYouPage';
+import MyProfile from './pages/MyProfile';
+import WishlistPage from './pages/WishlistPage';
+import OrdersPage from './pages/OrdersPage';
 
 
 function App() {
@@ -113,6 +116,11 @@ function App() {
         <Route path="/RefundPolicy" element={<RefundPolicy />} />
         <Route path="/TermsOfService" element={<TermsOfService />} />
         <Route path="/thank-you" element={<ThankYouPage />} />
+        <Route path="/my-profile" element={<MyProfile />} />
+<Route path="/wishlist" element={<WishlistPage />} />
+<Route path="/orders" element={<OrdersPage />} />
+
+
       </Routes>
 
       {!hideNavbar && <Footer />}

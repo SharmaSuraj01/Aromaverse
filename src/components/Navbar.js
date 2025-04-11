@@ -6,33 +6,78 @@ import logo from '../assets/images/logo.png';
 import forHim from '../assets/images/forhim.jpg';
 import forHer from '../assets/images/forher.jpg';
 import forKids from '../assets/images/forkid.jpg';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../Context/CartContext';
+import { auth } from '../firebase';
+
+// Example scents data (ideally move this to a separate file or context)
+const scents = [
+  { id: 1, name: 'KZ Black', price: 999 },
+  { id: 2, name: 'KZ Seduced', price: 1299 },
+  { id: 3, name: 'KZ Sports', price: 1499 },
+  { id: 4, name: 'KZ Marine', price: 1599 },
+  { id: 5, name: 'KZ Breeze', price: 1099 },
+  { id: 6, name: 'KZ Wild', price: 1199 },
+];
 
 const Navbar = () => {
-  const [showSearchOverlay, setShowSearchOverlay] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredResults, setFilteredResults] = useState([]);
   const [showSearchBox, setShowSearchBox] = useState(false);
+  const [showSearchOverlay, setShowSearchOverlay] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [showLogoutMessage, setShowLogoutMessage] = useState(false);
 
   const { cartItems, setShowCartModal } = useCart();
-
-  const toggleSearchOverlay = () => setShowSearchOverlay(!showSearchOverlay);
-  const closeSearchOverlay = () => setShowSearchOverlay(false);
+  const navigate = useNavigate();
+  const totalQty = cartItems.reduce((total, item) => total + item.qty, 0);
 
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === 'Escape') closeSearchOverlay();
+      if (e.key === 'Escape') {
+        setShowSearchOverlay(false);
+        setFilteredResults([]);
+      }
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
-  const handleLogout = () => {
-    console.log("Logged out");
-    setIsLoggedIn(false);
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (value.trim() === '') {
+      setFilteredResults([]);
+      return;
+    }
+
+    const results = scents.filter((item) =>
+      item.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredResults(results);
   };
 
-  const totalQty = cartItems.reduce((total, item) => total + item.qty, 0);
+  const handleResultClick = (id) => {
+    navigate(`/product/${id}`);
+    setSearchTerm('');
+    setFilteredResults([]);
+    setShowSearchOverlay(false);
+    setShowSearchBox(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      setIsLoggedIn(false);
+      setShowLogoutMessage(true);
+      setTimeout(() => {
+        setShowLogoutMessage(false);
+        navigate('/');
+      }, 2500);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
     <>
@@ -55,7 +100,7 @@ const Navbar = () => {
               </a>
 
               <div className="d-flex gap-2">
-                <button className="btn btn-link text-dark p-0" onClick={toggleSearchOverlay}>
+                <button className="btn btn-link text-dark p-0" onClick={() => setShowSearchOverlay(true)}>
                   <i className="bi bi-search fs-5"></i>
                 </button>
 
@@ -76,8 +121,7 @@ const Navbar = () => {
                     {isLoggedIn ? (
                       <>
                         <li className="dropdown-header fw-semibold text-dark px-3">Welcome, User</li>
-                        <li><Link className="dropdown-item" to="/profile"><i className="bi bi-person me-2"></i>My Profile</Link></li>
-                        <li><Link className="dropdown-item" to="/cart"><i className="bi bi-cart-check me-2"></i>My Cart</Link></li>
+                        <li><Link className="dropdown-item" to="/my-profile"><i className="bi bi-person me-2"></i>My Profile</Link></li>
                         <li><Link className="dropdown-item" to="/orders"><i className="bi bi-box-seam me-2"></i>My Orders</Link></li>
                         <li><Link className="dropdown-item" to="/wishlist"><i className="bi bi-heart me-2"></i>Wishlist</Link></li>
                         <li><hr className="dropdown-divider" /></li>
@@ -94,17 +138,14 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Desktop Logo - only visible on lg+ */}
+            {/* Desktop */}
             <a className="navbar-brand d-none d-lg-block me-4" href="/">
               <img src={logo} alt="Kizu Perfumes" className="logo-img" />
             </a>
 
             <div className="collapse navbar-collapse mt-2 mt-lg-0" id="navbarContent">
               <ul className="navbar-nav mx-auto nav-center-custom">
-                <li className="nav-item px-2">
-                  <a className="nav-link active" href="/">HOME</a>
-                </li>
-
+                <li className="nav-item px-2"><a className="nav-link active" href="/">HOME</a></li>
                 <li className="nav-item mega-dropdown px-2 position-relative">
                   <span className="nav-link dropdown-toggle">COLLECTIONS</span>
                   <div className="collections-dropdown-content">
@@ -129,28 +170,41 @@ const Navbar = () => {
                     </div>
                   </div>
                 </li>
-
-                <li className="nav-item px-2">
-                  <Link to="/shop" className="nav-link">SHOP</Link>
-                </li>
-
-                <li className="nav-item px-2">
-                  <Link to="/contact" className="nav-link">CONTACT US</Link>
-                </li>
+                <li className="nav-item px-2"><Link to="/shop" className="nav-link">SHOP</Link></li>
+                <li className="nav-item px-2"><Link to="/contact" className="nav-link">CONTACT US</Link></li>
               </ul>
 
-              <div className="d-none d-lg-flex align-items-center gap-3 ms-3">
+              <div className="d-none d-lg-flex align-items-center gap-3 ms-3 position-relative">
+                {/* Desktop Search Bar */}
                 <div className="search-container d-flex align-items-center position-relative">
                   <button className="btn btn-link text-dark p-0" onClick={() => setShowSearchBox(prev => !prev)}>
                     <i className="bi bi-search fs-5"></i>
                   </button>
                   {showSearchBox && (
-                    <input
-                      type="text"
-                      className="form-control search-input ms-2"
-                      placeholder="Search..."
-                      autoFocus
-                    />
+                    <div className="position-relative">
+                      <input
+                        type="text"
+                        className="form-control search-input ms-2"
+                        placeholder="Search..."
+                        autoFocus
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                      />
+                      {filteredResults.length > 0 && (
+                        <ul className="search-suggestions list-group position-absolute w-100 mt-1 shadow z-3">
+                          {filteredResults.map((item) => (
+                            <li
+                              key={item.id}
+                              className="list-group-item list-group-item-action"
+                              onClick={() => handleResultClick(item.id)}
+                              style={{ cursor: 'pointer' }}
+                            >
+                              {item.name} – ₹{item.price}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
                   )}
                 </div>
 
@@ -163,6 +217,7 @@ const Navbar = () => {
                   )}
                 </button>
 
+                {/* Profile Dropdown */}
                 <div className="dropdown">
                   <button className="btn btn-link text-dark p-0" id="desktopUserMenu" data-bs-toggle="dropdown">
                     <i className="bi bi-person-circle fs-5"></i>
@@ -171,8 +226,7 @@ const Navbar = () => {
                     {isLoggedIn ? (
                       <>
                         <li className="dropdown-header fw-semibold text-dark px-3">Welcome, User</li>
-                        <li><Link className="dropdown-item" to="/profile"><i className="bi bi-person me-2"></i>My Profile</Link></li>
-                        <li><Link className="dropdown-item" to="/cart"><i className="bi bi-cart-check me-2"></i>My Cart</Link></li>
+                        <li><Link className="dropdown-item" to="/my-profile"><i className="bi bi-person me-2"></i>My Profile</Link></li>
                         <li><Link className="dropdown-item" to="/orders"><i className="bi bi-box-seam me-2"></i>My Orders</Link></li>
                         <li><Link className="dropdown-item" to="/wishlist"><i className="bi bi-heart me-2"></i>Wishlist</Link></li>
                         <li><hr className="dropdown-divider" /></li>
@@ -191,20 +245,10 @@ const Navbar = () => {
           </div>
         </nav>
 
-        {showSearchOverlay && (
-          <div
-            className="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-flex justify-content-center align-items-center"
-            style={{ zIndex: 1055 }}
-            onClick={closeSearchOverlay}
-          >
-            <input
-              type="text"
-              className="form-control w-75"
-              placeholder="Search for perfumes..."
-              style={{ maxWidth: '600px', fontSize: '1.25rem' }}
-              onClick={(e) => e.stopPropagation()}
-              autoFocus
-            />
+        {showLogoutMessage && (
+          <div className="position-fixed top-50 start-50 translate-middle bg-white text-center border p-4 rounded shadow" style={{ zIndex: 1060, minWidth: '300px' }}>
+            <h5 className="text-success mb-2">Logged out successfully!</h5>
+            <p>You have been securely signed out.</p>
           </div>
         )}
       </div>

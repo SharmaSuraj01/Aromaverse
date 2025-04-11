@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import AddToCartModal from './AddToCartModal';
 import ProductDetailModal from './ProductDetailModal';
 
@@ -12,6 +12,9 @@ import scent6 from '../assets/images/2.png';
 import '../css/FeaturedScents.css';
 import { useCart } from '../Context/CartContext';
 
+import { auth, db } from '../firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+
 function FeaturedScents({ filterGender }) {
   const scrollRef = useRef(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -24,6 +27,46 @@ function FeaturedScents({ filterGender }) {
     removeFromCart,
     showCartModal,
   } = useCart();
+
+  const [wishlist, setWishlist] = useState([]);
+
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+      try {
+        const docRef = doc(db, 'wishlists', user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setWishlist(docSnap.data().items || []);
+        }
+      } catch (err) {
+        console.error('Error loading wishlist:', err);
+      }
+    };
+    fetchWishlist();
+  }, []);
+
+  const isInWishlist = (id) => wishlist.includes(id);
+
+  const toggleWishlist = async (item) => {
+    const user = auth.currentUser;
+    if (!user) return alert('Please log in to use wishlist.');
+
+    let updatedWishlist;
+    if (isInWishlist(item.id)) {
+      updatedWishlist = wishlist.filter((wId) => wId !== item.id);
+    } else {
+      updatedWishlist = [...wishlist, item.id];
+    }
+
+    try {
+      await setDoc(doc(db, 'wishlists', user.uid), { items: updatedWishlist });
+      setWishlist(updatedWishlist);
+    } catch (err) {
+      console.error('Error updating wishlist:', err);
+    }
+  };
 
   const scents = [
     { id: 1, name: 'KZ Black', price: 999, img: scent1, gender: 'him' },
@@ -69,10 +112,29 @@ function FeaturedScents({ filterGender }) {
             {filteredScents.map((scent) => (
               <div key={scent.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div
-                  className="card border-0 shadow scent-card h-100"
+                  className="card border-0 shadow scent-card h-100 position-relative"
                   onClick={() => setSelectedProduct(scent)}
                   style={{ cursor: 'pointer' }}
                 >
+                  <div
+                    className="wishlist-icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleWishlist(scent);
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: '10px',
+                      right: '10px',
+                      cursor: 'pointer',
+                      zIndex: 2,
+                    }}
+                  >
+                    <i
+                      className={`bi ${isInWishlist(scent.id) ? 'bi-heart-fill' : 'bi-heart'} text-danger fs-4`}
+                    ></i>
+                  </div>
+
                   <img src={scent.img} className="card-img-top rounded-3" alt={scent.name} />
                   <div className="card-body text-center">
                     <h5 className="card-title fw-semibold">{scent.name}</h5>
@@ -106,10 +168,29 @@ function FeaturedScents({ filterGender }) {
             {filteredScents.map((scent) => (
               <div key={scent.id} className="carousel-card">
                 <div
-                  className="card h-100 border-0 shadow-sm featured-card"
+                  className="card h-100 border-0 shadow-sm featured-card position-relative"
                   onClick={() => setSelectedProduct(scent)}
                   style={{ cursor: 'pointer' }}
                 >
+                  <div
+                    className="wishlist-icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleWishlist(scent);
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: '10px',
+                      right: '10px',
+                      cursor: 'pointer',
+                      zIndex: 2,
+                    }}
+                  >
+                    <i
+                      className={`bi ${isInWishlist(scent.id) ? 'bi-heart-fill' : 'bi-heart'} text-danger fs-4`}
+                    ></i>
+                  </div>
+
                   <img src={scent.img} className="card-img-top" alt={scent.name} />
                   <div className="card-body">
                     <h5 className="card-title">{scent.name}</h5>
