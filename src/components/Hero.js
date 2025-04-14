@@ -2,8 +2,8 @@ import React from 'react';
 import Slider from 'react-slick';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';  
 
-import heroImage2 from '../assets/images/scent2.jpg';
-import heroImage3 from '../assets/images/scent3.jpg';
+import heroImage2 from '../assets/images/19.JPG';
+import heroImage3 from '../assets/images/18.JPG';
 import '../css/Hero.css';
 
 function Hero() {

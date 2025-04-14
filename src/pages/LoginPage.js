@@ -34,7 +34,7 @@ const LoginPage = () => {
     setMessage('');
     try {
       await signInWithPopup(auth, new GoogleAuthProvider());
-      navigate('/checkout');
+      navigate('/');
     } catch (err) {
       setError(err.message);
     }

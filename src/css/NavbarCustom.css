@@ -35,7 +35,9 @@
   object-fit: contain;
 }
 
-
+.navbar .nav-link:hover{
+   color: #ff4081;
+}
 /* Nav Links */
 .nav-center-custom {
   display: flex;
@@ -195,7 +197,7 @@
 }
 
 .search-input {
-  width: 200px;
+  width: 200px; /* Adjusted for a clean, reasonable width */
   padding: 6px 12px;
   font-size: 14px;
   border: 1px solid #ccc;
@@ -205,18 +207,34 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
   animation: slideFadeIn 0.3s ease forwards;
+  margin-left: 8px; /* Ensures space between search bar and icons */
 }
 
-/* On smaller screens */
+/* On smaller screens (mobile view) */
 @media (max-width: 768px) {
   .search-input {
-    width: 160px;
+    width: 160px; /* Smaller width for mobile screens */
     font-size: 13px;
-    box-shadow: none;
+    box-shadow: none; /* Removes the shadow effect for cleaner mobile look */
+    margin-left: 0; /* Ensures the search bar is flush with the icons on small screens */
   }
 }
+
+/* Search input focus styling */
 .search-input:focus {
   outline: none;
   border-color: #999;
-  box-shadow: 0 0 0 2px rgba(230, 57, 70, 0.2); /* subtle red ring */
+  box-shadow: 0 0 0 2px rgba(230, 57, 70, 0.2); /* Subtle red ring on focus */
+}
+
+/* Optional animation for sliding and fading effect */
+@keyframes slideFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

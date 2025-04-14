@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import scent1 from '../assets/images/scent1.jpg';
-import scent2 from '../assets/images/scent2.jpg';
-import scent3 from '../assets/images/scent3.jpg';
-import scent4 from '../assets/images/1.png';
-import scent5 from '../assets/images/9.png';
-import scent6 from '../assets/images/2.png';
+import scent1 from '../assets/images/11.JPG';
+import scent2 from '../assets/images/12.PNG';
+import scent3 from '../assets/images/13.PNG';
+import scent4 from '../assets/images/14.JPG';
+import scent5 from '../assets/images/15.JPG';
+import scent6 from '../assets/images/16.JPG';
+import scent7 from '../assets/images/17.JPG';
+import scent8 from '../assets/images/18.JPG';
 
 import '../css/Shop.css';
 
@@ -23,12 +25,15 @@ import {
 } from 'firebase/firestore';
 
 const scents = [
-  { id: 1, name: 'KZ Black', price: 999, img: scent1 },
-  { id: 2, name: 'KZ Seduced', price: 1299, img: scent2 },
-  { id: 3, name: 'KZ Sports', price: 1499, img: scent3 },
-  { id: 4, name: 'KZ Marine', price: 1599, img: scent4 },
-  { id: 5, name: 'KZ Breeze', price: 1099, img: scent5 },
-  { id: 6, name: 'KZ Wild', price: 1199, img: scent6 },
+  { id: 1, name: 'TITANIUM', price: 999, img: scent1, gender: 'her' },
+      { id: 2, name: 'AQUA', price: 1299, img: scent2, gender: 'him' },
+      { id: 3, name: 'YODHA', price: 1499, img: scent3, gender: 'him' },
+      { id: 4, name: 'VAHINI', price: 1599, img: scent4, gender: 'kids' },
+      { id: 5, name: 'VAASNA', price: 1099, img: scent5, gender: 'him' },
+      { id: 6, name: 'SENORA', price: 1199, img: scent6, gender: 'her' },
+      { id: 7, name: 'TANTRA', price: 1099, img: scent7, gender: 'him' },
+      { id: 8, name: 'UJJWALA', price: 1299, img: scent8, gender: 'her' },
+      
 ];
 
 function ShopPage() {
