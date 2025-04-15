@@ -42,7 +42,7 @@ const RegisterPage = () => {
         createdAt: new Date()
       });
 
-      navigate('/checkout');
+      navigate('/');
     } catch (err) {
       setError(err.message);
     }
