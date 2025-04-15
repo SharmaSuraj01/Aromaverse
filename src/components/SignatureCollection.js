@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../css/SignatureCollection.css';
 
 // Import all 9 images
-import img1 from '../assets/images/11.JPG';
+import img1 from '../assets/images/11.png';
 import img2 from '../assets/images/12.PNG';
 import img3 from '../assets/images/13.PNG';
 import img4 from '../assets/images/14.JPG';

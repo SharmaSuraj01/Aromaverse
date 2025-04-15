@@ -9,7 +9,7 @@ import forKids from '../assets/images/forkid.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../Context/CartContext';
 import { auth } from '../firebase';
-import scent1 from '../assets/images/11.JPG';
+import scent1 from '../assets/images/11.png';
 import scent2 from '../assets/images/12.PNG';
 import scent3 from '../assets/images/13.PNG';
 import scent4 from '../assets/images/14.JPG';
@@ -19,13 +19,13 @@ import scent7 from '../assets/images/17.JPG';
 import { onAuthStateChanged } from 'firebase/auth';
 
 const scents = [
-  { id: 1, name: 'TITANIUM', price: 999, img: scent1, gender: 'her' },
-      { id: 2, name: 'AQUA', price: 1299, img: scent2, gender: 'him' },
-      { id: 3, name: 'YODHA', price: 1499, img: scent3, gender: 'him' },
-      { id: 4, name: 'VAHINI', price: 1599, img: scent4, gender: 'kids' },
-      { id: 5, name: 'VAASNA', price: 1099, img: scent5, gender: 'him' },
-      { id: 6, name: 'SENORA', price: 1199, img: scent6, gender: 'her' },
-      { id: 7, name: 'TANTRA', price: 1099, img: scent7, gender: 'him' },
+  { id: 1, name: 'TEJASI', price: 999, img: scent1, gender: 'her' },
+  { id: 2, name: 'AQUA', price: 1299, img: scent2, gender: 'him' },
+  { id: 3, name: 'YODHA', price: 1499, img: scent3, gender: 'him' },
+  { id: 4, name: 'VAHINI', price: 1599, img: scent4, gender: 'kids' },
+  { id: 5, name: 'VAASNA', price: 1099, img: scent5, gender: 'him' },
+  { id: 6, name: 'SENORA', price: 1199, img: scent6, gender: 'her' },
+  { id: 7, name: 'TANTRA', price: 1099, img: scent7, gender: 'him' },
 ];
 
 const Navbar = () => {
@@ -58,19 +58,19 @@ const Navbar = () => {
         setUserName('');
       }
     });
-  
+
     const handleEsc = (e) => {
       if (e.key === 'Escape') closeSearchOverlay();
     };
-  
+
     window.addEventListener('keydown', handleEsc);
-  
+
     return () => {
-      unsubscribe();               // Cleanup auth listener
-      window.removeEventListener('keydown', handleEsc);  // Cleanup ESC key listener
+      unsubscribe();
+      window.removeEventListener('keydown', handleEsc);
     };
   }, []);
-  
+
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -108,6 +108,11 @@ const Navbar = () => {
               <div className="d-flex gap-2">
                 <button className="btn btn-link text-dark p-0" onClick={toggleSearchOverlay}>
                   <i className="bi bi-search fs-5"></i>
+                </button>
+
+                {/* Wishlist button - Mobile */}
+                <button className="btn btn-link text-dark p-0" onClick={() => navigate('/wishlist')}>
+                  <i className="bi bi-heart fs-5"></i>
                 </button>
 
                 <button className="btn btn-link text-dark position-relative p-0" onClick={() => setShowCartModal(true)}>
@@ -162,7 +167,7 @@ const Navbar = () => {
                       <Link to="/collections/for-her">FOR HER</Link>
                       <Link to="/collections/kids">FOR KIDS</Link>
                     </div>
-                    <div className="collection-preview">
+                    <div className="collection-preview d-none d-lg-flex">
                       <Link to="/collections/for-him" className="collection-card">
                         <img src={forHim} alt="For Him" />
                         <p>For Him</p>
@@ -191,6 +196,11 @@ const Navbar = () => {
               <div className="d-none d-lg-flex align-items-center gap-3 ms-3">
                 <button className="btn btn-link text-dark p-0" onClick={toggleSearchOverlay}>
                   <i className="bi bi-search fs-5"></i>
+                </button>
+
+                {/* Wishlist button - Desktop */}
+                <button className="btn btn-link text-dark p-0" onClick={() => navigate('/wishlist')}>
+                  <i className="bi bi-heart fs-5"></i>
                 </button>
 
                 <button className="btn btn-link text-dark position-relative p-0" onClick={() => setShowCartModal(true)}>
@@ -255,7 +265,7 @@ const Navbar = () => {
                       key={item.id}
                       className="list-group-item list-group-item-action d-flex align-items-center"
                       onClick={() => {
-                        navigate(`/product/${item.id}`);
+                        navigate(`/shop`);
                         closeSearchOverlay();
                       }}
                       style={{ cursor: 'pointer' }}

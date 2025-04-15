@@ -31,7 +31,7 @@
   background: transparent !important; /* Ensures no background */
   padding: 0;
   margin: 0;
-  height: 60px; /* Adjust size as needed */
+  height: 80px; /* Adjust size as needed */
   object-fit: contain;
 }
 

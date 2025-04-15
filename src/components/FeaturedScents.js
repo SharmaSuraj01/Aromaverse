@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import AddToCartModal from './AddToCartModal';
 import ProductDetailModal from './ProductDetailModal';
 
-import scent1 from '../assets/images/11.JPG';
+import scent1 from '../assets/images/11.png';
 import scent2 from '../assets/images/12.PNG';
 import scent3 from '../assets/images/13.PNG';
 import scent4 from '../assets/images/14.JPG';
@@ -72,7 +72,7 @@ function FeaturedScents({ filterGender }) {
   };
 
   const scents = [
-    { id: 1, name: 'TITANIUM', price: 999, img: scent1, gender: 'her' },
+    { id: 1, name: 'TEJASI', price: 999, img: scent1, gender: 'her' },
     { id: 2, name: 'AQUA', price: 1299, img: scent2, gender: 'him' },
     { id: 3, name: 'YODHA', price: 1499, img: scent3, gender: 'him' },
     { id: 4, name: 'VAHINI', price: 1599, img: scent4, gender: 'kids' },

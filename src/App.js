@@ -36,7 +36,8 @@ import ThankYouPage from './pages/ThankYouPage';
 import MyProfile from './pages/MyProfile';
 import WishlistPage from './pages/WishlistPage';
 import OrdersPage from './pages/OrdersPage';
-
+import Support from './pages/Support';
+import Returns from './pages/Returns';
 
 function App() {
   // eslint-disable-next-line no-unused-vars
@@ -117,8 +118,11 @@ function App() {
         <Route path="/TermsOfService" element={<TermsOfService />} />
         <Route path="/thank-you" element={<ThankYouPage />} />
         <Route path="/my-profile" element={<MyProfile />} />
+        <Route path="/support" element={<Support />} />
+        <Route path="/returns" element={<Returns />} />
 <Route path="/wishlist" element={<WishlistPage />} />
 <Route path="/orders" element={<OrdersPage />} />
+
 
 
       </Routes>

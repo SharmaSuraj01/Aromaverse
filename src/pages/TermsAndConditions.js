@@ -1,6 +1,6 @@
 import React from 'react';
 import '../css/TermsAndConditions.css'; // Create this CSS file same as PrivacyPolicy.css style
-import Footer from '../components/Footer';
+
 
 const TermsAndConditions = () => {
   return (
@@ -9,7 +9,7 @@ const TermsAndConditions = () => {
         <div className="terms-container">
           <h2 className="title">Terms and Conditions</h2>
           <p>
-            These Website Standard Terms and Conditions written on this webpage shall manage your use of our website, accessible at <strong>Kizu-web.com</strong>.
+            These Website Standard Terms and Conditions written on this webpage shall manage your use of our website, accessible at <strong>Gitaami.com</strong>.
           </p>
           <p>
             These Terms will be applied fully and affect your use of this Website. By using this Website, you agreed to accept all terms and conditions written here. You must not use this Website if you disagree with any of these Website Standard Terms and Conditions.
@@ -17,7 +17,7 @@ const TermsAndConditions = () => {
 
           <h3 className="section-title">Intellectual Property Rights</h3>
           <p>
-            Other than the content you own, under these Terms, <strong>Kizu-web</strong> and/or its licensors own all the intellectual property rights and materials contained in this Website.
+            Other than the content you own, under these Terms, <strong>GITAAMI</strong> and/or its licensors own all the intellectual property rights and materials contained in this Website.
           </p>
           <p>
             You are granted limited license only for purposes of viewing the material contained on this Website.
@@ -37,30 +37,30 @@ const TermsAndConditions = () => {
           </ul>
 
           <p>
-            Certain areas of this Website are restricted from being accessed by you and <strong>Kizu-web</strong> may further restrict access at any time. Any user ID and password you may have are confidential.
+            Certain areas of this Website are restricted from being accessed by you and <strong>GITAAMI</strong> may further restrict access at any time. Any user ID and password you may have are confidential.
           </p>
 
           <h3 className="section-title">Your Content</h3>
           <p>
-            “Your Content” means any audio, video, text, images, or other material you choose to display on this Website. By displaying it, you grant <strong>Kizu-web</strong> a non-exclusive, worldwide irrevocable license to use it in any media.
+            “Your Content” means any audio, video, text, images, or other material you choose to display on this Website. By displaying it, you grant <strong>GITAAMI</strong> a non-exclusive, worldwide irrevocable license to use it in any media.
           </p>
           <p>
-            Your content must be your own and not invade any third-party’s rights. <strong>Kizu-web</strong> reserves the right to remove your content at any time.
+            Your content must be your own and not invade any third-party’s rights. <strong>GITAAMI</strong> reserves the right to remove your content at any time.
           </p>
 
           <h3 className="section-title">No Warranties</h3>
           <p>
-            This Website is provided “as is,” with all faults, and <strong>Kizu-web</strong> expresses no warranties related to the materials on this Website.
+            This Website is provided “as is,” with all faults, and <strong>GITAAMI</strong> expresses no warranties related to the materials on this Website.
           </p>
 
           <h3 className="section-title">Limitation of Liability</h3>
           <p>
-            In no event shall <strong>Kizu-web</strong>, nor its team, be liable for anything arising from or connected to your use of this Website.
+            In no event shall <strong>GITAAMI</strong>, nor its team, be liable for anything arising from or connected to your use of this Website.
           </p>
 
           <h3 className="section-title">Indemnification</h3>
           <p>
-            You hereby indemnify <strong>Kizu-web</strong> from any liabilities, costs, or expenses related to your breach of these Terms.
+            You hereby indemnify <strong>GITAAMI</strong> from any liabilities, costs, or expenses related to your breach of these Terms.
           </p>
 
           <h3 className="section-title">Severability</h3>
@@ -70,17 +70,17 @@ const TermsAndConditions = () => {
 
           <h3 className="section-title">Variation of Terms</h3>
           <p>
-            <strong>Kizu-web</strong> is permitted to revise these Terms at any time. By using this Website you agree to review these Terms regularly.
+            <strong>GITAAMI</strong> is permitted to revise these Terms at any time. By using this Website you agree to review these Terms regularly.
           </p>
 
           <h3 className="section-title">Assignment</h3>
           <p>
-            <strong>Kizu-web</strong> can assign its rights and obligations under these Terms. You cannot assign your rights under these Terms.
+            <strong>GITAAMI</strong> can assign its rights and obligations under these Terms. You cannot assign your rights under these Terms.
           </p>
 
           <h3 className="section-title">Entire Agreement</h3>
           <p>
-            These Terms constitute the entire agreement between <strong>Kizu-web</strong> and you.
+            These Terms constitute the entire agreement between <strong>GITAAMI</strong> and you.
           </p>
 
           <h3 className="section-title">Governing Law & Jurisdiction</h3>

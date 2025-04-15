@@ -17,6 +17,7 @@ const RegisterPage = () => {
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -32,12 +33,11 @@ const RegisterPage = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Save user profile to Firestore
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         name,
         email,
-        phone: '',
+        phone,
         address: '',
         createdAt: new Date()
       });
@@ -56,7 +56,6 @@ const RegisterPage = () => {
       const docRef = doc(db, 'users', user.uid);
       const userDoc = await getDoc(docRef);
 
-      // Save profile if first time
       if (!userDoc.exists()) {
         await setDoc(docRef, {
           uid: user.uid,
@@ -80,7 +79,9 @@ const RegisterPage = () => {
         {error && <div className="alert alert-danger">{error}</div>}
 
         <div className="mb-3">
-          <label>Name</label>
+          <label>
+            Name <span className="text-danger">*</span>
+          </label>
           <input
             type="text"
             className="form-control"
@@ -91,7 +92,22 @@ const RegisterPage = () => {
         </div>
 
         <div className="mb-3">
-          <label>Email</label>
+          <label>
+            Phone Number <span className="text-danger">*</span>
+          </label>
+          <input
+            type="tel"
+            className="form-control"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label>
+            Email <span className="text-danger">*</span>
+          </label>
           <input
             type="email"
             className="form-control"
@@ -102,7 +118,9 @@ const RegisterPage = () => {
         </div>
 
         <div className="mb-3">
-          <label>Password</label>
+          <label>
+            Password <span className="text-danger">*</span>
+          </label>
           <div className="input-group">
             <input
               type={showPassword ? 'text' : 'password'}
@@ -122,7 +140,9 @@ const RegisterPage = () => {
         </div>
 
         <div className="mb-3">
-          <label>Confirm Password</label>
+          <label>
+            Confirm Password <span className="text-danger">*</span>
+          </label>
           <input
             type="password"
             className="form-control"
@@ -132,7 +152,9 @@ const RegisterPage = () => {
           />
         </div>
 
-        <button type="submit" className="btn btn-dark w-100 mb-3">Register</button>
+        <button type="submit" className="btn btn-dark w-100 mb-3">
+          Register
+        </button>
 
         <div className="text-center text-muted mb-2">OR</div>
 
