@@ -3,7 +3,8 @@ import { auth, db } from '../firebase';
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  updateProfile
 } from 'firebase/auth';
 import {
   doc,
@@ -32,6 +33,11 @@ const RegisterPage = () => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+
+      // 👇 Update user's display name for use in Navbar
+      await updateProfile(user, {
+        displayName: name,
+      });
 
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
