@@ -2,25 +2,17 @@ import React, { useRef, useState, useEffect } from 'react';
 import AddToCartModal from './AddToCartModal';
 import ProductDetailModal from './ProductDetailModal';
 
-import scent1 from '../assets/images/11.png';
-import scent2 from '../assets/images/12.PNG';
-import scent3 from '../assets/images/13.PNG';
-import scent4 from '../assets/images/14.JPG';
-import scent5 from '../assets/images/15.JPG';
-import scent6 from '../assets/images/16.JPG';
-import scent7 from '../assets/images/17.JPG';
-
-
-
 import '../css/FeaturedScents.css';
 import { useCart } from '../Context/CartContext';
 
 import { auth, db } from '../firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
 
 function FeaturedScents({ filterGender }) {
   const scrollRef = useRef(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [scents, setScents] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
 
   const {
     cartItems,
@@ -31,12 +23,30 @@ function FeaturedScents({ filterGender }) {
     showCartModal,
   } = useCart();
 
-  const [wishlist, setWishlist] = useState([]);
+  // Fetch products from Firestore
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        const products = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setScents(products);
+      } catch (err) {
+        console.error('Error loading products:', err);
+      }
+    };
 
+    fetchProducts();
+  }, []);
+
+  // Fetch wishlist
   useEffect(() => {
     const fetchWishlist = async () => {
       const user = auth.currentUser;
       if (!user) return;
+
       try {
         const docRef = doc(db, 'wishlists', user.uid);
         const docSnap = await getDoc(docRef);
@@ -47,6 +57,7 @@ function FeaturedScents({ filterGender }) {
         console.error('Error loading wishlist:', err);
       }
     };
+
     fetchWishlist();
   }, []);
 
@@ -56,12 +67,9 @@ function FeaturedScents({ filterGender }) {
     const user = auth.currentUser;
     if (!user) return alert('Please log in to use wishlist.');
 
-    let updatedWishlist;
-    if (isInWishlist(item.id)) {
-      updatedWishlist = wishlist.filter((wId) => wId !== item.id);
-    } else {
-      updatedWishlist = [...wishlist, item.id];
-    }
+    const updatedWishlist = isInWishlist(item.id)
+      ? wishlist.filter((wId) => wId !== item.id)
+      : [...wishlist, item.id];
 
     try {
       await setDoc(doc(db, 'wishlists', user.uid), { items: updatedWishlist });
@@ -71,21 +79,18 @@ function FeaturedScents({ filterGender }) {
     }
   };
 
-  const scents = [
-    { id: 1, name: 'TEJASI', price: 999, img: scent1, gender: 'her' },
-    { id: 2, name: 'AQUA', price: 1299, img: scent2, gender: 'him' },
-    { id: 3, name: 'YODHA', price: 1499, img: scent3, gender: 'him' },
-    { id: 4, name: 'VAHINI', price: 1599, img: scent4, gender: 'kids' },
-    { id: 5, name: 'VAASNA', price: 1099, img: scent5, gender: 'him' },
-    { id: 6, name: 'SENORA', price: 1199, img: scent6, gender: 'her' },
-    { id: 7, name: 'TANTRA', price: 1099, img: scent7, gender: 'him' },
-    
-    
-  ];
+  // Normalize and filter by category
+  const normalize = (str) =>
+    str?.toLowerCase().replace(/\s+/g, '-').trim();
 
   const filteredScents = filterGender
-    ? scents.filter((scent) => scent.gender === filterGender)
-    : scents;
+  ? scents.filter((scent) => {
+      const category = normalize(scent.category);
+      const filter = normalize(filterGender);
+      return category.includes(filter);
+    })
+  : scents;
+
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -141,7 +146,11 @@ function FeaturedScents({ filterGender }) {
                     ></i>
                   </div>
 
-                  <img src={scent.img} className="card-img-top rounded-3" alt={scent.name} />
+                  <img
+                    src={scent.images?.[0] || 'https://via.placeholder.com/150'}
+                    className="card-img-top rounded-3"
+                    alt={scent.name}
+                  />
                   <div className="card-body text-center">
                     <h5 className="card-title fw-semibold">{scent.name}</h5>
                     <p className="card-text text-muted mb-2">₹{scent.price}</p>
@@ -166,7 +175,9 @@ function FeaturedScents({ filterGender }) {
               </div>
             ))}
             {filteredScents.length === 0 && (
-              <p className="text-center py-5">No scents available for this category.</p>
+              <p className="text-center py-5 text-danger">
+                No products matched the category "{filterGender}".
+              </p>
             )}
           </div>
         ) : (
@@ -197,7 +208,11 @@ function FeaturedScents({ filterGender }) {
                     ></i>
                   </div>
 
-                  <img src={scent.img} className="card-img-top" alt={scent.name} />
+                  <img
+                    src={scent.images?.[0] || 'https://via.placeholder.com/150'}
+                    className="card-img-top"
+                    alt={scent.name}
+                  />
                   <div className="card-body">
                     <h5 className="card-title">{scent.name}</h5>
                     <p className="card-text fw-bold">₹{scent.price}</p>

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { db } from '../../firebase'; // Import Firestore database
+import { collection, getDocs } from 'firebase/firestore';
 import '../styles/CustomerCommon.css';
 
 const CustomerList = () => {
@@ -7,34 +9,45 @@ const CustomerList = () => {
   const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    // Fetch orders from Firestore
+    const fetchOrders = async () => {
+      try {
+        const ordersSnapshot = await getDocs(collection(db, 'orders'));
+        const orders = ordersSnapshot.docs.map(doc => doc.data());
 
-    const map = {};
-    orders.forEach((order) => {
-      const email = order.customer.email;
-      if (!map[email]) {
-        map[email] = {
-          ...order.customer,
-          totalOrders: 1,
-          totalSpent: order.total,
-        };
-      } else {
-        map[email].totalOrders += 1;
-        map[email].totalSpent += order.total;
+        // Process orders to get customer data
+        const map = {};
+        orders.forEach((order) => {
+          const email = order.customer.email;
+          if (!map[email]) {
+            map[email] = {
+              ...order.customer,
+              totalOrders: 1,
+              totalSpent: order.total,
+            };
+          } else {
+            map[email].totalOrders += 1;
+            map[email].totalSpent += order.total;
+          }
+        });
+
+        const result = Object.values(map).map((c) => ({
+          ...c,
+          segment:
+            c.totalOrders >= 5
+              ? 'VIP'
+              : c.totalOrders >= 2
+              ? 'Regular'
+              : 'First Time',
+        }));
+
+        setCustomers(result);
+      } catch (error) {
+        console.error("Error fetching orders from Firestore:", error);
       }
-    });
+    };
 
-    const result = Object.values(map).map((c) => ({
-      ...c,
-      segment:
-        c.totalOrders >= 5
-          ? 'VIP'
-          : c.totalOrders >= 2
-          ? 'Regular'
-          : 'First Time',
-    }));
-
-    setCustomers(result);
+    fetchOrders();
   }, []);
 
   return (
@@ -69,7 +82,9 @@ const CustomerList = () => {
                 <td>
                   <button
                     className="view-btn"
-                    onClick={() => navigate(`/admin/customers/${encodeURIComponent(c.email)}`)}
+                    onClick={() =>
+                      navigate(`/admin/customers/${encodeURIComponent(c.email)}`)
+                    }
                   >
                     View
                   </button>

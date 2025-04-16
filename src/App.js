@@ -36,10 +36,11 @@ import ThankYouPage from './pages/ThankYouPage';
 import MyProfile from './pages/MyProfile';
 import WishlistPage from './pages/WishlistPage';
 import OrdersPage from './pages/OrdersPage';
-import AdminRoutes from './admin/adminRoutes'; 
+
 import Support from './pages/Support';
 import Returns from './pages/Returns';
 
+import AdminRoutes from './admin/adminRoutes';
 function App() {
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(null);
@@ -123,6 +124,7 @@ function App() {
         <Route path="/orders" element={<OrdersPage />} />
          {/* Admin Routes */}
          <Route path="/admin/*" element={<AdminRoutes />} />
+        
         <Route path="/support" element={<Support />} />
         <Route path="/returns" element={<Returns />} />
 <Route path="/wishlist" element={<WishlistPage />} />

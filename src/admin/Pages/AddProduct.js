@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { db, storage } from '../../firebase'; // Make sure this path is correct
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Import Firebase Storage functions
 import '../styles/AddProduct.css';
 
 const AddProduct = () => {
@@ -11,11 +14,11 @@ const AddProduct = () => {
     quantity: '',
     description: '',
     category: '',
-    images: [],
-    faqs: [] 
+    images: [], // This will store actual file objects now
+    faqs: []
   });
 
-  const [imagePreviews, setImagePreviews] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]); // Preview URLs for displaying images
   const [faq, setFaq] = useState({ question: '', answer: '' });
 
   const handleChange = (e) => {
@@ -26,26 +29,27 @@ const AddProduct = () => {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     const previews = files.map((file) => URL.createObjectURL(file));
-    setProduct((prev) => ({ ...prev, images: previews }));
-    setImagePreviews(previews);
+    setProduct((prev) => ({ ...prev, images: files })); // Save the actual files
+    setImagePreviews(previews); // Save the preview URLs
   };
+
   const handleFAQChange = (e) => {
     const { name, value } = e.target;
     setFaq((prev) => ({ ...prev, [name]: value }));
   };
-  
+
   const addFAQ = () => {
     if (faq.question.trim() && faq.answer.trim()) {
       setProduct((prev) => ({
         ...prev,
-        faqs: prev.faqs ? [...prev.faqs, faq] : [faq]
+        faqs: [...(prev.faqs || []), faq]
       }));
       setFaq({ question: '', answer: '' });
     } else {
-      alert('❗Please fill in both question and answer');
+      alert('❗ Please fill in both question and answer');
     }
   };
-  
+
   const removeFAQ = (index) => {
     setProduct((prev) => ({
       ...prev,
@@ -53,19 +57,33 @@ const AddProduct = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const stored = JSON.parse(localStorage.getItem('products')) || [];
-    const newProduct = {
-      id: Date.now(),
-      ...product
-    };
-    const updated = [...stored, newProduct];
-    localStorage.setItem('products', JSON.stringify(updated));
+    try {
+      // 1. Upload all images to Firebase Storage and get their download URLs
+      const imageUploadPromises = product.images.map(async (file) => {
+        const fileRef = ref(storage, `product-images/${Date.now()}-${file.name}`);
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
+        return url; // Return the download URL of the uploaded file
+      });
 
-    alert('✅ Product added successfully!');
-    navigate('/admin/products');
+      const uploadedImageUrls = await Promise.all(imageUploadPromises);
+
+      // 2. Save product with image URLs to Firestore
+      const docRef = await addDoc(collection(db, 'products'), {
+        ...product,
+        images: uploadedImageUrls, // Store the URLs in the 'images' field
+        createdAt: serverTimestamp()
+      });
+
+      alert('✅ Product added successfully!');
+      navigate('/admin/products');
+    } catch (error) {
+      console.error('❌ Error adding product:', error);
+      alert('Failed to add product. Please try again.');
+    }
   };
 
   return (
@@ -119,6 +137,7 @@ const AddProduct = () => {
             ))}
           </div>
         )}
+
         <div className="faq-section">
           <h3>FAQs</h3>
           <div className="form-group">
@@ -138,7 +157,7 @@ const AddProduct = () => {
               value={faq.answer}
               onChange={handleFAQChange}
               placeholder="Enter FAQ answer"
-            ></textarea>
+            />
           </div>
           <button type="button" className="add-faq-btn" onClick={addFAQ}>
             ➕ Add FAQ

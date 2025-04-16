@@ -1,32 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import scent1 from '../assets/images/scent1.jpg';
-import scent2 from '../assets/images/scent2.jpg';
-import scent3 from '../assets/images/scent3.jpg';
-import scent4 from '../assets/images/1.png';
-import scent5 from '../assets/images/9.png';
-import scent6 from '../assets/images/2.png';
-
 import '../css/Shop.css';
 
 import { auth, db } from '../firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-
-const scents = [
-  { id: 1, name: 'KZ Black', price: 999, img: scent1 },
-  { id: 2, name: 'KZ Seduced', price: 1299, img: scent2 },
-  { id: 3, name: 'KZ Sports', price: 1499, img: scent3 },
-  { id: 4, name: 'KZ Marine', price: 1599, img: scent4 },
-  { id: 5, name: 'KZ Breeze', price: 1099, img: scent5 },
-  { id: 6, name: 'KZ Wild', price: 1199, img: scent6 },
-];
+import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
 
 const WishlistPage = () => {
   const [wishlist, setWishlist] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Fetch wishlist items (IDs) for current user
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
@@ -49,14 +35,33 @@ const WishlistPage = () => {
       } catch (err) {
         console.error('Error fetching wishlist:', err);
         setWishlist([]);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchWishlist();
   }, []);
 
+  // Fetch all products from Firestore
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        const allProducts = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setProducts(allProducts);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Remove from wishlist
   const handleRemove = async (id) => {
     const user = auth.currentUser;
     if (!user) return;
@@ -71,7 +76,8 @@ const WishlistPage = () => {
     }
   };
 
-  const wishlistItems = scents.filter((item) => wishlist.includes(item.id));
+  // Match wishlist IDs with product data
+  const wishlistItems = products.filter((item) => wishlist.includes(item.id));
 
   return (
     <div className="container py-5">
@@ -86,7 +92,11 @@ const WishlistPage = () => {
           {wishlistItems.map((item) => (
             <div key={item.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
               <div className="featured-card h-100 d-flex flex-column">
-                <img src={item.img} alt={item.name} className="w-100" />
+                <img
+                  src={item.images?.[0] || 'https://via.placeholder.com/150'}
+                  alt={item.name}
+                  className="w-100"
+                />
                 <div className="card-body text-center d-flex flex-column pt-3">
                   <h5 className="popup-title">{item.name}</h5>
                   <p className="popup-price">₹{item.price}</p>

@@ -1,28 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { db } from '../../firebase'; // Import Firestore database
+import { collection, query, where, getDocs } from 'firebase/firestore'; 
 import '../styles/CustomerCommon.css';
 import '../styles/CustomerProfile.css';
 
 const CustomerProfile = () => {
-  const { id } = useParams();
+  const { id } = useParams();  // Getting customer email from URL
   const [orders, setOrders] = useState([]);
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    const email = decodeURIComponent(id);
-    const allOrders = JSON.parse(localStorage.getItem('orders')) || [];
+    const fetchCustomerData = async () => {
+      const email = decodeURIComponent(id);  // Decode the customer email from URL
+      try {
+        // Fetch orders related to the customer from Firestore
+        const ordersQuery = query(
+          collection(db, 'orders'),
+          where('customer.email', '==', email)
+        );
+        const ordersSnapshot = await getDocs(ordersQuery);
+        const customerOrders = ordersSnapshot.docs.map(doc => doc.data());
 
-    const userOrders = allOrders.filter(
-      (order) => order.customer.email === email
-    );
+        if (customerOrders.length > 0) {
+          const customer = customerOrders[0].customer;
+          const totalSpent = customerOrders.reduce((sum, o) => sum + o.total, 0);
 
-    if (userOrders.length > 0) {
-      const customer = userOrders[0].customer;
-      const totalSpent = userOrders.reduce((sum, o) => sum + o.total, 0);
+          setProfile({ ...customer, totalSpent });
+          setOrders(customerOrders);
+        }
+      } catch (error) {
+        console.error('Error fetching customer data:', error);
+      }
+    };
 
-      setProfile({ ...customer, totalSpent });
-      setOrders(userOrders);
-    }
+    fetchCustomerData();
   }, [id]);
 
   if (!profile) return <p style={{ padding: '2rem' }}>Customer not found.</p>;

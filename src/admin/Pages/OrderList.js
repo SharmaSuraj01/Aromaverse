@@ -1,27 +1,26 @@
-import React, { useState } from 'react';
+// OrderList.js
+import React, { useState, useEffect } from 'react';
 import { MdVisibility, MdDelete } from 'react-icons/md';
-import '../styles/OrderList.css';
 import { useNavigate } from 'react-router-dom';
+import { collection, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase'; // adjust path as necessary
+import '../styles/OrderList.css';
 
 const OrderList = () => {
   const navigate = useNavigate();
+  const [orders, setOrders] = useState([]);
 
-  const [orderData, setOrderData] = useState([
-    {
-      id: 'ORD001',
-      customer: 'Raj Sharma',
-      amount: 1499,
-      status: 'Placed',
-      date: '2025-04-10',
-    },
-    {
-      id: 'ORD002',
-      customer: 'Riya',
-      amount: 1599,
-      status: 'Shipped',
-      date: '2025-04-11',
-    },
-  ]);
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'orders'), (snapshot) => {
+      const orderList = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setOrders(orderList);
+    });
+
+    return () => unsubscribe(); // cleanup on unmount
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -38,17 +37,14 @@ const OrderList = () => {
     navigate(`/admin/orders/${orderId}`);
   };
 
-  const handleStatusChange = (orderId, newStatus) => {
-    const updatedOrders = orderData.map(order =>
-      order.id === orderId ? { ...order, status: newStatus } : order
-    );
-    setOrderData(updatedOrders);
+  const handleStatusChange = async (orderId, newStatus) => {
+    const orderRef = doc(db, 'orders', orderId);
+    await updateDoc(orderRef, { status: newStatus });
   };
 
   return (
     <div className="admin-card">
       <h2 className="page-title">Order List</h2>
-
       <table className="order-table">
         <thead>
           <tr>
@@ -61,48 +57,55 @@ const OrderList = () => {
           </tr>
         </thead>
         <tbody>
-          {orderData.map((order) => (
-            <tr key={order.id}>
-              <td>{order.id}</td>
-              <td>{order.customer}</td>
-              <td>{order.amount}</td>
-              <td>
-                <span
-                  className="order-status"
-                  style={{
-                    backgroundColor: getStatusColor(order.status),
-                    color: 'white',
-                    padding: '4px 8px',
-                    borderRadius: '6px',
-                    fontSize: '0.8rem',
-                  }}
-                >
-                  {order.status}
-                </span>
-              </td>
-              <td>{order.date}</td>
-              <td>
-                <button className="view-btn" onClick={() => handleView(order.id)}>
-                  <MdVisibility />
-                </button>
-                <button className="delete-btn">
-                  <MdDelete />
-                </button>
-                <button onClick={() => navigate(`/admin/returns/${order.id}`)}>
-                  <MdVisibility />
-                </button>
-                <select
-                  value={order.status}
-                  onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                  className="status-dropdown"
-                >
-                  <option value="Placed">Placed</option>
-                  <option value="Shipped">Shipped</option>
-                  <option value="Delivered">Delivered</option>
-                </select>
+          {orders.length > 0 ? (
+            orders.map((order) => (
+              <tr key={order.id}>
+                <td>{order.id}</td>
+                <td>{order.customer || 'N/A'}</td>
+                <td>{order.amount}</td>
+                <td>
+                  <span
+                    className="order-status"
+                    style={{
+                      backgroundColor: getStatusColor(order.status),
+                      color: 'white',
+                      padding: '4px 8px',
+                      borderRadius: '6px',
+                      fontSize: '0.8rem',
+                    }}
+                  >
+                    {order.status}
+                  </span>
+                </td>
+                <td>{order.date || 'N/A'}</td>
+                <td>
+                  <button className="view-btn" onClick={() => handleView(order.id)}>
+                    <MdVisibility />
+                  </button>
+                  <button className="delete-btn" disabled>
+                    <MdDelete />
+                  </button>
+                  <select
+                    value={order.status}
+                    onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                    className="status-dropdown"
+                  >
+                    <option value="Placed">Placed</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="6" style={{ textAlign: 'center', padding: '1rem' }}>
+                No orders found.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>

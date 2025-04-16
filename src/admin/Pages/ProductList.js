@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MdListAlt, MdEdit, MdDelete } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import { db } from '../../firebase'; // ✅ Adjust the path based on your folder structure
+import { collection, getDocs } from 'firebase/firestore';
 import '../styles/ProductList.css';
 
 const ProductList = () => {
@@ -8,8 +10,20 @@ const ProductList = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('products')) || [];
-    setProducts(stored);
+    const fetchProducts = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        const productsArray = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setProducts(productsArray);
+      } catch (error) {
+        console.error('Error fetching products: ', error);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   const handleDelete = (id) => {
@@ -17,7 +31,7 @@ const ProductList = () => {
     if (confirmDelete) {
       const updated = products.filter((p) => p.id !== id);
       setProducts(updated);
-      localStorage.setItem('products', JSON.stringify(updated));
+      // ⚠️ You may want to actually delete from Firestore too
     }
   };
 
