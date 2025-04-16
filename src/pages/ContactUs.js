@@ -1,8 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../css/ContactUs.css'; 
-import Footer from '../components/Footer';
+
 
 const ContactUs = () => {
+  const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setShowPopup(true);
+  };
+
+  const closePopup = () => {
+    setShowPopup(false);
+    navigate('/'); // Redirect to homepage
+  };
+
   return (
     <div className="contact-us">
       <div className="container">
@@ -13,7 +27,7 @@ const ContactUs = () => {
 
         <div className="row justify-content-center">
           <div className="col-md-10 col-lg-8">
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label htmlFor="name" className="form-label">Name *</label>
                 <input type="text" id="name" className="form-control" placeholder="Your Name" required />
@@ -41,6 +55,16 @@ const ContactUs = () => {
           </div>
         </div>
       </div>
+
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-box">
+            <h4>Thank You!</h4>
+            <p>Your message has been sent successfully. We'll get back to you soon.</p>
+            <button className="btn btn-success mt-3" onClick={closePopup}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

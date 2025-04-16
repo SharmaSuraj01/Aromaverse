@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../css/Footer.css';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+
+    if (email.trim()) {
+      setShowPopup(true);
+      setEmail('');
+
+      // Auto-close popup after 3 seconds (optional)
+      setTimeout(() => {
+        setShowPopup(false);
+      }, 3000);
+    }
+  };
+
   return (
     <footer className="footer bg-dark text-white pt-5 pb-5">
       <div className="container">
@@ -12,13 +29,19 @@ const Footer = () => {
           <div className="col-md-5">
             <h5 className="mb-4">SIGN UP FOR OUR NEWSLETTER</h5>
             <p>Receive our latest updates about our products & promotions.</p>
-            <form className="d-flex flex-column flex-sm-row align-items-stretch gap-3 mt-3">
+            <form
+              className="d-flex flex-column flex-sm-row align-items-stretch gap-3 mt-3"
+              onSubmit={handleSubscribe}
+            >
               <input
                 type="email"
                 placeholder="Enter your email"
                 className="form-control"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
-              <button className="btn btn-outline-light">Subscribe</button>
+              <button type="submit" className="btn btn-outline-light">Subscribe</button>
             </form>
           </div>
 
@@ -28,7 +51,7 @@ const Footer = () => {
             <ul className="list-unstyled">
               <li><Link to="/contact" className="text-white text-decoration-none">Contact us</Link></li>
               <li><Link to="/support" className="text-white text-decoration-none">Support</Link></li>
-              <li><Link to="/shipping" className="text-white text-decoration-none">Shipping</Link></li>
+              {/* <li><Link to="/shipping" className="text-white text-decoration-none">Shipping</Link></li> */}
               <li><Link to="/returns" className="text-white text-decoration-none">Returns and exchanges</Link></li>
             </ul>
           </div>
@@ -43,12 +66,20 @@ const Footer = () => {
               <li><Link to="/TermsOfService" className="text-white text-decoration-none">Terms of service</Link></li>
             </ul>
           </div>
-
         </div>
 
         <hr className="my-5 border-light" />
         <p className="text-center mb-0 small">© All rights reserved - KizuPerfumes</p>
       </div>
+
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-box bg-white text-dark p-4 rounded shadow">
+            <h5 className="mb-2">Subscribed Successfully ✅</h5>
+            <p className="mb-0">Thank you for subscribing!</p>
+          </div>
+        </div>
+      )}
     </footer>
   );
 };
