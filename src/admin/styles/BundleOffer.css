@@ -1,0 +1,106 @@
+.add-product-container {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 900px;
+    margin: 2rem auto;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 0.75rem;
+  }
+  
+  .add-product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #334155;
+    font-size: 0.95rem;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: #f8fafc;
+    transition: border 0.3s ease;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: #4f46e5;
+    outline: none;
+    background-color: #ffffff;
+  }
+  
+  .submit-btn {
+    background-color: #4f46e5;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-btn:hover {
+    background-color: #4338ca;
+  }
+  
+  .image-preview-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+  
+  .image-preview {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .image-preview:hover {
+    transform: scale(1.05);
+    border-color: #4f46e5;
+  }
+  
+  /* Responsive */
+  @media (max-width: 600px) {
+    .add-product-container {
+      padding: 1rem;
+    }
+  
+    .submit-btn {
+      width: 100%;
+      padding: 0.75rem;
+    }
+  }
+  

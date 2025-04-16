@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f3f6fd;
+  color: #1e293b;
+  overflow-x: hidden;
+}
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* This ensures the content area doesn't overlap the sidebar */
+.admin-content {
+  margin-left: 250px; /* match sidebar width */
+  margin-top: 70px; /* match navbar height */
+  padding: 1.5rem;
+  width: calc(100% - 250px);
+  min-height: calc(100vh - 70px);
+  background-color: #f1f5f9;
+  position: relative;
+  z-index: 1; /* Lower than sidebar and navbar */
+}
+
+.admin-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+/* Make sure tables don't overflow */
+.admin-content table {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .sidebar-toggle {
+    display: block;
+  }
+}

@@ -1,0 +1,116 @@
+.customer-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .customer-table th,
+  .customer-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 14px;
+    text-align: left;
+  }
+  
+  .customer-table th {
+    background-color: #f1f5f9;
+    color: #1e293b;
+    font-weight: 600;
+  }
+  
+  .customer-table td {
+    color: #334155;
+  }
+  
+  .action-btn {
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background-color: #3b82f6;
+    color: white;
+    transition: background 0.2s;
+  }
+  
+  .action-btn:hover {
+    background-color: #2563eb;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+  
+  .product-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+  
+  .product-table th,
+  .product-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    font-size: 0.95rem;
+  }
+  
+  .product-table th {
+    background-color: #f1f5f9;
+    color: #1e293b;
+    font-weight: 600;
+  }
+  
+  .view-btn {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+  .view-btn:hover {
+    background-color: #2563eb;
+  }
+  
+  /* Segment Badges */
+  td:nth-child(5) {
+    font-weight: 500;
+  }
+  
+  td:nth-child(5)::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 6px;
+    border-radius: 9999px;
+    background-color: currentColor;
+    vertical-align: middle;
+  }
+  
+  td:nth-child(5):contains('VIP') {
+    color: #10b981;
+  }
+  
+  td:nth-child(5):contains('Regular') {
+    color: #3b82f6;
+  }
+  
+  td:nth-child(5):contains('First Time') {
+    color: #f97316;
+  }
+  

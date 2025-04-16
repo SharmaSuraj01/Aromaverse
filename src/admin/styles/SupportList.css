@@ -1,0 +1,50 @@
+.support-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  
+  .support-table th,
+  .support-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+    text-align: left;
+  }
+  
+  .ticket-status {
+    font-weight: 500;
+  }
+
+  .support-reply-section {
+    margin-top: 2rem;
+  }
+  
+  .reply-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: vertical;
+    margin-bottom: 0.75rem;
+  }
+  
+  .reply-btn {
+    background-color: #2563eb;
+    color: #fff;
+    padding: 0.5rem 1.25rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .reply-btn:hover {
+    background-color: #1e40af;
+  }
+  
+  

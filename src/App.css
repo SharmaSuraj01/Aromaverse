@@ -9,61 +9,133 @@
   --transition: all 0.3s ease-in-out;
 }
 
-body {
+.admin-wrapper {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   font-family: 'Inter', sans-serif;
-  color: var(--text-color);
-  background-color: #0F172A;
-  margin: 0;
-  padding: 0;
-  line-height: 1.6;
+  background-color: #f1f5f9;
 }
 
-/* Heading Premium Look */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Playfair Display', serif;
-  color: var(--text-color);
-  margin-bottom: 1rem;
+/* Sidebar & Main Layout */
+.admin-wrapper .admin-container {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
 }
 
-/* Global Link Styling */
-a {
-  color: var(--text-color);
-  text-decoration: none;
-  transition: var(--transition);
+/* Sidebar */
+.admin-wrapper .sidebar {
+  width: 250px;
+  background-color: #0f172a;
+  color: white;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
 }
 
-a:hover {
-  color: var(--secondary-color);
+.admin-wrapper .sidebar h2 {
+  font-size: 22px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #ffffff;
 }
 
-/* Button Styling */
-button {
-  border: none;
-  padding: 10px 24px;
-  background-color: var(--secondary-color);
-  color: #fff;
-  border-radius: var(--border-radius);
+/* Menu Toggle */
+.admin-wrapper .menu-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #cbd5e1;
   cursor: pointer;
-  transition: var(--transition);
+  margin-bottom: 10px;
+  padding: 8px 4px;
+  transition: background 0.2s;
+  border-radius: 4px;
+}
+
+.admin-wrapper .menu-toggle:hover {
+  color: #ffffff;
+  background-color: #1e293b;
+}
+
+/* Submenu */
+.admin-wrapper .submenu {
+  margin-left: 16px;
+  margin-top: 6px;
+}
+
+.admin-wrapper .submenu a {
+  display: block;
+  color: #94a3b8;
+  text-decoration: none;
+  margin: 6px 0;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.admin-wrapper .submenu a:hover,
+.admin-wrapper .submenu a.active {
+  color: #ffffff;
   font-weight: 500;
+  padding-left: 4px;
 }
 
-button:hover {
-  background-color: #b45309;
+/* Hover Group (for dropdown section) */
+.admin-wrapper .hover-group {
+  margin-top: 20px;
 }
 
-/* Card, Image, Icon Smooth Transition */
-.card, img, svg, .icon {
-  transition: var(--transition);
+/* Main Admin Content */
+.admin-wrapper .admin-main {
+  flex: 1;
+  padding: 30px;
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #f1f5f9;
 }
 
-/* Utility Class for Section Padding */
-.section-padding {
-  padding: 60px 20px;
+/* Scrollbar */
+.admin-wrapper .admin-main::-webkit-scrollbar {
+  width: 6px;
+}
+.admin-wrapper .admin-main::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
+.admin-wrapper .admin-main::-webkit-scrollbar-track {
+  background-color: #f1f5f9;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
+/* Admin Cards / Content Boxes */
+.admin-wrapper .admin-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  max-width: 900px;
+  margin: auto;
+}
+
+.admin-wrapper .admin-card-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.admin-wrapper .admin-card-header h1 {
+  font-size: 26px;
+  color: #1e293b;
+  margin-left: 10px;
+  font-weight: 600;
 }

@@ -1,0 +1,248 @@
+.dashboard-container {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 1200px;
+  margin: 2rem auto;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  font-family: 'Poppins', sans-serif;
+}
+
+.dashboard-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.75rem;
+}
+
+.dashboard-cards {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  flex: 1;
+  min-width: 220px;
+  margin-bottom: 1.5rem;
+}
+
+.card strong {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4f46e5;
+}
+
+.dashboard-charts {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.chart-box {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  flex: 1;
+  height: 300px;
+  min-width: 220px;
+  margin-bottom: 1.5rem;
+}
+
+.latest-orders {
+  margin-top: 2rem;
+}
+
+.latest-orders table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.latest-orders th, .latest-orders td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.latest-orders th {
+  font-weight: 600;
+  color: #334155;
+}
+
+.reports-section {
+  margin-top: 2rem;
+}
+
+.reports-section h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.75rem;
+}
+
+.report-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.report-filters label {
+  font-weight: 500;
+  font-size: 1rem;
+  color: #334155;
+}
+
+.report-filters select {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #f8fafc;
+}
+
+.card-group {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.card-group .card {
+  padding: 1.5rem;
+  text-align: center;
+  flex: 1;
+  min-width: 220px;
+  margin-bottom: 1.5rem;
+}
+
+.card-group .card strong {
+  font-size: 1.5rem;
+  color: #4f46e5;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dashboard-table th, .dashboard-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dashboard-table th {
+  font-weight: 600;
+  color: #334155;
+}
+
+.marketing-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+}
+
+.marketing-table th, .marketing-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.marketing-table th {
+  font-weight: 600;
+  color: #334155;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1.5rem;
+  }
+
+  .dashboard-title {
+    font-size: 1.4rem;
+  }
+
+  .dashboard-cards {
+    gap: 1.5rem;
+  }
+
+  .card {
+    flex: 1;
+    min-width: 100%;
+  }
+
+  .dashboard-charts {
+    flex-direction: column;
+  }
+
+  .chart-box {
+    height: 250px;
+    margin-bottom: 1rem;
+  }
+
+  .latest-orders table th, .latest-orders table td {
+    font-size: 0.9rem;
+  }
+
+  .report-filters select {
+    font-size: 0.9rem;
+  }
+
+  .card-group {
+    gap: 1.5rem;
+    flex-direction: column;
+  }
+
+  .card-group .card {
+    flex: 1;
+    min-width: 100%;
+  }
+
+  .marketing-table th, .marketing-table td {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-title {
+    font-size: 1.3rem;
+  }
+
+  .card strong {
+    font-size: 1.3rem;
+  }
+
+  .report-filters label {
+    font-size: 0.85rem;
+  }
+
+  .report-filters select {
+    font-size: 0.85rem;
+  }
+
+  .card-group .card strong {
+    font-size: 1.3rem;
+  }
+
+  .dashboard-table th, .dashboard-table td {
+    font-size: 0.85rem;
+  }
+
+  .marketing-table th, .marketing-table td {
+    font-size: 0.85rem;
+  }
+}

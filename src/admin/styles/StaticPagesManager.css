@@ -1,0 +1,68 @@
+.static-pages-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  }
+  
+  .static-pages-heading {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #333;
+    text-align: center;
+  }
+  
+  .static-pages-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .static-form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .static-form-group label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #555;
+  }
+  
+  .static-form-group textarea {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    resize: vertical;
+  }
+  
+  .static-save-btn {
+    background-color: #1d4ed8;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .static-save-btn:hover {
+    background-color: #2563eb;
+  }
+  
+  /* Responsive */
+  @media (max-width: 640px) {
+    .static-pages-container {
+      padding: 1rem;
+    }
+  
+    .static-pages-heading {
+      font-size: 1.5rem;
+    }
+  }
+  

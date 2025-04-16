@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+.admin-navbar {
+  position: fixed;
+  top: 0;
+  left: 250px;
+  height: 70px;
+  width: calc(100% - 250px);
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  z-index: 999;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.admin-navbar h1 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: 0.03em;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* Search Bar */
+.nav-search {
+  position: relative;
+}
+
+.nav-search input {
+  padding: 8px 12px;
+  padding-right: 2.2rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  width: 220px;
+}
+
+.nav-search input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.nav-search i {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+/* Notification Icon */
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #4b5563;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+  color: #4b5563;
+}
+
+.icon-btn:hover {
+  color: #3b82f6;
+}
+
+.icon-btn .notification-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  animation: ping 1.5s infinite;
+}
+
+@keyframes ping {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.avatar:hover {
+  border-color: #3b82f6;
+}
+.logout-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-navbar {
+    left: 0;
+    width: 100%;
+    padding: 0 1rem;
+  }
+  
+  .nav-search input {
+    width: 160px;
+  }
+  
+  .nav-right {
+    gap: 0.75rem;
+  }
+}

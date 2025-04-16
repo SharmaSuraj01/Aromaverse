@@ -1,11 +1,12 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { auth } from './firebase';
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -14,16 +15,15 @@ import Categories from './components/Categories';
 import SignatureCollection from './components/SignatureCollection';
 import Testimonials from './components/Testimonials';
 import Footer from './components/Footer';
+
 import CheckoutPage from './pages/CheckoutPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-
 import ForHimPage from './components/ForHimPage';
 import ForHerPage from './components/ForHerPage';
 import ForKidsPage from './components/ForKidsPage';
 import CollectionPage from './pages/CollectionsPage';
 import ShopPage from './pages/ShopPage';
-
 import ContactUs from './pages/ContactUs';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions';
@@ -37,6 +37,7 @@ import MyProfile from './pages/MyProfile';
 import WishlistPage from './pages/WishlistPage';
 import OrdersPage from './pages/OrdersPage';
 
+import AdminRoutes from './admin/adminRoutes'; 
 
 function App() {
   // eslint-disable-next-line no-unused-vars
@@ -52,7 +53,10 @@ function App() {
     removeFromCart,
   } = useCart();
 
-  const hideNavbar = location.pathname === '/login' || location.pathname === '/register';
+  const hideNavbar =
+    location.pathname.startsWith('/admin') ||
+    location.pathname === '/login' ||
+    location.pathname === '/register';
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -64,10 +68,7 @@ function App() {
   return (
     <div className="App">
       {!hideNavbar && (
-        <Navbar
-          cartItems={cartItems}
-          setShowCartModal={setShowCartModal}
-        />
+        <Navbar cartItems={cartItems} setShowCartModal={setShowCartModal} />
       )}
 
       {showCartModal && (
@@ -117,10 +118,11 @@ function App() {
         <Route path="/TermsOfService" element={<TermsOfService />} />
         <Route path="/thank-you" element={<ThankYouPage />} />
         <Route path="/my-profile" element={<MyProfile />} />
-<Route path="/wishlist" element={<WishlistPage />} />
-<Route path="/orders" element={<OrdersPage />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/orders" element={<OrdersPage />} />
 
-
+         {/* Admin Routes */}
+         <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>
 
       {!hideNavbar && <Footer />}

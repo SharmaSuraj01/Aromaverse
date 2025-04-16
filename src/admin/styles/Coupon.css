@@ -1,0 +1,72 @@
+.add-coupon-container {
+    background: #ffffff;
+    padding: 2rem;
+    max-width: 900px;
+    margin: 2rem auto;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .add-coupon-container h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 0.75rem;
+  }
+  
+  .add-coupon-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .add-coupon-form label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #334155;
+    font-size: 0.95rem;
+  }
+  
+  .add-coupon-form input,
+  .add-coupon-form select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: #f8fafc;
+    transition: border 0.3s ease;
+  }
+  
+  .add-coupon-form input:focus,
+  .add-coupon-form select:focus {
+    border-color: #4f46e5;
+    outline: none;
+    background-color: #ffffff;
+  }
+  
+  .add-coupon-form .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .add-coupon-form button {
+    background-color: #4f46e5;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .add-coupon-form button:hover {
+    background-color: #4338ca;
+  }
