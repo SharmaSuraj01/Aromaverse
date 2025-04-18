@@ -6,6 +6,7 @@ import AddProduct from './Pages/AddProduct';
 import OrderList from './Pages/OrderList';
 import Dashboard from './Pages/Dashboard';
 
+import 'react-toastify/dist/ReactToastify.css'; 
 import Login from './Auth/Login';
 import Signup from './Auth/Signup';
 import ForgotPassword from './Auth/ForgetPassword';
@@ -42,6 +43,7 @@ const AdminRoutes = () => {
   return(
     <Routes>
       {/* Public Routes */}
+      
       <Route index element={<Login />} />
       <Route path="login" element={<Login />} />
       <Route path="signup" element={<Signup />} />
@@ -59,7 +61,7 @@ const AdminRoutes = () => {
           <Route path="returns" element={<ReturnRequestList />} />
           <Route path="returns/:id" element={<ReturnRequestDetails />} />
           <Route path="/customers" element={<CustomerList />} />
-          <Route path="/customers/:id" element={<CustomerProfile />} />
+          <Route path="/customers/:email" element={<CustomerProfile />} />
           <Route path="support" element={<SupportList />} />
           <Route path="support/:id" element={<SupportDetails />} />
           <Route path="/coupons" element={<CouponList />} />

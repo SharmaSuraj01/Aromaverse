@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
 import '../styles/BundleOffer.css';
 
 const EditBundleOffer = () => {
@@ -16,16 +18,17 @@ const EditBundleOffer = () => {
 
   useEffect(() => {
     const fetchOffer = async () => {
-      const dummyOffer = {
-        id: offerId,
-        offerName: 'Buy 2 Get 1 Free',
-        buyQuantity: 2,
-        getQuantity: 1,
-        discount: 50,
-        startDate: '2025-04-01',
-        endDate: '2025-04-30',
-      };
-      setBundleOffer(dummyOffer);
+      try {
+        const docRef = doc(db, 'bundleOffers', offerId);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setBundleOffer(docSnap.data());
+        } else {
+          console.log('No such bundle offer!');
+        }
+      } catch (error) {
+        console.error('Error fetching bundle offer:', error);
+      }
     };
 
     fetchOffer();
@@ -39,10 +42,22 @@ const EditBundleOffer = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Updated Bundle Offer:', bundleOffer);
-    navigate('/admin/bundleoffers');
+    try {
+      const docRef = doc(db, 'bundleOffers', offerId);
+      await updateDoc(docRef, {
+        ...bundleOffer,
+        buyQuantity: Number(bundleOffer.buyQuantity),
+        getQuantity: Number(bundleOffer.getQuantity),
+        discount: Number(bundleOffer.discount),
+      });
+
+      console.log('Bundle offer updated!');
+      navigate('/admin/bundleoffers');
+    } catch (error) {
+      console.error('Error updating bundle offer:', error);
+    }
   };
 
   return (

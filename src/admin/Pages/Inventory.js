@@ -1,19 +1,28 @@
-export const updateInventory = (items, type = 'subtract') => {
-    let products = JSON.parse(localStorage.getItem('products')) || [];
-  
-    const updated = products.map((p) => {
-      const matched = items.find((i) => i.name === p.name);
-      if (matched) {
-        const updatedQty =
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
+
+export const updateInventory = async (items, type = 'subtract') => {
+  try {
+    for (const item of items) {
+      const productRef = doc(db, 'products', item.id); // assumes `item.id` matches Firestore doc ID
+      const productSnap = await getDoc(productRef);
+
+      if (productSnap.exists()) {
+        const productData = productSnap.data();
+        const currentQty = productData.quantity || 0;
+
+        const newQty =
           type === 'subtract'
-            ? Math.max(0, p.quantity - matched.qty)
-            : p.quantity + matched.qty;
-  
-        return { ...p, quantity: updatedQty };
+            ? Math.max(0, currentQty - item.qty)
+            : currentQty + item.qty;
+
+        await updateDoc(productRef, { quantity: newQty });
+      } else {
+        console.warn(`Product with ID ${item.id} not found in Firestore.`);
       }
-      return p;
-    });
-  
-    localStorage.setItem('products', JSON.stringify(updated));
-  };
-  
+    }
+    console.log('✅ Inventory updated successfully');
+  } catch (error) {
+    console.error('❌ Error updating inventory:', error);
+  }
+};

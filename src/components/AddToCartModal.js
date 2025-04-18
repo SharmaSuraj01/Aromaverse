@@ -43,7 +43,7 @@ const AddToCartModal = ({ cartItems, onClose, onUpdateQty, onRemove }) => {
         ) : (
           cartItems.map((item, index) => (
             <div key={item.id} className="modal-product-info">
-              <img src={item.img} alt={item.name} />
+              <img src={item.images?.[0] || 'https://via.placeholder.com/100'} alt={item.name} />
               <div className="modal-product-details">
                 <h5>{item.name}</h5>
                 <p className="modal-price">₹{item.price}</p>

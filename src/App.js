@@ -1,7 +1,9 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { auth } from './firebase';
+  // Import ToastContainer
+import 'react-toastify/dist/ReactToastify.css';  // Import Toastify CSS
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import "slick-carousel/slick/slick.css";
@@ -41,6 +43,8 @@ import Support from './pages/Support';
 import Returns from './pages/Returns';
 
 import AdminRoutes from './admin/adminRoutes';
+import Features from './components/Features';
+
 function App() {
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(null);
@@ -88,6 +92,7 @@ function App() {
           element={
             <>
               <Hero />
+              <Features/>
               <FeaturedScents />
               <Categories />
               <SignatureCollection />
@@ -95,11 +100,15 @@ function App() {
             </>
           }
         />
+        
+        
         <Route path="/for-him" element={<ForHimPage />} />
         <Route path="/for-her" element={<ForHerPage />} />
         <Route path="/for-kids" element={<ForKidsPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={<Navigate to="/login" replace />} />
+
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/collections/:category" element={<CollectionPage />} />
 
@@ -119,17 +128,20 @@ function App() {
         <Route path="/RefundPolicy" element={<RefundPolicy />} />
         <Route path="/TermsOfService" element={<TermsOfService />} />
         <Route path="/thank-you" element={<ThankYouPage />} />
+        
         <Route path="/my-profile" element={<MyProfile />} />
+<Route path="/profile" element={<Navigate to="/my-profile" replace />} />
+
+
+        {/* Other Routes */}
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/orders" element={<OrdersPage />} />
-         {/* Admin Routes */}
-         <Route path="/admin/*" element={<AdminRoutes />} />
+
+        {/* Admin Routes */}
+        <Route path="/admin/*" element={<AdminRoutes />} />
         
         <Route path="/support" element={<Support />} />
         <Route path="/returns" element={<Returns />} />
-<Route path="/wishlist" element={<WishlistPage />} />
-<Route path="/orders" element={<OrdersPage />} />
-
       </Routes>
 
       {!hideNavbar && <Footer />}

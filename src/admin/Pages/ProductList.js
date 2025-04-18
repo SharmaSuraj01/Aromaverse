@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MdListAlt, MdEdit, MdDelete } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase'; // ✅ Adjust the path based on your folder structure
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore'; // Add deleteDoc for deleting documents
 import '../styles/ProductList.css';
 
 const ProductList = () => {
@@ -26,12 +26,23 @@ const ProductList = () => {
     fetchProducts();
   }, []);
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this product?");
     if (confirmDelete) {
-      const updated = products.filter((p) => p.id !== id);
-      setProducts(updated);
-      // ⚠️ You may want to actually delete from Firestore too
+      try {
+        // Delete from Firestore
+        await deleteDoc(doc(db, 'products', id));
+
+        // Update the state to reflect the product removal in the UI
+        const updated = products.filter((p) => p.id !== id);
+        setProducts(updated);
+
+        // Show success message
+        alert("Product deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting product: ", error);
+        alert("Error deleting product. Please try again.");
+      }
     }
   };
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { auth } from '../firebase';
+import { signInWithRedirect } from 'firebase/auth';
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
@@ -21,39 +22,46 @@ const LoginPage = () => {
   const [showResetPopup, setShowResetPopup] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
 
+  // Login with email and password
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setMessage('');
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/checkout');
+      navigate('/'); // Redirect after successful login
     } catch (err) {
-      setError(err.message);
+      setError(err.message); // Display error message if login fails
     }
   };
 
+  // Login with Google
   const handleGoogleLogin = async () => {
     setError('');
     setMessage('');
     try {
       await signInWithPopup(auth, new GoogleAuthProvider());
-      navigate('/');
+      navigate('/'); // Redirect after successful Google login
     } catch (err) {
-      setError(err.message);
+      setError(err.message); // Display error message if Google login fails
     }
   };
 
+  // Send password reset email
   const handleResetPassword = async () => {
-    if (!resetEmail) return;
+    if (!resetEmail) {
+      setError('Please enter a valid email address');
+      return;
+    }
+    setError('');
+    setMessage('');
     try {
       await sendPasswordResetEmail(auth, resetEmail);
       setMessage('Password reset email sent! Check your inbox.');
-      setError('');
-      setShowResetPopup(false);
-      setResetEmail('');
+      setShowResetPopup(false); // Close the reset password popup
+      setResetEmail(''); // Clear email input after sending reset request
     } catch (err) {
-      setError(err.message);
+      setError(err.message); // Display error message if reset fails
       setMessage('');
     }
   };
@@ -61,9 +69,11 @@ const LoginPage = () => {
   return (
     <AuthLayout>
       <form onSubmit={handleLogin}>
+        {/* Error and Success Message */}
         {error && <div className="alert alert-danger">{error}</div>}
         {message && <div className="alert alert-success">{message}</div>}
 
+        {/* Email Input */}
         <div className="mb-3">
           <label>Email <span className="text-danger">*</span></label>
           <input
@@ -72,9 +82,11 @@ const LoginPage = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            autoFocus
           />
         </div>
 
+        {/* Password Input */}
         <div className="mb-3">
           <label>Password <span className="text-danger">*</span></label>
           <div className="input-group">
@@ -95,6 +107,7 @@ const LoginPage = () => {
           </div>
         </div>
 
+        {/* Forgot Password Link */}
         <div className="mb-3 text-end">
           <small
             className="text-primary"
@@ -105,12 +118,15 @@ const LoginPage = () => {
           </small>
         </div>
 
+        {/* Login Button */}
         <button type="submit" className="btn btn-dark w-100 mb-3">
           Login
         </button>
 
+        {/* OR Divider */}
         <div className="text-center text-muted mb-2">OR</div>
 
+        {/* Google Login Button */}
         <button
           type="button"
           className="btn btn-outline-danger w-100"
@@ -120,6 +136,7 @@ const LoginPage = () => {
         </button>
       </form>
 
+      {/* Password Reset Popup */}
       {showResetPopup && (
         <div className="popup-overlay">
           <div className="popup-box">

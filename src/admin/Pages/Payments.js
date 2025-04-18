@@ -1,44 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase'; // adjust path as needed
 import Papa from 'papaparse';
 import '../styles/Payments.css';
 
 const Payments = () => {
-  const [transactionHistory, setTransactionHistory] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [statusFilter, setStatusFilter] = useState('all');
-  
-  // Dummy data for transactions
-  const transactions = [
-    { id: 'T1001', date: '2025-04-10', amount: 5000, status: 'Successful', method: 'Credit Card' },
-    { id: 'T1002', date: '2025-04-11', amount: 3000, status: 'Failed', method: 'Debit Card' },
-    { id: 'T1003', date: '2025-04-12', amount: 4000, status: 'Pending', method: 'PayPal' },
-  ];
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'orders'));
+
+        const fetchedData = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+
+          const timestamp = data.timestamp?.seconds
+            ? new Date(data.timestamp.seconds * 1000).toLocaleString('en-IN', {
+                timeZone: 'Asia/Kolkata',
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false,
+              })
+            : 'N/A';
+
+          return {
+            id: doc.id,
+            date: timestamp,
+            amount: data.total || 0,
+            status: data.status || 'Unknown',
+            method: data.paymentMethod || 'Unknown',
+          };
+        });
+
+        setTransactions(fetchedData);
+      } catch (error) {
+        console.error('Error fetching payments from orders:', error);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
 
   const handleStatusChange = (e) => {
     setStatusFilter(e.target.value);
   };
 
-  const filteredTransactions = statusFilter === 'all' ? transactions : transactions.filter(t => t.status === statusFilter);
+  const filteredTransactions =
+    statusFilter === 'all'
+      ? transactions
+      : transactions.filter((t) => t.status === statusFilter);
 
   const exportToCSV = () => {
-    const csvData = filteredTransactions.map(t => ({
+    const csvData = filteredTransactions.map((t) => ({
       'Transaction ID': t.id,
       'Date': t.date,
       'Amount': t.amount,
       'Status': t.status,
       'Payment Method': t.method,
     }));
-  
+
     const csvContent = Papa.unparse(csvData);
     const downloadLink = document.createElement('a');
     downloadLink.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvContent);
     downloadLink.target = '_blank';
-    downloadLink.download = 'transactions.csv';
+    downloadLink.download = 'payments.csv';
     downloadLink.click();
   };
-  
 
   const refundTransaction = (id) => {
-    alert(`Refunding transaction: ${id}`);
+    alert(`Refund requested for transaction: ${id}`);
   };
 
   return (
@@ -68,7 +104,7 @@ const Payments = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredTransactions.map(t => (
+            {filteredTransactions.map((t) => (
               <tr key={t.id}>
                 <td>{t.id}</td>
                 <td>{t.date}</td>
@@ -76,16 +112,27 @@ const Payments = () => {
                 <td>{t.status}</td>
                 <td>{t.method}</td>
                 <td>
-                  {t.status === 'Successful' && <button onClick={() => refundTransaction(t.id)}>Refund</button>}
+                  {t.status === 'Successful' && (
+                    <button onClick={() => refundTransaction(t.id)}>Refund</button>
+                  )}
                 </td>
               </tr>
             ))}
+            {filteredTransactions.length === 0 && (
+              <tr>
+                <td colSpan="6" style={{ textAlign: 'center' }}>
+                  No transactions found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
 
       <div className="actions">
-        <button className="export-btn" onClick={exportToCSV}>Export to CSV</button>
+        <button className="export-btn" onClick={exportToCSV}>
+          Export to CSV
+        </button>
       </div>
 
       <div className="gateway-status">

@@ -7,7 +7,7 @@ const AdminNavbar = () => {
   return (
     <nav className="admin-navbar">
       {/* Left Title or Logo */}
-      <h1>GITAMMI</h1>
+      <h1>GITAAMI</h1>
 
       {/* Right Side */}
       <div className="nav-right">

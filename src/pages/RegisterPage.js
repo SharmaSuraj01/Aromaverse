@@ -17,6 +17,7 @@ import AuthLayout from './AuthLayout';
 const RegisterPage = () => {
   const navigate = useNavigate();
 
+  // State variables
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -25,43 +26,50 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
+  // Handle form submission for registration
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
     if (password !== confirm) return setError("Passwords don't match");
 
     try {
+      // Create user with email and password
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // 👇 Update user's display name for use in Navbar
+      // Update user's display name
       await updateProfile(user, {
         displayName: name,
       });
 
+      // Set user data in Firestore
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         name,
         email,
         phone,
         address: '',
-        createdAt: new Date()
+        createdAt: new Date(),
       });
 
+      // Navigate to the homepage
       navigate('/');
     } catch (err) {
       setError(err.message);
     }
   };
 
+  // Handle Google login
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, new GoogleAuthProvider());
       const user = result.user;
 
+      // Check if the user exists in Firestore
       const docRef = doc(db, 'users', user.uid);
       const userDoc = await getDoc(docRef);
 
+      // If user doesn't exist, create a new record
       if (!userDoc.exists()) {
         await setDoc(docRef, {
           uid: user.uid,
@@ -69,11 +77,12 @@ const RegisterPage = () => {
           email: user.email,
           phone: '',
           address: '',
-          createdAt: new Date()
+          createdAt: new Date(),
         });
       }
 
-      navigate('/checkout');
+      // Navigate to the checkout page after login
+      navigate('/');
     } catch (err) {
       setError(err.message);
     }
@@ -84,6 +93,7 @@ const RegisterPage = () => {
       <form onSubmit={handleRegister}>
         {error && <div className="alert alert-danger">{error}</div>}
 
+        {/* Name Input */}
         <div className="mb-3">
           <label>
             Name <span className="text-danger">*</span>
@@ -97,6 +107,7 @@ const RegisterPage = () => {
           />
         </div>
 
+        {/* Phone Number Input */}
         <div className="mb-3">
           <label>
             Phone Number <span className="text-danger">*</span>
@@ -110,6 +121,7 @@ const RegisterPage = () => {
           />
         </div>
 
+        {/* Email Input */}
         <div className="mb-3">
           <label>
             Email <span className="text-danger">*</span>
@@ -123,6 +135,7 @@ const RegisterPage = () => {
           />
         </div>
 
+        {/* Password Input */}
         <div className="mb-3">
           <label>
             Password <span className="text-danger">*</span>
@@ -145,6 +158,7 @@ const RegisterPage = () => {
           </div>
         </div>
 
+        {/* Confirm Password Input */}
         <div className="mb-3">
           <label>
             Confirm Password <span className="text-danger">*</span>
@@ -158,12 +172,15 @@ const RegisterPage = () => {
           />
         </div>
 
+        {/* Submit Register Button */}
         <button type="submit" className="btn btn-dark w-100 mb-3">
           Register
         </button>
 
+        {/* Divider */}
         <div className="text-center text-muted mb-2">OR</div>
 
+        {/* Google Login Button */}
         <button
           type="button"
           className="btn btn-outline-danger w-100"

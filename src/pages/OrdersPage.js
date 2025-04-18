@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+} from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 import '../css/Shop.css';
-import '../css/OrderStatus.css'; // new CSS file for tracker styles
+import '../css/OrderStatus.css'; // for tracker styles
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
@@ -10,34 +16,39 @@ const OrdersPage = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      const currentUser = auth.currentUser;
-      setUser(currentUser);
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
 
-      if (!currentUser) {
+        const q = query(collection(db, 'orders'), where('userId', '==', currentUser.uid));
+        const unsubscribeOrders = onSnapshot(q, (snapshot) => {
+          const updatedOrders = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setOrders(updatedOrders);
+          setLoading(false);
+        });
+
+        // Clean up Firestore listener
+        return () => unsubscribeOrders();
+      } else {
+        setUser(null);
+        setOrders([]);
         setLoading(false);
-        return;
       }
+    });
 
-      const orderRef = doc(db, 'orders', currentUser.uid);
-      const snap = await getDoc(orderRef);
-
-      if (snap.exists()) {
-        setOrders(snap.data().orderList || []);
-      }
-
-      setLoading(false);
-    };
-
-    fetchOrders();
+    // Clean up Auth listener
+    return () => unsubscribeAuth();
   }, []);
 
-  // Order progress stages
-  const statusSteps = ['Ordered', 'Shipped', 'Out for Delivery', 'Delivered'];
+  const statusSteps = ['Ordered', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered'];
 
   return (
     <div className="container py-5">
       <h2 className="text-center mb-4">My Orders</h2>
+
       {loading ? (
         <p className="text-center">Loading...</p>
       ) : !user ? (
@@ -52,7 +63,10 @@ const OrdersPage = () => {
             <div key={index} className="card shadow-sm p-3 mb-4">
               <h5>Order #{order.id}</h5>
               <p className="mb-1 text-muted">
-                Date: {new Date(order.timestamp.seconds * 1000).toLocaleString()}
+                Date:{' '}
+                {order.timestamp?.seconds
+                  ? new Date(order.timestamp.seconds * 1000).toLocaleString()
+                  : 'N/A'}
               </p>
 
               <div className="order-tracker my-3">
@@ -65,14 +79,17 @@ const OrdersPage = () => {
               </div>
 
               <div className="mb-2">
-                <strong>Shipping Details:</strong><br />
-                {order.shipping?.name}<br />
-                {order.shipping?.phone}<br />
+                <strong>Shipping Details:</strong>
+                <br />
+                {order.shipping?.name}
+                <br />
+                {order.shipping?.phone}
+                <br />
                 {order.shipping?.address}
               </div>
 
               <ul className="list-group list-group-flush mb-2">
-                {order.items.map((item, i) => (
+                {order.items?.map((item, i) => (
                   <li key={i} className="list-group-item d-flex justify-content-between">
                     {item.name} × {item.qty}
                     <span>₹{item.qty * item.price}</span>
@@ -82,7 +99,7 @@ const OrdersPage = () => {
 
               <div className="text-end fw-bold">
                 Total: ₹
-                {order.items.reduce((acc, item) => acc + item.qty * item.price, 0)}
+                {order.items?.reduce((acc, item) => acc + item.qty * item.price, 0)}
               </div>
             </div>
           );

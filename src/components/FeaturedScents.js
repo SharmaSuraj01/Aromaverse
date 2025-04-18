@@ -23,7 +23,6 @@ function FeaturedScents({ filterGender }) {
     showCartModal,
   } = useCart();
 
-  // Fetch products from Firestore
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -41,7 +40,6 @@ function FeaturedScents({ filterGender }) {
     fetchProducts();
   }, []);
 
-  // Fetch wishlist
   useEffect(() => {
     const fetchWishlist = async () => {
       const user = auth.currentUser;
@@ -79,18 +77,16 @@ function FeaturedScents({ filterGender }) {
     }
   };
 
-  // Normalize and filter by category
   const normalize = (str) =>
     str?.toLowerCase().replace(/\s+/g, '-').trim();
 
   const filteredScents = filterGender
-  ? scents.filter((scent) => {
-      const category = normalize(scent.category);
-      const filter = normalize(filterGender);
-      return category.includes(filter);
-    })
-  : scents;
-
+    ? scents.filter((scent) => {
+        const category = normalize(scent.category);
+        const filter = normalize(filterGender);
+        return category.includes(filter);
+      })
+    : scents;
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -124,7 +120,7 @@ function FeaturedScents({ filterGender }) {
               <div key={scent.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div
                   className="card border-0 shadow scent-card h-100 position-relative"
-                  onClick={() => setSelectedProduct(scent)}
+                  onClick={() => setSelectedProduct(scent)} // ✅ Opens modal with image
                   style={{ cursor: 'pointer' }}
                 >
                   <div
@@ -165,7 +161,7 @@ function FeaturedScents({ filterGender }) {
                       className="btn btn-dark w-100 mt-2"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAddToCart(scent);
+                        handleAddToCart(scent); // ✅ Add to cart + show modal
                       }}
                     >
                       Add to Cart
@@ -249,6 +245,7 @@ function FeaturedScents({ filterGender }) {
         )}
       </div>
 
+      {/* ✅ Add To Cart Modal */}
       {showCartModal && (
         <AddToCartModal
           cartItems={cartItems}
@@ -258,6 +255,7 @@ function FeaturedScents({ filterGender }) {
         />
       )}
 
+      {/* ✅ Product Detail Modal with image */}
       {selectedProduct && (
         <ProductDetailModal
           product={selectedProduct}

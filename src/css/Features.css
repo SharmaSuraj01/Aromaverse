@@ -1,0 +1,101 @@
+.features-section {
+    padding: 3rem 1rem;
+    background: #fff;
+  }
+  
+  .features-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 3rem; /* Increased spacing */
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  
+  .feature-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    padding: 1rem;
+    border-radius: 1rem;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    background: #f9f9f9;
+  }
+  
+  .feature-card img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin-bottom: 0.7rem;
+  }
+  
+  .feature-card p {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    margin: 0;
+    text-align: center;
+  }
+  
+  /* Responsive */
+  @media (max-width: 600px) {
+    .features-container {
+      gap: 2rem;
+    }
+  
+    .feature-card img {
+      width: 55px;
+      height: 55px;
+    }
+  
+    .feature-card p {
+      font-size: 0.95rem;
+    }
+  }
+  
+
+  .brand-intro {
+    padding: 4rem 1.5rem;
+    background-color: #fff;
+    text-align: center;
+  }
+  
+  .intro-container {
+    
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .intro-title {
+    margin-top: 2rem;
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: 'Coboto', sans-serif;
+    margin-bottom: 1rem;
+    color: #2c2c2c;
+  }
+  
+  .intro-text {
+    font-size: 1.1rem;
+    color: #444;
+    line-height: 1.8;
+    font-weight: 400;
+    font-family: 'Coboto', sans-serif;
+  }
+  
+  @media (max-width: 600px) {
+    .intro-title {
+      font-size: 1.6rem;
+    }
+  
+    .intro-text {
+      font-size: 1rem;
+    }
+  }
+  

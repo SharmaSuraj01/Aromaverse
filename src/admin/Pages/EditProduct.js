@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase'; // make sure db is correctly imported
 import '../styles/AddProduct.css';
 
 const EditProduct = () => {
@@ -7,7 +9,6 @@ const EditProduct = () => {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState({
-    id: '',
     name: '',
     price: '',
     discount: '',
@@ -18,27 +19,47 @@ const EditProduct = () => {
   });
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem('products')) || [];
-    const found = stored.find((p) => p.id === parseInt(id));
-    if (found) {
-      setProduct(found);
-    } else {
-      alert('Product not found');
-      navigate('/admin/products');
-    }
+    const fetchProduct = async () => {
+      try {
+        const docRef = doc(db, 'products', id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setProduct(docSnap.data());
+        } else {
+          alert('Product not found!');
+          navigate('/admin/products');
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      }
+    };
+
+    fetchProduct();
   }, [id, navigate]);
 
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const stored = JSON.parse(localStorage.getItem('products')) || [];
-    const updated = stored.map((p) => (p.id === parseInt(id) ? product : p));
-    localStorage.setItem('products', JSON.stringify(updated));
-    alert('✅ Product updated successfully!');
-    navigate('/admin/products');
+
+    try {
+      const docRef = doc(db, 'products', id);
+      await updateDoc(docRef, {
+        ...product,
+        price: Number(product.price),
+        discount: Number(product.discount),
+        quantity: Number(product.quantity)
+      });
+
+      alert('✅ Product updated successfully!');
+      navigate('/admin/products');
+    } catch (error) {
+      console.error('Error updating product:', error);
+      alert('❌ Failed to update product');
+    }
   };
 
   return (
@@ -54,24 +75,17 @@ const EditProduct = () => {
           <label>Price (₹)</label>
           <input type="number" name="price" value={product.price} onChange={handleChange} required />
         </div>
+
         <div className="form-group">
-            <label>Discount (%)</label>
-            <input            
-            type="number"
-            name="discount"
-            value={product.discount}
-            onChange={handleChange}
-            />
+          <label>Discount (%)</label>
+          <input type="number" name="discount" value={product.discount} onChange={handleChange} />
         </div>
+
         <div className="form-group">
-            <label>Quantity</label>
-            <input
-            type="number"
-            name="quantity"
-            value={product.quantity}
-            onChange={handleChange}
-            />
+          <label>Quantity</label>
+          <input type="number" name="quantity" value={product.quantity} onChange={handleChange} />
         </div>
+
         <div className="form-group">
           <label>Category</label>
           <input type="text" name="category" value={product.category} onChange={handleChange} required />

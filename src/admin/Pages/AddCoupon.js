@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../../firebase'; // make sure the path is correct
 import '../styles/Coupon.css';
 
 const AddCoupon = () => {
@@ -19,18 +21,30 @@ const AddCoupon = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Coupon Data:', couponData);
-    alert('Coupon added successfully!');
-    setCouponData({
-      code: '',
-      discountType: 'flat',
-      discountValue: '',
-      minOrderAmount: '',
-      expiryDate: '',
-      isActive: true
-    });
+
+    try {
+      // Add to Firestore
+      await addDoc(collection(db, 'coupons'), {
+        ...couponData,
+        discountValue: Number(couponData.discountValue),
+        minOrderAmount: Number(couponData.minOrderAmount),
+      });
+
+      alert('Coupon added successfully!');
+      setCouponData({
+        code: '',
+        discountType: 'flat',
+        discountValue: '',
+        minOrderAmount: '',
+        expiryDate: '',
+        isActive: true
+      });
+    } catch (error) {
+      console.error("Error adding coupon:", error);
+      alert('Failed to add coupon.');
+    }
   };
 
   return (

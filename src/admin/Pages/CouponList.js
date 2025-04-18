@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../../firebase';
 import '../styles/CouponList.css';
 
 const CouponList = () => {
   const navigate = useNavigate();
   const [coupons, setCoupons] = useState([]);
   const [search, setSearch] = useState('');
-  useEffect(() => {
 
-    console.log('Add Coupon Component Rendered');
-    const dummyCoupons = [
-      {
-        id: 1,
-        code: 'SAVE20',
-        discountType: 'flat',
-        discountValue: 20,
-        minOrderAmount: 100,
-        expiryDate: '2025-05-31',
-        isActive: true,
-      },
-    ];
-    setCoupons(dummyCoupons);
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'coupons'), (snapshot) => {
+      const fetchedCoupons = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setCoupons(fetchedCoupons);
+    });
+
+    // Cleanup on unmount
+    return () => unsubscribe();
   }, []);
 
   const filteredCoupons = coupons.filter(c =>
@@ -29,12 +28,17 @@ const CouponList = () => {
 
   const handleEdit = (couponId) => {
     navigate(`/admin/coupons/edit/${couponId}`);
-    //back
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this coupon?')) {
-      setCoupons(coupons.filter(c => c.id !== id));
+      try {
+        await deleteDoc(doc(db, 'coupons', id)); // Delete from Firestore
+        // No need to update state manually — onSnapshot handles it!
+      } catch (error) {
+        console.error('Error deleting coupon:', error);
+        alert('Failed to delete coupon.');
+      }
     }
   };
 

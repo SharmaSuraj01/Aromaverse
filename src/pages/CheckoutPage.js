@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { collection, addDoc } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 
 const CheckoutPage = () => {
@@ -41,10 +41,6 @@ const CheckoutPage = () => {
     email && firstName && address && city && state && pin && phone;
 
   const placeOrderInFirebase = async () => {
-    const orderRef = doc(db, 'orders', user.uid);
-    const snap = await getDoc(orderRef);
-    const existingOrders = snap.exists() ? snap.data().orderList : [];
-
     const shippingInfo = {
       name: `${firstName} ${lastName}`,
       phone,
@@ -53,15 +49,20 @@ const CheckoutPage = () => {
 
     const newOrder = {
       id: uuidv4().split('-')[0].toUpperCase(),
+      userId: user.uid,
+      email,
       timestamp: new Date(),
       items: cartItems,
       shipping: shippingInfo,
-      status: 'Delivered ✅'
+      status: 'Pending 🕒',
+      paymentMethod,
+      subtotal,
+      tax,
+      total
     };
 
-    await setDoc(orderRef, {
-      orderList: [newOrder, ...existingOrders]
-    });
+    // Save to Firestore orders collection
+    await addDoc(collection(db, 'orders'), newOrder);
   };
 
   const handlePayment = async () => {
@@ -77,6 +78,7 @@ const CheckoutPage = () => {
 
     if (paymentMethod === 'razorpay') {
       alert('Redirecting to Razorpay...');
+      // You'd handle real payment integration here
     } else if (paymentMethod === 'cod') {
       await placeOrderInFirebase();
       localStorage.removeItem('cart');

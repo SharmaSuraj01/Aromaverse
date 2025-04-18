@@ -17,20 +17,31 @@ const CustomerList = () => {
 
         // Process orders to get customer data
         const map = {};
+
         orders.forEach((order) => {
-          const email = order.customer.email;
+          // Extract customer data from shipping field
+          const { shipping, email, total } = order;
+          const { name, address } = shipping; // Extracting name and address from shipping
+
+          // Ensure email exists for unique customer identification
+          if (!email) return;
+
+          // Check if this customer already exists in the map
           if (!map[email]) {
             map[email] = {
-              ...order.customer,
+              name: name || 'No Name Available',  // If no name, fallback to 'No Name Available'
+              email,
+              address: address || 'No Address Available',  // Fallback for address
               totalOrders: 1,
-              totalSpent: order.total,
+              totalSpent: total || 0,
             };
           } else {
             map[email].totalOrders += 1;
-            map[email].totalSpent += order.total;
+            map[email].totalSpent += total || 0;
           }
         });
 
+        // Prepare customer data
         const result = Object.values(map).map((c) => ({
           ...c,
           segment:
@@ -43,7 +54,7 @@ const CustomerList = () => {
 
         setCustomers(result);
       } catch (error) {
-        console.error("Error fetching orders from Firestore:", error);
+        console.error('Error fetching orders from Firestore:', error);
       }
     };
 
@@ -74,7 +85,7 @@ const CustomerList = () => {
           ) : (
             customers.map((c, i) => (
               <tr key={i}>
-                <td>{c.name}</td>
+                <td>{c.name}</td> {/* Name will now be displayed correctly */}
                 <td>{c.email}</td>
                 <td>{c.totalOrders}</td>
                 <td>₹{c.totalSpent}</td>

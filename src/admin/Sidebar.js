@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { MdOutlineShoppingCart, MdAssignmentReturn } from 'react-icons/md';
 import { FaTags } from 'react-icons/fa';
+import { db } from '../firebase'; // Adjust the path to match your project
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore'; // For deleting and fetching items
+import { toast } from 'react-toastify'; // Optional, for success/failure messages
 import './styles/Sidebar.css';
 
 const Sidebar = () => {
@@ -13,7 +16,47 @@ const Sidebar = () => {
   const [bannersOpen, setBannersOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Local state to store the banners
+  const [banners, setBanners] = useState([]);
+
+  useEffect(() => {
+    // Fetch banners from Firestore when the component is mounted
+    const fetchBanners = async () => {
+      const bannersCollection = collection(db, 'banners'); // Adjust the collection name based on your Firestore structure
+      const bannersSnapshot = await getDocs(bannersCollection);
+      const bannersList = bannersSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setBanners(bannersList);
+    };
+
+    fetchBanners();
+  }, []);
+
   const isActive = (path) => location.pathname === path;
+
+  // Function to remove an item from Firestore and update the UI
+  const handleRemove = async (docId) => {
+    try {
+      // Remove item from Firestore
+      await deleteDoc(doc(db, 'banners', docId)); // Adjust 'banners' to the relevant Firestore collection
+      // Remove item from local state to update UI immediately
+      setBanners(prevBanners => prevBanners.filter(banner => banner.id !== docId));
+      toast.success('Banner removed successfully'); // Optional, show success message
+    } catch (error) {
+      console.error('Error removing banner:', error);
+      toast.error('Failed to remove banner'); // Optional, show error message
+    }
+  };
+
+  // Function to handle the delete action with confirmation
+  const handleDeleteClick = (docId) => {
+    const isConfirmed = window.confirm('Are you sure you want to delete this item?');
+    if (isConfirmed) {
+      handleRemove(docId);
+    }
+  };
 
   return (
     <div className="sidebar">
@@ -52,51 +95,6 @@ const Sidebar = () => {
         )}
       </div>
 
-      {/* Authentication Dropdown */}
-      <div
-        className="hover-group"
-        onMouseEnter={() => setAuthOpen(true)}
-        onMouseLeave={() => setAuthOpen(false)}
-      >
-        <div className="menu-toggle">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            🔐 Authentication
-          </div>
-          <span>{authOpen ? '▾' : '▸'}</span>
-        </div>
-
-        {authOpen && (
-          <div className="submenu">
-            <Link to="/admin/login" className={isActive('/admin/login') ? 'active' : ''}>Login</Link>
-            <Link to="/admin/signup" className={isActive('/admin/signup') ? 'active' : ''}>Signup</Link>
-            <Link to="/admin/forgetpassword" className={isActive('/admin/forgotpassword') ? 'active' : ''}>Forgot Password</Link>
-            <Link to="/admin/reset-password" className={isActive('/admin/reset-password') ? 'active' : ''}>Reset Password</Link>
-            <Link to="/admin/two-factor" className={isActive('/admin/two-factor') ? 'active' : ''}>Two Factor</Link>
-          </div>
-        )}
-      </div>
-
-      {/* Customer Support Dropdown */}
-      <div
-        className="hover-group"
-        onMouseEnter={() => setSupportOpen(true)}
-        onMouseLeave={() => setSupportOpen(false)}
-      >
-        <div className="menu-toggle">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            🧾 Customer Support
-          </div>
-          <span>{supportOpen ? '▾' : '▸'}</span>
-        </div>
-        {supportOpen && (
-          <div className="submenu">
-            <Link to="/admin/support" className={isActive('/admin/support') ? 'active' : ''}>
-              Support Tickets
-            </Link>
-          </div>
-        )}
-      </div>
-
       {/* Promotions Dropdown */}
       <div
         className="hover-group"
@@ -119,7 +117,7 @@ const Sidebar = () => {
         )}
       </div>
 
-      {/* Banners Dropdown (Newly Added) */}
+      {/* Banners Dropdown */}
       <div
         className="hover-group"
         onMouseEnter={() => setBannersOpen(true)}
@@ -127,21 +125,28 @@ const Sidebar = () => {
       >
         <div className="menu-toggle">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            📢 WebSite Managements
+            📢 Website Management
           </div>
           <span>{bannersOpen ? '▾' : '▸'}</span>
         </div>
 
         {bannersOpen && (
           <div className="submenu">
-            <Link to="/admin/banners" className={isActive('/admin/banners') ? 'active' : ''}>Add Banners</Link>
-            <Link to="/admin/bannersdisplay" className={isActive('/admin/bannersdisplay') ? 'active' : ''}>View Banners</Link>
-            <Link to="/admin/Slider" className={isActive('/admin/slider') ? 'active' : ''}>Add Slider</Link>
-            <Link to="/admin/FeaturedProducts" className={isActive('/admin/FeaturedProducts') ? 'active' : ''}>Featured Products</Link>
-            <Link to="/admin/Bestsellers" className={isActive('/admin/Bestsellers') ? 'active' : ''}>Bestsellers</Link>
-            <Link to="/admin/BlogPost" className={isActive('/admin/BlogPost') ? 'active' : ''}>Blog Post</Link>
-            <Link to="/admin/SeoSettings" className={isActive('/admin/SeoSettings') ? 'active' : ''}>Seo Settings</Link>
-            <Link to="/admin/StaticPagesManager" className={isActive('/admin/StaticPagesManager') ? 'active' : ''}>StaticPagesManager</Link>
+            {/* Render the list of banners */}
+            {banners.map((banner) => (
+              <div key={banner.id} className="banner-item">
+                <Link to={`/admin/banners/${banner.id}`} className={isActive(`/admin/banners/${banner.id}`) ? 'active' : ''}>
+                  {banner.name} {/* Adjust according to your Firestore structure */}
+                </Link>
+                {/* Remove button */}
+                <button
+                  onClick={() => handleDeleteClick(banner.id)} // Use the handleDeleteClick for confirmation
+                  style={{ marginLeft: '10px', color: 'red', background: 'none', border: 'none', cursor: 'pointer' }}
+                >
+                  🗑 Remove
+                </button>
+              </div>
+            ))}
           </div>
         )}
       </div>
