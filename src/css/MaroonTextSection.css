@@ -1,0 +1,28 @@
+/* MaroonTextSection.css */
+
+.maroon-text-section {
+    background-color: maroon; /* Maroon background for the text section */
+    color: white; /* White text color */
+    padding: 3rem 0; /* Padding for spacing */
+    text-align: center; /* Center text alignment */
+}
+  
+.stylish-header {
+    color: white; /* Ensure the header text is white */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+  
+.lead {
+    color: white; /* Make the paragraph text white */
+    font-weight: medium;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+  
+.text-dark {
+    color: #333; /* Dark text color for the highlighted part */
+}

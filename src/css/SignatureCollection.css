@@ -8,3 +8,21 @@
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
   filter: brightness(1.05) contrast(1.1); /* Slight pop in color */
 }
+/* SignatureCollection.css */
+
+.signature-text p {
+  color: black; /* Make paragraph text black */
+}
+
+.signature-section {
+  padding: 5rem 0; /* Padding for spacing */
+}
+
+.signature-img-wrapper {
+  width: 140px;
+  height: auto;
+}
+
+.btn {
+  margin-top: 20px; /* Optional: for better spacing between text and button */
+}

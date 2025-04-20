@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate
 import '../css/Shop.css';
 
 import AddToCartModal from '../components/AddToCartModal';
-import ProductDetailModal from '../components/ProductDetailModal';
 import { useCart } from '../Context/CartContext';
 
 import { auth, db } from '../firebase';
@@ -21,9 +21,8 @@ import {
 function ShopPage() {
   const [products, setProducts] = useState([]);
   const [loadingIds, setLoadingIds] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [wishlist, setWishlist] = useState([]);
-  
+
   const {
     cartItems,
     addToCart,
@@ -34,6 +33,7 @@ function ShopPage() {
   } = useCart();
 
   const user = auth.currentUser;
+  const navigate = useNavigate();  // Hook for navigation
 
   // Fetch products with real-time updates
   useEffect(() => {
@@ -92,6 +92,11 @@ function ShopPage() {
     setWishlist(updated);
   };
 
+  const handleProductClick = (productId) => {
+    // Navigate to the product detail page when an image or product is clicked
+    navigate(`/product/${productId}`);
+  };
+
   return (
     <>
       <section className="container py-5">
@@ -107,7 +112,7 @@ function ShopPage() {
                 <div className="featured-card h-100 d-flex flex-column">
                   <div
                     className="img-hover-wrap position-relative"
-                    onClick={() => setSelectedProduct(item)}
+                    onClick={() => handleProductClick(item.id)}  // Navigate to product detail page
                     style={{ cursor: 'pointer' }}
                   >
                     <img src={imageUrl} alt={item.name} className="w-100" />
@@ -117,9 +122,16 @@ function ShopPage() {
                         e.stopPropagation();
                         toggleWishlist(item.id);
                       }}
+                      style={{
+                        position: 'absolute',
+                        top: '5px',  // Adjust the distance from the top of the card
+                        right: '5px',  // Adjust the distance from the right of the card
+                        cursor: 'pointer',
+                        zIndex: 2,
+                      }}
                     >
                       <i
-                        className={`bi ${isWishlisted ? 'bi-heart-fill text-danger' : 'bi-heart'} fs-5`}
+                        className={`bi ${isWishlisted ? 'bi-heart-fill text-danger' : 'bi-heart text-danger'} fs-5`}
                       ></i>
                     </div>
                   </div>
@@ -149,17 +161,6 @@ function ShopPage() {
           onClose={() => setShowCartModal(false)}
           onUpdateQty={updateQty}
           onRemove={removeFromCart}
-        />
-      )}
-
-      {selectedProduct && (
-        <ProductDetailModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          onAddToCart={(product) => {
-            handleAddToCart(product);
-            setSelectedProduct(null);
-          }}
         />
       )}
     </>

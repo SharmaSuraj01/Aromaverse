@@ -10,8 +10,8 @@ import './styles/Sidebar.css';
 const Sidebar = () => {
   const location = useLocation();
   const [ecomOpen, setEcomOpen] = useState(true);
-  const [authOpen, setAuthOpen] = useState(false);
-  const [supportOpen, setSupportOpen] = useState(false);
+  // const [authOpen, setAuthOpen] = useState(false);
+  // const [supportOpen, setSupportOpen] = useState(false);
   const [promoOpen, setPromoOpen] = useState(false);
   const [bannersOpen, setBannersOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);

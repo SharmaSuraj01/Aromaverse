@@ -29,6 +29,8 @@ function Categories() {
 
   return (
     <section className="categories-section py-5 bg-white text-center" id="categories">
+    
+
       <h2 className="mb-5">Find Your Perfect Scent</h2>
       <div className="container">
         <div className="row justify-content-center">

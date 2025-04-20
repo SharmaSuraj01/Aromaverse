@@ -49,3 +49,21 @@
   font-family: 'Poppins', sans-serif;
   letter-spacing: 0.5px;
 }
+/* Import Google Font */
+/* Import Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
+
+/* Style for the header */
+.stylish-header {
+  font-family: 'Poppins', sans-serif; /* Apply the stylish font */
+  font-weight: bold; /* Make it bold */
+  color: white; /* White text color */
+  background-color: maroon; /* Maroon background */
+  font-size: 3rem; /* Make the font size bigger */
+  letter-spacing: 2px; /* Add some spacing between letters */
+  text-transform: uppercase; /* Make the header uppercase */
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1); /* Optional: Add subtle shadow for a more stylish effect */
+  padding: 10px 20px; /* Add padding around the text */
+  border-radius: 5px; /* Optional: Add rounded corners */
+  display: inline-block; /* Optional: Keeps the background around the text */
+}

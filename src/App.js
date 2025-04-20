@@ -44,6 +44,8 @@ import Returns from './pages/Returns';
 
 import AdminRoutes from './admin/adminRoutes';
 import Features from './components/Features';
+import ProductDetailPage from './pages/ProductDetailPage';
+import MaroonTextSection from './components/MaroonTextSection';
 
 function App() {
   // eslint-disable-next-line no-unused-vars
@@ -94,6 +96,7 @@ function App() {
               <Hero />
               <Features/>
               <FeaturedScents />
+              <MaroonTextSection/>
               <Categories />
               <SignatureCollection />
               <Testimonials />
@@ -128,6 +131,7 @@ function App() {
         <Route path="/RefundPolicy" element={<RefundPolicy />} />
         <Route path="/TermsOfService" element={<TermsOfService />} />
         <Route path="/thank-you" element={<ThankYouPage />} />
+        <Route path="/product/:id" element={<ProductDetailPage />} />
         
         <Route path="/my-profile" element={<MyProfile />} />
 <Route path="/profile" element={<Navigate to="/my-profile" replace />} />

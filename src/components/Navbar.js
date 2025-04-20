@@ -111,7 +111,7 @@ const Navbar = () => {
                 </button>
 
                 {/* Wishlist button - Mobile */}
-                <button className="btn btn-link text-dark p-0" onClick={() => navigate('/wishlist')}>
+                <button className="btn btn-link text-dark p-0 d-none d-md-block" onClick={() => navigate('/wishlist')}>
                   <i className="bi bi-heart fs-5"></i>
                 </button>
 
@@ -199,7 +199,7 @@ const Navbar = () => {
                 </button>
 
                 {/* Wishlist button - Desktop */}
-                <button className="btn btn-link text-dark p-0" onClick={() => navigate('/wishlist')}>
+                <button className="btn btn-link text-dark p-0 d-none d-md-block" onClick={() => navigate('/wishlist')}>
                   <i className="bi bi-heart fs-5"></i>
                 </button>
 

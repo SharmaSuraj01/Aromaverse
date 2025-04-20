@@ -11,7 +11,8 @@ const Hero = () => {
         
         <h2 className="sacred-rebellion">Scent of Sacred Rebellion</h2>
         <p className="scent-profile">Scent Profile</p>
-        <hr className="scent-divider" />
+        <p className="scent-profile">EAU DE PARFUM</p>
+        {/* <hr className="scent-divider" /> */}
         <p className="scent-character">Scent Character</p>
       </div>
 

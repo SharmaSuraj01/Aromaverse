@@ -1,18 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react';
-import AddToCartModal from './AddToCartModal';
-import ProductDetailModal from './ProductDetailModal';
-
+import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 import '../css/FeaturedScents.css';
 import { useCart } from '../Context/CartContext';
-
+import AddToCartModal from '../components/AddToCartModal';  // Adjust path as necessary
+import hero from '../assets/images/hero.webp'
 import { auth, db } from '../firebase';
 import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
 
 function FeaturedScents({ filterGender }) {
   const scrollRef = useRef(null);
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [scents, setScents] = useState([]);
   const [wishlist, setWishlist] = useState([]);
+
+  const navigate = useNavigate(); // Use navigate for routing
 
   const {
     cartItems,
@@ -90,12 +90,16 @@ function FeaturedScents({ filterGender }) {
 
   const handleAddToCart = (product) => {
     addToCart(product);
-    setShowCartModal(true);
+    setShowCartModal(true); // Show cart modal
   };
 
   const formatGender = (gender) => {
     if (!gender) return 'All';
     return gender.charAt(0).toUpperCase() + gender.slice(1);
+  };
+
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
   };
 
   return (
@@ -120,7 +124,7 @@ function FeaturedScents({ filterGender }) {
               <div key={scent.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <div
                   className="card border-0 shadow scent-card h-100 position-relative"
-                  onClick={() => setSelectedProduct(scent)} // ✅ Opens modal with image
+                  onClick={() => handleProductClick(scent.id)}
                   style={{ cursor: 'pointer' }}
                 >
                   <div
@@ -131,8 +135,8 @@ function FeaturedScents({ filterGender }) {
                     }}
                     style={{
                       position: 'absolute',
-                      top: '10px',
-                      right: '10px',
+                      top: '5px',
+                      right: '5px',
                       cursor: 'pointer',
                       zIndex: 2,
                     }}
@@ -161,7 +165,7 @@ function FeaturedScents({ filterGender }) {
                       className="btn btn-dark w-100 mt-2"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAddToCart(scent); // ✅ Add to cart + show modal
+                        handleAddToCart(scent); // Add to cart + show modal
                       }}
                     >
                       Add to Cart
@@ -182,7 +186,7 @@ function FeaturedScents({ filterGender }) {
               <div key={scent.id} className="carousel-card">
                 <div
                   className="card h-100 border-0 shadow-sm featured-card position-relative"
-                  onClick={() => setSelectedProduct(scent)}
+                  onClick={() => handleProductClick(scent.id)} // Open product detail page
                   style={{ cursor: 'pointer' }}
                 >
                   <div
@@ -193,8 +197,8 @@ function FeaturedScents({ filterGender }) {
                     }}
                     style={{
                       position: 'absolute',
-                      top: '10px',
-                      right: '10px',
+                      top: '5px',
+                      right: '5px',
                       cursor: 'pointer',
                       zIndex: 2,
                     }}
@@ -223,7 +227,7 @@ function FeaturedScents({ filterGender }) {
                       className="btn btn-dark w-100 mt-2"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAddToCart(scent);
+                        handleAddToCart(scent); // Add to cart + show modal
                       }}
                     >
                       Add to Cart
@@ -252,18 +256,6 @@ function FeaturedScents({ filterGender }) {
           onClose={() => setShowCartModal(false)}
           onUpdateQty={updateQty}
           onRemove={removeFromCart}
-        />
-      )}
-
-      {/* ✅ Product Detail Modal with image */}
-      {selectedProduct && (
-        <ProductDetailModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          onAddToCart={(product) => {
-            handleAddToCart(product);
-            setSelectedProduct(null);
-          }}
         />
       )}
     </section>
