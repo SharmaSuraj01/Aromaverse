@@ -10,7 +10,7 @@
 .auth-page::before {
   content: '';
   flex: 1;
-  background: url('./Logo_Gitammi.png') no-repeat center center;
+  background: url('./logo.png') no-repeat center center;
   background-color: #0f172a;
   background-size: cover;
 }

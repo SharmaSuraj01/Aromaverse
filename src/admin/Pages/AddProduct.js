@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db, storage } from '../../firebase'; // Make sure this path is correct
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Import Firebase Storage functions
+import { db } from '../../firebase'; // Firebase Firestore
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'; // Firestore functions
 import '../styles/AddProduct.css';
 
 const AddProduct = () => {
@@ -20,6 +19,7 @@ const AddProduct = () => {
 
   const [imagePreviews, setImagePreviews] = useState([]); // Preview URLs for displaying images
   const [faq, setFaq] = useState({ question: '', answer: '' });
+  const [loading, setLoading] = useState(false); // Loading state
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,14 +59,23 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      // 1. Upload all images to Firebase Storage and get their download URLs
+      // 1. Upload all images to Cloudinary and get their URLs
       const imageUploadPromises = product.images.map(async (file) => {
-        const fileRef = ref(storage, `product-images/${Date.now()}-${file.name}`);
-        await uploadBytes(fileRef, file);
-        const url = await getDownloadURL(fileRef);
-        return url; // Return the download URL of the uploaded file
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'your_upload_preset'); // Replace with your Cloudinary upload preset
+        formData.append('cloud_name', 'your_cloud_name'); // Replace with your Cloudinary cloud name
+
+        const response = await fetch(`https://api.cloudinary.com/v1_1/your_cloud_name/image/upload`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+        return data.secure_url; // Return the secure URL of the uploaded image
       });
 
       const uploadedImageUrls = await Promise.all(imageUploadPromises);
@@ -83,6 +92,8 @@ const AddProduct = () => {
     } catch (error) {
       console.error('❌ Error adding product:', error);
       alert('Failed to add product. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -176,10 +187,12 @@ const AddProduct = () => {
           )}
         </div>
 
-        <button type="submit" className="submit-btn">Add Product</button>
+        <button type="submit" className="submit-btn" disabled={loading}>
+          {loading ? 'Adding Product...' : 'Add Product'}
+        </button>
       </form>
     </div>
   );
 };
 
-export default AddProduct;
+export default AddProduct;  

@@ -62,7 +62,7 @@ const Sidebar = () => {
     <div className="sidebar">
       {/* Logo section */}
       <div className="sidebar-logo">
-        <img src="/Logo_Gitammi.png" alt="Logo" />
+        <img src="/logo.png" alt="Logo" />
       </div>
 
       {/* Sidebar title */}

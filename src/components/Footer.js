@@ -71,7 +71,7 @@ const Footer = () => {
         </div>
 
         <hr className="my-5 border-light" />
-        <p className="text-center mb-0 small">© All rights reserved - KizuPerfumes</p>
+        <p className="text-center mb-0 small">© All rights reserved - Aromaverse Perfumes</p>
       {showPopup && (
         <div className="popup-overlay">
           <div className="popup-box bg-white text-dark p-4 rounded shadow">
