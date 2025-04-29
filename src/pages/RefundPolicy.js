@@ -15,7 +15,7 @@ const RefundPolicy = () => {
         <p>
           We Quality Control all our shipping and packaging processes, but in rare circumstances, if you do receive a damaged,
           defective/wrong product or an incomplete order, simply get in touch with us within <strong>24 hours</strong> of receiving
-          your order with pictures at <strong>gitaami@123.com</strong> and we will take care of the rest.
+          your order with pictures at <strong>Aromaverse@gmail.com</strong> and we will take care of the rest.
         </p>
 
         <p>

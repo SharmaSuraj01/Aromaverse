@@ -4,18 +4,23 @@ import '../css/Testimonials.css';
 const testimonials = [
   {
     id: 1,
-    name: 'Sarah K.',
+    name: 'Manya',
     feedback: 'Absolutely love the scent! Long-lasting and elegant.',
   },
   {
     id: 2,
-    name: 'Ravi M.',
+    name: 'Suraj',
     feedback: 'Perfect for daily wear. The compliments keep coming!',
   },
   {
     id: 3,
-    name: 'Ananya S.',
+    name: 'priyanshu',
     feedback: 'Great packaging and the fragrance is divine!',
+  },
+  {
+    id: 4,
+    name: 'Sameer',
+    feedback: 'Nice Fragnance',
   },
 ];
 

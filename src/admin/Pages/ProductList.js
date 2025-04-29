@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MdListAlt, MdEdit, MdDelete } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebase'; // ✅ Adjust the path based on your folder structure
+import { db } from '../../firebase'; //
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore'; // Add deleteDoc for deleting documents
 import '../styles/ProductList.css';
 

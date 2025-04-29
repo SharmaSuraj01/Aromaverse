@@ -1,31 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../css/NavbarCustom.css';
-import logo from '../assets/images/logo.png';
-import forHim from '../assets/images/forhim.jpg';
-import forHer from '../assets/images/forher.jpg';
-import forKids from '../assets/images/forkid.jpg';
+import logo from '../assets/photo/logo.png';
+import forHim from '../assets/photo/men.jpg';
+import forHer from '../assets/photo/women.jpg';
+import forKids from '../assets/photo/child.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../Context/CartContext';
 import { auth } from '../firebase';
-import scent1 from '../assets/images/11.png';
-import scent2 from '../assets/images/12.PNG';
-import scent3 from '../assets/images/13.PNG';
-import scent4 from '../assets/images/14.JPG';
-import scent5 from '../assets/images/15.JPG';
-import scent6 from '../assets/images/16.JPG';
-import scent7 from '../assets/images/17.JPG';
+import i1 from '../assets/photo/11.jpg?v=2';
+import i2 from '../assets/photo/12.jpg?v=2';
+import i3 from '../assets/photo/13.jpg?v=2';
+import i4 from '../assets/photo/141.jpg?v=2';
+import i5 from '../assets/photo/151.jpg?v=2';
+import i6 from '../assets/photo/161.jpg?v=2';
+import i7 from '../assets/photo/171.jpg?v=2';
 import { onAuthStateChanged } from 'firebase/auth';
 
 const scents = [
-  { id: 1, name: 'TEJASI', price: 999, img: scent1, gender: 'her' },
-  { id: 2, name: 'AQUA', price: 1299, img: scent2, gender: 'him' },
-  { id: 3, name: 'YODHA', price: 1499, img: scent3, gender: 'him' },
-  { id: 4, name: 'VAHINI', price: 1599, img: scent4, gender: 'kids' },
-  { id: 5, name: 'VAASNA', price: 1099, img: scent5, gender: 'him' },
-  { id: 6, name: 'SENORA', price: 1199, img: scent6, gender: 'her' },
-  { id: 7, name: 'TANTRA', price: 1099, img: scent7, gender: 'him' },
+  { id: 1, name: 'Moonlit Desire', price: 799, img: i1, gender: 'her' },
+  { id: 2, name: 'Midnight Ember', price: 1099, img: i2, gender: 'him' },
+  { id: 3, name: 'Royal Creed', price: 1299, img: i3, gender: 'him' },
+  { id: 4, name: 'Vanilla Smoke', price: 199, img: i4, gender: 'kids' },
+  { id: 5, name: 'Dark Leather', price: 799, img: i5, gender: 'him' },
+  { id: 6, name: 'Velvet Bloom', price: 999, img: i6, gender: 'her' },
+  { id: 7, name: 'Storm Knight', price: 1099, img: i7, gender: 'him' },
 ];
 
 const Navbar = () => {
@@ -150,7 +148,7 @@ const Navbar = () => {
             </div>
 
             <a className="navbar-brand d-none d-lg-block me-4" href="/">
-              <img src={logo} alt="Kizu Perfumes" className="logo-img" />
+              <img src={logo} alt="Aromaverse Perfumes" className="logo-img" />
             </a>
 
             <div className="collapse navbar-collapse mt-2 mt-lg-0" id="navbarContent">
@@ -163,22 +161,22 @@ const Navbar = () => {
                   <span className="nav-link dropdown-toggle">COLLECTIONS</span>
                   <div className="collections-dropdown-content">
                     <div className="collection-list">
-                      <Link to="/collections/for-him">FOR HIM</Link>
-                      <Link to="/collections/for-her">FOR HER</Link>
-                      <Link to="/collections/kids">FOR KIDS</Link>
+                      <Link to="/collections/for-him">Men</Link>
+                      <Link to="/collections/for-her">Women</Link>
+                      <Link to="/collections/kids">Child</Link>
                     </div>
                     <div className="collection-preview d-none d-lg-flex">
                       <Link to="/collections/for-him" className="collection-card">
-                        <img src={forHim} alt="For Him" />
-                        <p>For Him</p>
+                        <img src={forHim} alt="Men" />
+                        <p>Men</p>
                       </Link>
                       <Link to="/collections/for-her" className="collection-card">
-                        <img src={forHer} alt="For Her" />
-                        <p>For Her</p>
+                        <img src={forHer} alt="Women" />
+                        <p>Women</p>
                       </Link>
                       <Link to="/collections/kids" className="collection-card">
-                        <img src={forKids} alt="For Kids" />
-                        <p>For Kids</p>
+                        <img src={forKids} alt="Child" />
+                        <p>Child</p>
                       </Link>
                     </div>
                   </div>

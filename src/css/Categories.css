@@ -58,7 +58,7 @@
   font-family: 'Poppins', sans-serif; /* Apply the stylish font */
   font-weight: bold; /* Make it bold */
   color: white; /* White text color */
-  background-color: maroon; /* Maroon background */
+  background-color: #020568; /* Maroon background */
   font-size: 3rem; /* Make the font size bigger */
   letter-spacing: 2px; /* Add some spacing between letters */
   text-transform: uppercase; /* Make the header uppercase */

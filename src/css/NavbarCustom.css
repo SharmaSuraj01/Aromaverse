@@ -119,13 +119,13 @@
   height: 2px;
   left: 0;
   bottom: -4px;
-  background-color: #e63946;
+  background-color: #020568;
   transition: all 0.4s ease;
   display: none;
 }
 
 .collection-list a:hover {
-  color: #e63946;
+  color:  #020568;
   transform: translateX(5px);
 }
 

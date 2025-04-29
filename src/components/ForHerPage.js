@@ -5,7 +5,7 @@ import '../css/PageContent.css';
 const ForHerPage = () => {
   return (
     <div className="page-wrapper">
-      <h2 className="page-title">For Her</h2>
+      <h2 className="page-title">Women</h2>
       <FeaturedScents filterGender="her" gridView={true} />
     </div>
   );

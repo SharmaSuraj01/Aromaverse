@@ -11,8 +11,6 @@ const WishlistPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  // Fetch wishlist items (IDs) for current user
   useEffect(() => {
     const fetchWishlist = async () => {
       try {

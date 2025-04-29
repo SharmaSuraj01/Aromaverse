@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { auth } from '../firebase';
-import { signInWithRedirect } from 'firebase/auth';
 import {
+  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
   sendPasswordResetEmail,
+  signInWithPopup,
+  GoogleAuthProvider,
 } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import AuthLayout from './AuthLayout';
-import '../css/AuthPopup.css'; // Make sure this file exists
+import '../css/AuthPopup.css';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -18,7 +18,6 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
-
   const [showResetPopup, setShowResetPopup] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
 

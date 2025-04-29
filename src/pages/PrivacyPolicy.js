@@ -9,10 +9,10 @@ const PrivacyPolicy = () => {
         <div className="privacy-container">
           <h2 className="title">Privacy Policy</h2>
           <p>
-            This section pertains to the Privacy Policy of <strong>GITAAMI</strong>. We would like to inform you that our privacy policy is subject to change without prior intimation and you shall be required to review it regularly.
+            This section pertains to the Privacy Policy of <strong>Aromaverse</strong>. We would like to inform you that our privacy policy is subject to change without prior intimation and you shall be required to review it regularly.
           </p>
           <p>
-            The protection and security of your personal information is one of GITAAMI'S top priorities...
+            The protection and security of your personal information is one of Aromaverse'S top priorities...
           </p>
           <p>
             By accessing or using this website, you expressly consent to our use and disclosure...
@@ -24,7 +24,7 @@ const PrivacyPolicy = () => {
           <h3>PLEASE READ THE FOLLOWING TERMS OF OUR PRIVACY POLICY</h3>
           <h4>PERSONAL INFORMATION COLLECTED</h4>
           <p>
-            By accepting this privacy policy, you authorize <strong>GITAAMI</strong> to collect...
+            By accepting this privacy policy, you authorize <strong>Aromaverse</strong> to collect...
           </p>
           <ul>
             <li>All information entered by you such as your name, address...</li>

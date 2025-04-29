@@ -1,9 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
+import { useNavigate } from 'react-router-dom';
 import '../css/FeaturedScents.css';
 import { useCart } from '../Context/CartContext';
-import AddToCartModal from '../components/AddToCartModal';  // Adjust path as necessary
-import hero from '../assets/images/hero.webp'
+import AddToCartModal from '../components/AddToCartModal';
 import { auth, db } from '../firebase';
 import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
 
@@ -12,7 +11,7 @@ function FeaturedScents({ filterGender }) {
   const [scents, setScents] = useState([]);
   const [wishlist, setWishlist] = useState([]);
 
-  const navigate = useNavigate(); // Use navigate for routing
+  const navigate = useNavigate();
 
   const {
     cartItems,
@@ -29,14 +28,18 @@ function FeaturedScents({ filterGender }) {
         const querySnapshot = await getDocs(collection(db, 'products'));
         const products = querySnapshot.docs.map((doc) => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         }));
+        console.log('Fetched Products:', products); 
+        products.forEach((product) => {
+          console.log(`Product ID: ${product.id}, Image: ${product.images?.[0]}`);
+        });
         setScents(products);
       } catch (err) {
         console.error('Error loading products:', err);
       }
     };
-
+  
     fetchProducts();
   }, []);
 
@@ -147,10 +150,10 @@ function FeaturedScents({ filterGender }) {
                   </div>
 
                   <img
-                    src={scent.images?.[0] || 'https://via.placeholder.com/150'}
-                    className="card-img-top rounded-3"
-                    alt={scent.name}
-                  />
+  src={`${scent.images?.[0]}?v=${Date.now()}`}
+  className="card-img-top rounded-3"
+  alt={scent.name}
+/>
                   <div className="card-body text-center">
                     <h5 className="card-title fw-semibold">{scent.name}</h5>
                     <p className="card-text text-muted mb-2">₹{scent.price}</p>

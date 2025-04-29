@@ -1,7 +1,7 @@
 import React from 'react';
 import '../css/Returns.css'; // Optional: for styling
 import { Link } from 'react-router-dom';
-import noReturnImg from '../assets/images/11.png'; // Optional image
+import noReturnImg from '../assets/photo/11.jpg'; // Optional image
 
 const Returns = () => {
   return (

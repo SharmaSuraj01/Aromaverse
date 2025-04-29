@@ -1,27 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../css/Categories.css';
-import forhim from '../assets/images/forhim.jpg';
-import forher from '../assets/images/forher.jpg';
-import forkids from '../assets/images/forkid.jpg';
+import forhim from '../assets/photo/men.jpg';
+import forher from '../assets/photo/women.jpg';
+import forkids from '../assets/photo/child.jpg';
 
 function Categories() {
   const categories = [
     {
-      title: 'For Him',
-      description: 'Bold, confident scents crafted for men',
+      title: 'Men',
+      description: 'Bold, confident scents — meticulously crafted for the modern man.',
       img: forhim,
       link: '/for-him',
     },
     {
-      title: 'For Her',
-      description: 'Elegant, timeless fragrances for women',
+      title: 'Women',
+      description: 'Elegant, timeless fragrances — designed to capture the essence of femininity.',
       img: forher,
       link: '/for-her',
     },
     {
-      title: 'For Kids',
-      description: 'Gentle, playful scents for the little ones',
+      title: 'Child',
+      description: 'Gentle, playful fragrances — perfect for the little ones.',
       img: forkids,
       link: '/for-kids',
     },

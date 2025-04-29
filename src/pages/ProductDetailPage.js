@@ -7,11 +7,11 @@ import { getAuth } from 'firebase/auth'; // Import Firebase Auth
 import '../css/ProductDetailPage.css';
 
 // Feature Icons
-import parabenFree from '../assets/images/paraben-free.png';
-import sulphateFree from '../assets/images/sulphate-free.png';
-import crueltyFree from '../assets/images/cruelty-free.png';
-import non from '../assets/images/non-carc.png';
-import siliconFree from '../assets/images/silicon-free.png';
+import parabenFree from '../assets/photo/paraben-free.png';
+import sulphateFree from '../assets/photo/sulphate-free.png';
+import crueltyFree from '../assets/photo/cruelty-free.png';
+import non from '../assets/photo/non-carc.png';
+import siliconFree from '../assets/photo/silicon-free.png';
 import ShopPage from './ShopPage';
 
 function ProductDetailPage() {

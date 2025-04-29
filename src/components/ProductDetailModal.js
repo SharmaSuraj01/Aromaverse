@@ -1,4 +1,3 @@
-// src/components/ProductDetailModal.js
 import React from 'react';
 import '../css/ProductDetailModal.css';
 

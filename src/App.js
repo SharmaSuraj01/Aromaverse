@@ -2,13 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { auth } from './firebase';
-  // Import ToastContainer
-import 'react-toastify/dist/ReactToastify.css';  // Import Toastify CSS
-
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';

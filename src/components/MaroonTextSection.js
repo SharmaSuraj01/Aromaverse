@@ -5,13 +5,14 @@ function MaroonTextSection() {
   return (
     <section className="maroon-text-section">
       <div className="container text-center py-5">
-        <h1 className="stylish-header">Gitaami – Fragrance That Defines You</h1> {/* Static text for header */}
+        <h1 className="stylish-header">Aromaverse – Universe of All Fragrance</h1> {/* Static text for header */}
         <p className="lead fw-medium">
-          At <span className="fw-bold text-dark">Gitaami</span>, we understand that fragrance is more than just a scent;
-          it’s a way to express yourself. Our curated collections are designed to reflect your identity, your style, and your moments.
+          At <span className="fw-bold text-light">Aromaverse</span>, we believe fragrance is more than a scent—it's a reflection of who you are. 
+          Our thoughtfully curated collections are crafted to capture your essence, celebrate your style, and enhance every cherished moment.
+
         </p>
         <p className="lead fw-medium">
-          Whether you're selecting a fragrance for yourself or a loved one, you'll find the perfect scent that elevates every experience.
+        Whether you're indulging yourself or finding the perfect gift, Aromaverse offers scents that elevate every experience into something truly memorable.
         </p>
       </div>
     </section>
