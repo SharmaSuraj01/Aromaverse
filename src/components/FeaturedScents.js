@@ -81,7 +81,7 @@ function FeaturedScents({ filterGender }) {
   };
 
   const normalize = (str) =>
-    str?.toLowerCase().replace(/\s+/g, '-').trim();
+    str?.toLowerCase().replace(/\s+/g,'-').trim();
 
   const filteredScents = filterGender
     ? scents.filter((scent) => {
@@ -93,7 +93,7 @@ function FeaturedScents({ filterGender }) {
 
   const handleAddToCart = (product) => {
     addToCart(product);
-    setShowCartModal(true); // Show cart modal
+    setShowCartModal(true);
   };
 
   const formatGender = (gender) => {
@@ -150,10 +150,9 @@ function FeaturedScents({ filterGender }) {
                   </div>
 
                   <img
-  src={`${scent.images?.[0]}?v=${Date.now()}`}
-  className="card-img-top rounded-3"
-  alt={scent.name}
-/>
+                  src={`${scent.images?.[0]}?v=${Date.now()}`}
+                  className="card-img-top rounded-3"
+                  alt={scent.name}/>
                   <div className="card-body text-center">
                     <h5 className="card-title fw-semibold">{scent.name}</h5>
                     <p className="card-text text-muted mb-2">₹{scent.price}</p>
