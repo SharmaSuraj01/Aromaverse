@@ -19,7 +19,10 @@ const Signup = () => {
       return;
     }
 
-    // Dummy signup logic
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long ❌'); 
+      return;
+    }
     alert(`Account created for ${name}! 🎉`);
     setError('');
     navigate('/admin/login');

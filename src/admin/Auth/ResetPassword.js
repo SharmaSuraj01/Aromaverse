@@ -13,8 +13,6 @@ const ResetPassword = () => {
       alert("Passwords don't match ❌");
       return;
     }
-
-    // Proceed with actual reset logic
     alert('Password reset successfully ✅');
   };
 

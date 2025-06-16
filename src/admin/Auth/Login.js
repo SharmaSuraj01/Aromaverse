@@ -19,7 +19,7 @@ const Login = () => {
       setError('');
       alert('Login successful! Welcome Admin 😎');
     
-      localStorage.setItem('isAdminLoggedIn', 'true'); // 👈 yeh line add karo
+      localStorage.setItem('isAdminLoggedIn', 'true');
     
       setTimeout(() => {
         navigate('/admin/dashboard');

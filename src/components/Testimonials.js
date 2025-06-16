@@ -4,7 +4,7 @@ import '../css/Testimonials.css';
 const testimonials = [
   {
     id: 1,
-    name: 'Manya',
+    name: 'Archana',
     feedback: 'Absolutely love the scent! Long-lasting and elegant.',
   },
   {

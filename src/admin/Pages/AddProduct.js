@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebase'; // Firebase Firestore
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'; // Firestore functions
 import '../styles/AddProduct.css';
 
 const AddProduct = () => {
@@ -13,13 +11,13 @@ const AddProduct = () => {
     quantity: '',
     description: '',
     category: '',
-    images: [], // This will store actual file objects now
-    faqs: []
+    images: [],
+    faqs: [],
   });
 
-  const [imagePreviews, setImagePreviews] = useState([]); // Preview URLs for displaying images
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [faq, setFaq] = useState({ question: '', answer: '' });
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,8 +27,8 @@ const AddProduct = () => {
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     const previews = files.map((file) => URL.createObjectURL(file));
-    setProduct((prev) => ({ ...prev, images: files })); // Save the actual files
-    setImagePreviews(previews); // Save the preview URLs
+    setProduct((prev) => ({ ...prev, images: files }));
+    setImagePreviews(previews);
   };
 
   const handleFAQChange = (e) => {
@@ -42,7 +40,7 @@ const AddProduct = () => {
     if (faq.question.trim() && faq.answer.trim()) {
       setProduct((prev) => ({
         ...prev,
-        faqs: [...(prev.faqs || []), faq]
+        faqs: [...prev.faqs, faq],
       }));
       setFaq({ question: '', answer: '' });
     } else {
@@ -53,7 +51,7 @@ const AddProduct = () => {
   const removeFAQ = (index) => {
     setProduct((prev) => ({
       ...prev,
-      faqs: prev.faqs.filter((_, i) => i !== index)
+      faqs: prev.faqs.filter((_, i) => i !== index),
     }));
   };
 
@@ -62,12 +60,11 @@ const AddProduct = () => {
     setLoading(true);
 
     try {
-      // 1. Upload all images to Cloudinary and get their URLs
       const imageUploadPromises = product.images.map(async (file) => {
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('upload_preset', 'your_upload_preset'); // Replace with your Cloudinary upload preset
-        formData.append('cloud_name', 'your_cloud_name'); // Replace with your Cloudinary cloud name
+        formData.append('upload_preset', 'your_upload_preset');
+        formData.append('cloud_name', 'your_cloud_name');
 
         const response = await fetch(`https://api.cloudinary.com/v1_1/your_cloud_name/image/upload`, {
           method: 'POST',
@@ -75,17 +72,22 @@ const AddProduct = () => {
         });
 
         const data = await response.json();
-        return data.secure_url; // Return the secure URL of the uploaded image
+        return data.secure_url;
       });
 
       const uploadedImageUrls = await Promise.all(imageUploadPromises);
 
-      // 2. Save product with image URLs to Firestore
-      const docRef = await addDoc(collection(db, 'products'), {
-        ...product,
-        images: uploadedImageUrls, // Store the URLs in the 'images' field
-        createdAt: serverTimestamp()
+      const response = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...product,
+          images: uploadedImageUrls,
+          createdAt: new Date().toISOString(),
+        }),
       });
+
+      if (!response.ok) throw new Error('Failed to save product');
 
       alert('✅ Product added successfully!');
       navigate('/admin/products');
@@ -195,4 +197,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;  
+export default AddProduct;

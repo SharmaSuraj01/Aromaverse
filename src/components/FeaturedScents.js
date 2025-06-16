@@ -3,14 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import '../css/FeaturedScents.css';
 import { useCart } from '../Context/CartContext';
 import AddToCartModal from '../components/AddToCartModal';
-import { auth, db } from '../firebase';
-import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
+  import image1 from '../assets/photo/11.jpg';
+  import image2 from '../assets/photo/12.jpg';
+  import image3 from '../assets/photo/13.jpg';
+  import image4 from '../assets/photo/141.jpg';
+  import image5 from '../assets/photo/151.jpg';
+  import image6 from '../assets/photo/161.jpg';
+  import image7 from '../assets/photo/171.jpg';
+  import image8 from '../assets/photo/men.jpg';
+
 
 function FeaturedScents({ filterGender }) {
   const scrollRef = useRef(null);
   const [scents, setScents] = useState([]);
   const [wishlist, setWishlist] = useState([]);
-
   const navigate = useNavigate();
 
   const {
@@ -22,66 +28,106 @@ function FeaturedScents({ filterGender }) {
     showCartModal,
   } = useCart();
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'products'));
-        const products = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        console.log('Fetched Products:', products); 
-        products.forEach((product) => {
-          console.log(`Product ID: ${product.id}, Image: ${product.images?.[0]}`);
-        });
-        setScents(products);
-      } catch (err) {
-        console.error('Error loading products:', err);
-      }
-    };
-  
-    fetchProducts();
-  }, []);
+  // ✅ Mock product data
+  const mockProducts = [
+    {
+      id: '1',
+      name: 'Ocean Breeze',
+      price: 499,
+      discount: 10,
+      quantity: 50,
+      description: 'Fresh aquatic fragrance',
+      category: 'For Him',
+      images: [image1],
+    },
+    {
+      id: '2',
+      name: 'Floral Bliss',
+      price: 599,
+      discount: 5,
+      quantity: 30,
+      description: 'Sweet floral aroma',
+      category: 'For Her',
+      images: [image2],
+    },
+    {
+      id: '3',
+      name: 'Candy Pop',
+      price: 299,
+      discount: 0,
+      quantity: 20,
+      description: 'Fruity and fun',
+      category: 'For Kids',
+      images: [image3],
+    },
+    {
+      id: '4',
+      
+      name: 'Spicy Cinnamon',
+      price: 699,
+      discount: 15,
+      quantity: 25,
+      description: 'Warm and inviting',
+      category: 'For Him',
+      images: [image4],
+    },
+    {
+      id: '5',
+      name: 'Lavender Dreams',
+      price: 549,
+      discount: 20,
+      quantity: 40,
+      description: 'Relaxing lavender scent',
+      category: 'For Her',
+      images: [image5],
+    },
+    {
+      id: '6',
+      name: 'Sunny Citrus',
+      price: 399,
+      discount: 10,
+      quantity: 60,
+      description: 'Zesty citrus fragrance',
+      category: 'For Kids',
+      images: [image6],
+    },
+    {
+      id: '7',
+      name: 'Mystic Woods',
+      price: 799,
+      discount: 25,
+      quantity: 15,
+      description: 'Earthy and grounding',
+      category: 'For Him',
+      images: [image7],
+    },
+    {
+      id: '8',
+      name: 'Rose Petals',
+      price: 649,
+      discount: 30,
+      quantity: 35,
+      description: 'Romantic rose scent',
+      category: 'For Her',
+      images: [image8],
+    },
+  ];
 
   useEffect(() => {
-    const fetchWishlist = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
-
-      try {
-        const docRef = doc(db, 'wishlists', user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setWishlist(docSnap.data().items || []);
-        }
-      } catch (err) {
-        console.error('Error loading wishlist:', err);
-      }
-    };
-
-    fetchWishlist();
+    setScents(mockProducts);
   }, []);
 
   const isInWishlist = (id) => wishlist.includes(id);
 
-  const toggleWishlist = async (item) => {
-    const user = auth.currentUser;
-    if (!user) return alert('Please log in to use wishlist.');
-
+  const toggleWishlist = (item) => {
     const updatedWishlist = isInWishlist(item.id)
       ? wishlist.filter((wId) => wId !== item.id)
       : [...wishlist, item.id];
-
-    try {
-      await setDoc(doc(db, 'wishlists', user.uid), { items: updatedWishlist });
-      setWishlist(updatedWishlist);
-    } catch (err) {
-      console.error('Error updating wishlist:', err);
-    }
+    setWishlist(updatedWishlist);
   };
 
   const normalize = (str) =>
-    str?.toLowerCase().replace(/\s+/g,'-').trim();
+    str?.toLowerCase().replace(/\s+/g, '-').trim();
 
   const filteredScents = filterGender
     ? scents.filter((scent) => {
@@ -150,9 +196,10 @@ function FeaturedScents({ filterGender }) {
                   </div>
 
                   <img
-                  src={`${scent.images?.[0]}?v=${Date.now()}`}
-                  className="card-img-top rounded-3"
-                  alt={scent.name}/>
+                    src={scent.images?.[0]}
+                    className="card-img-top rounded-3"
+                    alt={scent.name}
+                  />
                   <div className="card-body text-center">
                     <h5 className="card-title fw-semibold">{scent.name}</h5>
                     <p className="card-text text-muted mb-2">₹{scent.price}</p>
@@ -167,7 +214,7 @@ function FeaturedScents({ filterGender }) {
                       className="btn btn-dark w-100 mt-2"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAddToCart(scent); // Add to cart + show modal
+                        handleAddToCart(scent);
                       }}
                     >
                       Add to Cart
@@ -188,7 +235,7 @@ function FeaturedScents({ filterGender }) {
               <div key={scent.id} className="carousel-card">
                 <div
                   className="card h-100 border-0 shadow-sm featured-card position-relative"
-                  onClick={() => handleProductClick(scent.id)} // Open product detail page
+                  onClick={() => handleProductClick(scent.id)}
                   style={{ cursor: 'pointer' }}
                 >
                   <div
@@ -211,7 +258,7 @@ function FeaturedScents({ filterGender }) {
                   </div>
 
                   <img
-                    src={scent.images?.[0] || 'https://via.placeholder.com/150'}
+                    src={scent.images?.[0]}
                     className="card-img-top"
                     alt={scent.name}
                   />
@@ -229,7 +276,7 @@ function FeaturedScents({ filterGender }) {
                       className="btn btn-dark w-100 mt-2"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAddToCart(scent); // Add to cart + show modal
+                        handleAddToCart(scent);
                       }}
                     >
                       Add to Cart
@@ -251,7 +298,6 @@ function FeaturedScents({ filterGender }) {
         )}
       </div>
 
-      {/* ✅ Add To Cart Modal */}
       {showCartModal && (
         <AddToCartModal
           cartItems={cartItems}

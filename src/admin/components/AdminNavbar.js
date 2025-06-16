@@ -8,17 +8,13 @@ const AdminNavbar = () => {
 
   const handleSearch = () => {
     console.log('Search Query:', searchQuery);
-    // Add logic to handle search functionality
+
   };
 
   return (
     <nav className="admin-navbar">
-      {/* Left Title or Logo */}
       <h1>Aromaverse</h1>
-
-      {/* Right Side */}
       <div className="nav-right">
-        {/* Search */}
         <div className="nav-search">
           <input
             type="text"
@@ -30,17 +26,16 @@ const AdminNavbar = () => {
             <i className="fas fa-search"></i>
           </button>
         </div>
-
-        {/* Notification */}
         <button className="icon-btn">
           <i className="fas fa-bell"></i>
           <span className="notification-dot"></span>
         </button>
 
-        {/* Avatar */}
         <img className="avatar" src="/logo.png" alt="User" />
-
-        {/* Logout Button */}
+        <span className="username">Admin</span>
+        <button className="settings-btn" onClick={() => navigate('/admin/settings')}>
+          <i className="fas fa-cog"></i>
+        </button>
         <button
           className="logout-btn"
           onClick={() => {
