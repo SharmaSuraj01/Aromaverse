@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MdVisibility, MdDelete } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import {
-  doc,
-  updateDoc,
-  collection,
-  onSnapshot,
-  deleteDoc,
-} from 'firebase/firestore';
-import { db as firestoreDb } from '../../firebase'; // Adjust path as necessary
 import '../styles/OrderList.css';
 
 const OrderList = () => {
@@ -16,58 +8,26 @@ const OrderList = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(firestoreDb, 'orders'), (snapshot) => {
-      const orderList = snapshot.docs.map((doc) => {
-        const data = doc.data();
+    const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const orderList = savedOrders.map(data => ({
+      id: data.id,
+      name: data.shipping?.name || 'N/A',
+      amount: data.total || 0,
+      status: data.status || 'Ordered',
+      dateFormatted: new Date(data.timestamp).toLocaleDateString()
+    }));
 
-        const customerName =
-          data.name || data.shipping?.name || data.user?.name || 'N/A';
-
-        const amount = data.total || 0;
-        const status = data.status || 'N/A';
-
-        const dateFormatted = data.date?.seconds
-          ? new Date(data.date.seconds * 1000).toLocaleString('en-IN', {
-              timeZone: 'Asia/Kolkata',
-              day: '2-digit',
-              month: 'short',
-              year: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-              hour12: false,
-            })
-          : 'N/A';
-
-        return {
-          id: doc.id,
-          name: customerName,
-          amount,
-          status,
-          dateFormatted,
-        };
-      });
-
-      setOrders(orderList);
-    });
-
-    return () => unsubscribe(); // Cleanup on unmount
+    setOrders(orderList);
   }, []);
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'Placed':
-        return 'gray';
-      case 'Processing':
-        return 'blue';
-      case 'Shipped':
-        return 'green';
-      case 'Delivered':
-        return 'purple';
-      case 'Cancelled':
-        return 'red';
-      default:
-        return 'gray';
+      case 'Ordered': return 'gray';
+      case 'Processing': return 'blue';
+      case 'Shipped': return 'green';
+      case 'Delivered': return 'purple';
+      case 'Cancelled': return 'red';
+      default: return 'gray';
     }
   };
 
@@ -77,10 +37,14 @@ const OrderList = () => {
     }
   };
 
-  const handleDelete = async (orderId) => {
+  const handleDelete = (orderId) => {
     if (window.confirm('Are you sure you want to delete this order?')) {
       try {
-        await deleteDoc(doc(firestoreDb, 'orders', orderId));
+        const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+        const updatedOrders = savedOrders.filter(order => order.id !== orderId);
+        localStorage.setItem('orders', JSON.stringify(updatedOrders));
+        
+        setOrders(prev => prev.filter(order => order.id !== orderId));
         console.log('Order deleted');
       } catch (error) {
         console.error('Error deleting order:', error);
@@ -88,12 +52,19 @@ const OrderList = () => {
     }
   };
 
-  const handleStatusChange = async (orderId, newStatus) => {
+  const handleStatusChange = (orderId, newStatus) => {
     if (!orderId || !newStatus) return;
 
     try {
-      const orderRef = doc(firestoreDb, 'orders', orderId);
-      await updateDoc(orderRef, { status: newStatus });
+      const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const updatedOrders = savedOrders.map(order => 
+        order.id === orderId ? { ...order, status: newStatus } : order
+      );
+      
+      localStorage.setItem('orders', JSON.stringify(updatedOrders));
+      setOrders(prev => prev.map(order => 
+        order.id === orderId ? { ...order, status: newStatus } : order
+      ));
     } catch (error) {
       console.error('Error updating status:', error);
     }
@@ -151,13 +122,13 @@ const OrderList = () => {
                     <MdDelete />
                   </button>
                   <select
-                    value={order.status || 'Placed'}
+                    value={order.status || 'Ordered'}
                     onChange={(e) =>
                       handleStatusChange(order.id, e.target.value)
                     }
                     className="status-dropdown"
                   >
-                    <option value="Placed">Placed</option>
+                    <option value="Ordered">Ordered</option>
                     <option value="Processing">Processing</option>
                     <option value="Shipped">Shipped</option>
                     <option value="Delivered">Delivered</option>

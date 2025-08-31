@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MdListAlt, MdEdit, MdDelete } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebase'; //
-import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore'; 
 import '../styles/ProductList.css';
 
 const ProductList = () => {
@@ -10,14 +8,10 @@ const ProductList = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProducts = () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'products'));
-        const productsArray = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setProducts(productsArray);
+        const savedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+        setProducts(savedProducts);
       } catch (error) {
         console.error('Error fetching products: ', error);
       }
@@ -26,18 +20,13 @@ const ProductList = () => {
     fetchProducts();
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this product?");
     if (confirmDelete) {
       try {
-        // Delete from Firestore
-        await deleteDoc(doc(db, 'products', id));
-
-        // Update the state to reflect the product removal in the UI
-        const updated = products.filter((p) => p.id !== id);
-        setProducts(updated);
-
-        // Show success message
+        const updatedProducts = products.filter((p) => p.id !== id);
+        setProducts(updatedProducts);
+        localStorage.setItem('products', JSON.stringify(updatedProducts));
         alert("Product deleted successfully!");
       } catch (error) {
         console.error("Error deleting product: ", error);

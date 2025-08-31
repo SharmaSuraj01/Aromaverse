@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase'; // adjust path as needed
 import Papa from 'papaparse';
 import '../styles/Payments.css';
 
@@ -9,34 +7,17 @@ const Payments = () => {
   const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
-    const fetchTransactions = async () => {
+    const fetchTransactions = () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'orders'));
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
 
-        const fetchedData = querySnapshot.docs.map(doc => {
-          const data = doc.data();
-
-          const timestamp = data.timestamp?.seconds
-            ? new Date(data.timestamp.seconds * 1000).toLocaleString('en-IN', {
-                timeZone: 'Asia/Kolkata',
-                day: '2-digit',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false,
-              })
-            : 'N/A';
-
-          return {
-            id: doc.id,
-            date: timestamp,
-            amount: data.total || 0,
-            status: data.status || 'Unknown',
-            method: data.paymentMethod || 'Unknown',
-          };
-        });
+        const fetchedData = orders.map(data => ({
+          id: data.id,
+          date: new Date(data.timestamp).toLocaleDateString(),
+          amount: data.total || 0,
+          status: data.status || 'Unknown',
+          method: data.paymentMethod || 'Unknown',
+        }));
 
         setTransactions(fetchedData);
       } catch (error) {
@@ -112,7 +93,7 @@ const Payments = () => {
                 <td>{t.status}</td>
                 <td>{t.method}</td>
                 <td>
-                  {t.status === 'Successful' && (
+                  {t.status === 'Delivered' && (
                     <button onClick={() => refundTransaction(t.id)}>Refund</button>
                   )}
                 </td>

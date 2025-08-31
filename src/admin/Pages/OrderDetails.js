@@ -3,42 +3,42 @@ import { useParams } from 'react-router-dom';
 import '../styles/OrderDetails.css';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { db } from '../../firebase';
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
-import { updateInventory } from '../Pages/Inventory'; // Make sure this function works with Firestore
+import { updateInventory } from '../Pages/Inventory';
 
 const OrderDetails = () => {
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
   const [status, setStatus] = useState('');
 
-  // Fetch order data in real-time from Firestore
   useEffect(() => {
-    const orderRef = doc(db, 'orders', orderId);
-    const unsubscribe = onSnapshot(orderRef, (docSnap) => {
-      if (docSnap.exists()) {
-        const orderData = docSnap.data();
-        setOrder({ id: docSnap.id, ...orderData });
-        setStatus(orderData.status);
-      } else {
-        console.warn('Order not found');
-      }
-    });
-
-    return () => unsubscribe(); // Clean up listener
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const foundOrder = orders.find(o => o.id === orderId);
+    
+    if (foundOrder) {
+      setOrder(foundOrder);
+      setStatus(foundOrder.status);
+    } else {
+      console.warn('Order not found');
+    }
   }, [orderId]);
 
-  const handleStatusChange = async (e) => {
+  const handleStatusChange = (e) => {
     const newStatus = e.target.value;
     setStatus(newStatus);
 
     try {
-      const orderRef = doc(db, 'orders', orderId);
-      await updateDoc(orderRef, { status: newStatus });
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const updatedOrders = orders.map(o => 
+        o.id === orderId ? { ...o, status: newStatus } : o
+      );
+      
+      localStorage.setItem('orders', JSON.stringify(updatedOrders));
+      setOrder(prev => ({ ...prev, status: newStatus }));
+      
       alert(`Order status updated to "${newStatus}"`);
 
       if (newStatus === 'Delivered') {
-        updateInventory(order.items, 'subtract'); // Ensure this updates Firestore inventory
+        updateInventory(order.items, 'subtract');
       }
     } catch (err) {
       console.error('Error updating status:', err);
@@ -52,11 +52,11 @@ const OrderDetails = () => {
     docPDF.text(`Invoice - Order #${order.id}`, 14, 20);
 
     docPDF.setFontSize(12);
-    docPDF.text(`Date: ${order.date}`, 14, 30);
-    docPDF.text(`Customer: ${order.customer.name}`, 14, 38);
-    docPDF.text(`Email: ${order.customer.email}`, 14, 46);
-    docPDF.text(`Phone: ${order.customer.phone}`, 14, 54);
-    docPDF.text(`Address: ${order.customer.address}`, 14, 62);
+    docPDF.text(`Date: ${new Date(order.timestamp).toLocaleDateString()}`, 14, 30);
+    docPDF.text(`Customer: ${order.shipping?.name || 'N/A'}`, 14, 38);
+    docPDF.text(`Email: ${order.email}`, 14, 46);
+    docPDF.text(`Phone: ${order.shipping?.phone || 'N/A'}`, 14, 54);
+    docPDF.text(`Address: ${order.shipping?.address || 'N/A'}`, 14, 62);
 
     autoTable(docPDF, {
       startY: 72,
@@ -82,14 +82,14 @@ const OrderDetails = () => {
   return (
     <div className="order-details-container">
       <h2>Order #{order.id}</h2>
-      <p><strong>Date:</strong> {order.date}</p>
+      <p><strong>Date:</strong> {new Date(order.timestamp).toLocaleDateString()}</p>
 
       <div className="order-section">
         <h3>Customer Details</h3>
-        <p><strong>Name:</strong> {order.customer.name}</p>
-        <p><strong>Email:</strong> {order.customer.email}</p>
-        <p><strong>Phone:</strong> {order.customer.phone}</p>
-        <p><strong>Address:</strong> {order.customer.address}</p>
+        <p><strong>Name:</strong> {order.shipping?.name || 'N/A'}</p>
+        <p><strong>Email:</strong> {order.email}</p>
+        <p><strong>Phone:</strong> {order.shipping?.phone || 'N/A'}</p>
+        <p><strong>Address:</strong> {order.shipping?.address || 'N/A'}</p>
       </div>
 
       <div className="order-section">
@@ -120,7 +120,7 @@ const OrderDetails = () => {
       <div className="order-section">
         <h3>Status</h3>
         <select value={status} onChange={handleStatusChange}>
-          <option value="Placed">Placed</option>
+          <option value="Ordered">Ordered</option>
           <option value="Processing">Processing</option>
           <option value="Shipped">Shipped</option>
           <option value="Delivered">Delivered</option>

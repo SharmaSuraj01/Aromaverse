@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
-import { db } from '../../firebase'; // make sure the path is correct
 import '../styles/Coupon.css';
 
 const AddCoupon = () => {
@@ -25,12 +23,18 @@ const AddCoupon = () => {
     e.preventDefault();
 
     try {
-      // Add to Firestore
-      await addDoc(collection(db, 'coupons'), {
+      // Save to localStorage instead of Firebase
+      const existingCoupons = JSON.parse(localStorage.getItem('coupons') || '[]');
+      const newCoupon = {
         ...couponData,
+        id: Date.now().toString(),
         discountValue: Number(couponData.discountValue),
         minOrderAmount: Number(couponData.minOrderAmount),
-      });
+        createdAt: new Date().toISOString()
+      };
+      
+      existingCoupons.push(newCoupon);
+      localStorage.setItem('coupons', JSON.stringify(existingCoupons));
 
       alert('Coupon added successfully!');
       setCouponData({

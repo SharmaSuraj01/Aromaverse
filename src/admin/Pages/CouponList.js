@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
-import { db } from '../../firebase';
 import '../styles/CouponList.css';
 
 const CouponList = () => {
@@ -10,16 +8,9 @@ const CouponList = () => {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'coupons'), (snapshot) => {
-      const fetchedCoupons = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setCoupons(fetchedCoupons);
-    });
-
-    // Cleanup on unmount
-    return () => unsubscribe();
+    // Load coupons from localStorage
+    const savedCoupons = JSON.parse(localStorage.getItem('coupons') || '[]');
+    setCoupons(savedCoupons);
   }, []);
 
   const filteredCoupons = coupons.filter(c =>
@@ -33,8 +24,10 @@ const CouponList = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this coupon?')) {
       try {
-        await deleteDoc(doc(db, 'coupons', id)); // Delete from Firestore
-        // No need to update state manually — onSnapshot handles it!
+        const updatedCoupons = coupons.filter(c => c.id !== id);
+        setCoupons(updatedCoupons);
+        localStorage.setItem('coupons', JSON.stringify(updatedCoupons));
+        alert('Coupon deleted successfully!');
       } catch (error) {
         console.error('Error deleting coupon:', error);
         alert('Failed to delete coupon.');

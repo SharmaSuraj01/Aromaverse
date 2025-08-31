@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { collection, onSnapshot } from 'firebase/firestore';
-import { db } from '../../firebase';
 import '../styles/Dashboard.css';
 
 const Dashboard = () => {
@@ -8,48 +6,41 @@ const Dashboard = () => {
   const [products, setProducts] = useState([]);
   const [timeFrame, setTimeFrame] = useState('daily');
 
-  // Firestore data fetching
+  // Load data from localStorage
   useEffect(() => {
-    const unsubscribeOrders = onSnapshot(collection(db, 'orders'), (snapshot) => {
-      const fetchedOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setOrders(fetchedOrders);
-    });
-
-    const unsubscribeProducts = onSnapshot(collection(db, 'products'), (snapshot) => {
-      const fetchedProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setProducts(fetchedProducts);
-    });
-
-    return () => {
-      unsubscribeOrders();
-      unsubscribeProducts();
-    };
+    const savedOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const savedProducts = JSON.parse(localStorage.getItem('products') || '[]');
+    
+    setOrders(savedOrders);
+    setProducts(savedProducts);
   }, []);
 
   // Revenue & buyers
   const totalRevenue = orders.reduce((acc, order) => acc + (order.total || 0), 0);
-  const uniqueBuyers = new Set(orders.map(order => order.customer?.email)).size;
-  const latestOrders = [...orders].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+  const uniqueBuyers = new Set(orders.map(order => order.email)).size;
+  const latestOrders = [...orders]
+    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+    .slice(0, 5);
 
   const topProducts = [...products]
     .sort((a, b) => (b.sold || 0) - (a.sold || 0))
     .slice(0, 5);
 
-  const lowStock = products.filter(p => (p.stock || 0) < 10);
+  const lowStock = products.filter(p => (p.quantity || 0) < 10);
 
   // Buyer behavior
   const repeatBuyers = orders.reduce((acc, order) => {
-    const email = order.customer?.email;
+    const email = order.email;
     if (email) acc[email] = (acc[email] || 0) + 1;
     return acc;
   }, {});
+  
   const returning = Object.values(repeatBuyers).filter(count => count > 1).length;
   const cartAbandonment = orders.filter(order => order.status === 'Abandoned').length;
-  const frequentBuyers = orders.filter(order => repeatBuyers[order.customer?.email] > 2).length;
+  const frequentBuyers = orders.filter(order => repeatBuyers[order.email] > 2).length;
 
-  // Placeholder for sales data by date (based on real orders)
   const salesData = orders.map(order => ({
-    date: order.date,
+    date: order.timestamp,
     total: order.total || 0,
   }));
 
@@ -87,8 +78,8 @@ const Dashboard = () => {
       </div>
 
       <div className="dashboard-charts">
-        <div className="chart-box">[ Orders Chart ]</div>
-        <div className="chart-box">[ Revenue Chart ]</div>
+        <div className="chart-box">[ Orders Chart - Coming Soon ]</div>
+        <div className="chart-box">[ Revenue Chart - Coming Soon ]</div>
       </div>
 
       <div className="latest-orders">
@@ -107,10 +98,10 @@ const Dashboard = () => {
             {latestOrders.length > 0 ? latestOrders.map((o, idx) => (
               <tr key={idx}>
                 <td>{o.id}</td>
-                <td>{o.customer?.name || 'N/A'}</td>
+                <td>{o.shipping?.name || 'N/A'}</td>
                 <td>₹{o.total}</td>
                 <td>{o.status || 'Placed'}</td>
-                <td>{o.date}</td>
+                <td>{new Date(o.timestamp).toLocaleDateString()}</td>
               </tr>
             )) : (
               <tr><td colSpan="5" style={{ textAlign: 'center' }}>No recent orders</td></tr>
@@ -145,24 +136,6 @@ const Dashboard = () => {
             <li key={i}>{p.name} - Sold: {p.sold || 0}</li>
           ))}
         </ul>
-
-        <h4>Sales Reports ({timeFrame.charAt(0).toUpperCase() + timeFrame.slice(1)})</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Total Sales</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filterSalesData().map((s, i) => (
-              <tr key={i}>
-                <td>{s.date}</td>
-                <td>₹{s.total}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
 
         <h4>Marketing Campaigns</h4>
         <table className="marketing-table">

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../firebase'; // Import Firestore database
-import { collection, getDocs } from 'firebase/firestore';
 import '../styles/CustomerCommon.css';
 
 const CustomerList = () => {
@@ -9,29 +7,25 @@ const CustomerList = () => {
   const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
-    // Fetch orders from Firestore
-    const fetchOrders = async () => {
+    // Get orders from localStorage instead of Firestore
+    const fetchOrders = () => {
       try {
-        const ordersSnapshot = await getDocs(collection(db, 'orders'));
-        const orders = ordersSnapshot.docs.map(doc => doc.data());
-
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+        
         // Process orders to get customer data
         const map = {};
 
         orders.forEach((order) => {
-          // Extract customer data from shipping field
           const { shipping, email, total } = order;
-          const { name, address } = shipping; // Extracting name and address from shipping
+          const { name, address } = shipping || {};
 
-          // Ensure email exists for unique customer identification
           if (!email) return;
 
-          // Check if this customer already exists in the map
           if (!map[email]) {
             map[email] = {
-              name: name || 'No Name Available',  // If no name, fallback to 'No Name Available'
+              name: name || 'No Name Available',
               email,
-              address: address || 'No Address Available',  // Fallback for address
+              address: address || 'No Address Available',
               totalOrders: 1,
               totalSpent: total || 0,
             };
@@ -54,7 +48,7 @@ const CustomerList = () => {
 
         setCustomers(result);
       } catch (error) {
-        console.error('Error fetching orders from Firestore:', error);
+        console.error('Error fetching orders from localStorage:', error);
       }
     };
 
@@ -85,7 +79,7 @@ const CustomerList = () => {
           ) : (
             customers.map((c, i) => (
               <tr key={i}>
-                <td>{c.name}</td> {/* Name will now be displayed correctly */}
+                <td>{c.name}</td>
                 <td>{c.email}</td>
                 <td>{c.totalOrders}</td>
                 <td>₹{c.totalSpent}</td>

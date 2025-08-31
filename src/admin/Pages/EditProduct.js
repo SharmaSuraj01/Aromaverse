@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebase'; // make sure db is correctly imported
 import '../styles/AddProduct.css';
 
 const EditProduct = () => {
@@ -15,17 +13,17 @@ const EditProduct = () => {
     quantity: '',
     description: '',
     category: '',
-    image: ''
+    images: []
   });
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchProduct = () => {
       try {
-        const docRef = doc(db, 'products', id);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          setProduct(docSnap.data());
+        const products = JSON.parse(localStorage.getItem('products') || '[]');
+        const foundProduct = products.find(p => p.id === id);
+        
+        if (foundProduct) {
+          setProduct(foundProduct);
         } else {
           alert('Product not found!');
           navigate('/admin/products');
@@ -46,13 +44,19 @@ const EditProduct = () => {
     e.preventDefault();
 
     try {
-      const docRef = doc(db, 'products', id);
-      await updateDoc(docRef, {
-        ...product,
-        price: Number(product.price),
-        discount: Number(product.discount),
-        quantity: Number(product.quantity)
-      });
+      const products = JSON.parse(localStorage.getItem('products') || '[]');
+      const updatedProducts = products.map(p => 
+        p.id === id 
+          ? {
+              ...product,
+              price: Number(product.price),
+              discount: Number(product.discount),
+              quantity: Number(product.quantity)
+            }
+          : p
+      );
+      
+      localStorage.setItem('products', JSON.stringify(updatedProducts));
 
       alert('✅ Product updated successfully!');
       navigate('/admin/products');
@@ -88,17 +92,17 @@ const EditProduct = () => {
 
         <div className="form-group">
           <label>Category</label>
-          <input type="text" name="category" value={product.category} onChange={handleChange} required />
+          <select name="category" value={product.category} onChange={handleChange} required>
+            <option value="">Select category</option>
+            <option value="For Him">For Him</option>
+            <option value="For Her">For Her</option>
+            <option value="For Kids">For Kids</option>
+          </select>
         </div>
 
         <div className="form-group">
           <label>Description</label>
           <textarea name="description" value={product.description} onChange={handleChange} rows="4" />
-        </div>
-
-        <div className="form-group">
-          <label>Image URL</label>
-          <input type="text" name="image" value={product.image} onChange={handleChange} />
         </div>
 
         <button className="submit-btn" type="submit">Update Product</button>
