@@ -2,16 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/FeaturedScents.css';
 import { useCart } from '../Context/CartContext';
+import { products } from '../data/products';
 import AddToCartModal from '../components/AddToCartModal';
-  import image1 from '../assets/photo/11.jpg';
-  import image2 from '../assets/photo/12.jpg';
-  import image3 from '../assets/photo/13.jpg';
-  import image4 from '../assets/photo/141.jpg';
-  import image5 from '../assets/photo/151.jpg';
-  import image6 from '../assets/photo/161.jpg';
-  import image7 from '../assets/photo/171.jpg';
-  import image8 from '../assets/photo/men.jpg';
-
 
 function FeaturedScents({ filterGender }) {
   const scrollRef = useRef(null);
@@ -28,93 +20,10 @@ function FeaturedScents({ filterGender }) {
     showCartModal,
   } = useCart();
 
-  // ✅ Mock product data
-  const mockProducts = [
-    {
-      id: '1',
-      name: 'Ocean Breeze',
-      price: 499,
-      discount: 10,
-      quantity: 50,
-      description: 'Fresh aquatic fragrance',
-      category: 'For Him',
-      images: [image1],
-    },
-    {
-      id: '2',
-      name: 'Floral Bliss',
-      price: 599,
-      discount: 5,
-      quantity: 30,
-      description: 'Sweet floral aroma',
-      category: 'For Her',
-      images: [image2],
-    },
-    {
-      id: '3',
-      name: 'Candy Pop',
-      price: 299,
-      discount: 0,
-      quantity: 20,
-      description: 'Fruity and fun',
-      category: 'For Kids',
-      images: [image3],
-    },
-    {
-      id: '4',
-      
-      name: 'Spicy Cinnamon',
-      price: 699,
-      discount: 15,
-      quantity: 25,
-      description: 'Warm and inviting',
-      category: 'For Him',
-      images: [image4],
-    },
-    {
-      id: '5',
-      name: 'Lavender Dreams',
-      price: 549,
-      discount: 20,
-      quantity: 40,
-      description: 'Relaxing lavender scent',
-      category: 'For Her',
-      images: [image5],
-    },
-    {
-      id: '6',
-      name: 'Sunny Citrus',
-      price: 399,
-      discount: 10,
-      quantity: 60,
-      description: 'Zesty citrus fragrance',
-      category: 'For Kids',
-      images: [image6],
-    },
-    {
-      id: '7',
-      name: 'Mystic Woods',
-      price: 799,
-      discount: 25,
-      quantity: 15,
-      description: 'Earthy and grounding',
-      category: 'For Him',
-      images: [image7],
-    },
-    {
-      id: '8',
-      name: 'Rose Petals',
-      price: 649,
-      discount: 30,
-      quantity: 35,
-      description: 'Romantic rose scent',
-      category: 'For Her',
-      images: [image8],
-    },
-  ];
-
   useEffect(() => {
-    setScents(mockProducts);
+    setScents(products);
+    const savedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    setWishlist(savedWishlist);
   }, []);
 
   const isInWishlist = (id) => wishlist.includes(id);
@@ -124,6 +33,7 @@ function FeaturedScents({ filterGender }) {
       ? wishlist.filter((wId) => wId !== item.id)
       : [...wishlist, item.id];
     setWishlist(updatedWishlist);
+    localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
   };
 
   const normalize = (str) =>

@@ -1,60 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { auth, db, storage } from '../firebase';
-import {
-  doc,
-  getDoc,
-  updateDoc
-} from 'firebase/firestore';
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from 'firebase/storage';
-import { onAuthStateChanged } from 'firebase/auth';
+import { useAuth } from '../Context/AuthContext';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const useDeviceDetect = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
   return { isMobile };
 };
 
 const MyProfile = () => {
   const { isMobile } = useDeviceDetect();
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, updateProfile, loading } = useAuth();
+  const [profile, setProfile] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    photoURL: ''
+  });
   const [updating, setUpdating] = useState(false);
   const [message, setMessage] = useState('');
   const [imageFile, setImageFile] = useState(null);
 
   useEffect(() => {
-    const fetchProfile = async (user) => {
-      try {
-        const ref = doc(db, 'users', user.uid);
-        const snap = await getDoc(ref);
-        if (snap.exists()) {
-          setProfile({ uid: user.uid, ...snap.data() });
-        }
-      } catch (err) {
-        console.error('Error loading profile:', err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) fetchProfile(user);
-      else setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
+    if (user) {
+      setProfile({
+        name: user.name || user.displayName || '',
+        email: user.email || '',
+        phone: user.phone || '',
+        address: user.address || '',
+        photoURL: user.photoURL || ''
+      });
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,37 +45,26 @@ const MyProfile = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) setImageFile(file);
+    if (file) {
+      setImageFile(file);
+      // Create a preview URL
+      const previewURL = URL.createObjectURL(file);
+      setProfile(prev => ({ ...prev, photoURL: previewURL }));
+    }
   };
 
   const handleUpdate = async () => {
-    if (!profile) return;
+    if (!user) return;
     setUpdating(true);
-
+    
     try {
-      let photoURL = profile.photoURL;
-
-      if (imageFile) {
-        const imageRef = ref(storage, `profile-images/${profile.uid}`);
-        await uploadBytes(imageRef, imageFile);
-        photoURL = await getDownloadURL(imageRef);
-      }
-
-      const userRef = doc(db, 'users', profile.uid);
-      await updateDoc(userRef, {
-        name: profile.name,
-        phone: profile.phone,
-        address: profile.address,
-        photoURL,
-      });
-
-      setProfile((prev) => ({ ...prev, photoURL }));
+      await updateProfile(profile);
       setMessage('✅ Profile updated successfully!');
+      setImageFile(null);
     } catch (err) {
-      console.error('Update error:', err.message);
+      console.error('Update error:', err);
       setMessage('❌ Failed to update profile.');
     }
-
     setUpdating(false);
   };
 
@@ -101,11 +72,7 @@ const MyProfile = () => {
     <>
       <div className="mb-3 text-center">
         <img
-          src={
-            imageFile
-              ? URL.createObjectURL(imageFile)
-              : profile.photoURL || 'https://via.placeholder.com/120'
-          }
+          src={profile.photoURL || 'https://via.placeholder.com/120'}
           alt="Profile"
           className="rounded-circle"
           width="120"
@@ -122,7 +89,7 @@ const MyProfile = () => {
           />
         </div>
       </div>
-
+      
       <div className="mb-3">
         <label className="form-label">Name</label>
         <input
@@ -133,35 +100,35 @@ const MyProfile = () => {
           placeholder="Your Name"
         />
       </div>
-
+      
       <div className="mb-3">
         <label className="form-label">Email</label>
         <input className="form-control" value={profile.email} disabled />
       </div>
-
+      
       <div className="mb-3">
         <label className="form-label">Phone</label>
         <input
           className="form-control"
           name="phone"
-          value={profile.phone || ''}
+          value={profile.phone}
           onChange={handleChange}
           placeholder="Your Phone"
         />
       </div>
-
+      
       <div className="mb-3">
         <label className="form-label">Address</label>
         <textarea
           className="form-control"
           name="address"
-          value={profile.address || ''}
+          value={profile.address}
           onChange={handleChange}
           rows={3}
           placeholder="Your Address"
         />
       </div>
-
+      
       <div className="text-center">
         <button
           className="btn btn-dark w-100"
@@ -183,7 +150,7 @@ const MyProfile = () => {
     );
   }
 
-  if (!profile) {
+  if (!user) {
     return (
       <div className="container py-5 text-center">
         <p>User not logged in.</p>

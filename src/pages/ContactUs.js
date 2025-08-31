@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/ContactUs.css';
-import { db } from '../firebase'; // 🔥 Make sure your firebase config is correct
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -23,11 +21,15 @@ const ContactUs = () => {
     e.preventDefault();
 
     try {
-      // ✅ Add contact message to Firestore
-      await addDoc(collection(db, 'contactMessages'), {
+      // Save contact message to localStorage
+      const existingMessages = JSON.parse(localStorage.getItem('contactMessages') || '[]');
+      const newMessage = {
         ...formData,
-        createdAt: serverTimestamp()
-      });
+        createdAt: new Date().toISOString(),
+        id: Date.now().toString()
+      };
+      existingMessages.push(newMessage);
+      localStorage.setItem('contactMessages', JSON.stringify(existingMessages));
 
       setShowPopup(true);
       setFormData({ name: '', email: '', phone: '', message: '' });
@@ -39,7 +41,7 @@ const ContactUs = () => {
 
   const closePopup = () => {
     setShowPopup(false);
-    navigate('/'); // Redirect to homepage
+    navigate('/');
   };
 
   return (

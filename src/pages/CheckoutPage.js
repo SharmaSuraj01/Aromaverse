@@ -1,20 +1,18 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { auth, db, storage } from '../firebase';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { useAuth } from '../Context/AuthContext';
 import { v4 as uuidv4 } from 'uuid';
 import Select from 'react-select';
 import axios from 'axios';
-import { ref, getDownloadURL } from 'firebase/storage';
 
 const CheckoutPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
+  const { user } = useAuth();
+  
   const initialCart = location.state?.cartItems || JSON.parse(localStorage.getItem('cart')) || [];
   const [cartItems, setCartItems] = useState(initialCart);
-  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
@@ -24,18 +22,16 @@ const CheckoutPage = () => {
   const tax = useMemo(() => Math.round(subtotal * 0.15), [subtotal]);
   const total = useMemo(() => subtotal + tax, [subtotal, tax]);
 
-  const [user, setUser] = useState(null);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(user?.email || '');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [address, setAddress] = useState('');
   const [state, setState] = useState('');
   const [city, setCity] = useState('');
   const [pin, setPin] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState(user?.phone || '');
   const [showErrorPopup, setShowErrorPopup] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('razorpay');
-
+  const [paymentMethod, setPaymentMethod] = useState('cod');
   const [allStates, setAllStates] = useState([]);
   const [cityOptions, setCityOptions] = useState([]);
 
@@ -44,10 +40,8 @@ const CheckoutPage = () => {
       .then(res => {
         const states = res.data.data.states.map(s => ({ label: s.name, value: s.name }));
         setAllStates(states);
-      });
-
-    axios.post('https://countriesnow.space/api/v0.1/countries/state/cities', { country: 'India', state: 'Uttar Pradesh' })
-      .then(res => setCityOptions(res.data.data));
+      })
+      .catch(err => console.error('Error fetching states:', err));
   }, []);
 
   const handleStateChange = async (selected) => {
@@ -82,7 +76,7 @@ const CheckoutPage = () => {
   const allRequiredFilled = () =>
     email && firstName && address && city && state && pin && phone;
 
-  const placeOrderInFirebase = async () => {
+  const placeOrderLocally = () => {
     const shippingInfo = {
       name: `${firstName} ${lastName}`,
       phone,
@@ -91,19 +85,29 @@ const CheckoutPage = () => {
 
     const newOrder = {
       id: uuidv4().split('-')[0].toUpperCase(),
-      userId: user.uid,
+      userId: user?.uid || 'guest',
       email,
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
       items: cartItems,
       shipping: shippingInfo,
-      status: 'Pending 🕒',
+      status: 'Ordered',
       paymentMethod,
       subtotal,
       tax,
       total
     };
 
-    await addDoc(collection(db, 'orders'), newOrder);
+    // Save order to localStorage
+    const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    existingOrders.push(newOrder);
+    localStorage.setItem('orders', JSON.stringify(existingOrders));
+
+    // Save user-specific orders
+    if (user) {
+      const userOrders = JSON.parse(localStorage.getItem(`orders_${user.uid}`) || '[]');
+      userOrders.push(newOrder);
+      localStorage.setItem(`orders_${user.uid}`, JSON.stringify(userOrders));
+    }
   };
 
   const handlePayment = async () => {
@@ -118,9 +122,12 @@ const CheckoutPage = () => {
     }
 
     if (paymentMethod === 'razorpay') {
-      alert('Redirecting to Razorpay...');
+      alert('Razorpay payment coming soon! Using COD for now.');
+      placeOrderLocally();
+      localStorage.removeItem('cart');
+      navigate('/thank-you', { state: { orderSuccess: true, cartItems } });
     } else if (paymentMethod === 'cod') {
-      await placeOrderInFirebase();
+      placeOrderLocally();
       localStorage.removeItem('cart');
       navigate('/thank-you', { state: { orderSuccess: true, cartItems } });
     }
@@ -133,45 +140,6 @@ const CheckoutPage = () => {
     setCartItems(updatedCart);
   };
 
-  // Fetch products and image URLs
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'products'));
-        const fetchedProducts = [];
-
-        for (const doc of querySnapshot.docs) {
-          const productData = doc.data();
-          let imageUrl = '';
-
-          try {
-            const imageRef = ref(storage, `product-images/${productData.imageName}`);
-            imageUrl = await getDownloadURL(imageRef);
-          } catch (e) {
-            console.warn(`No image found for ${productData.name}`);
-          }
-
-          fetchedProducts.push({
-            id: doc.id,
-            ...productData,
-            imageUrl,
-          });
-        }
-
-        setProducts(fetchedProducts);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(setUser);
-    return () => unsubscribe();
-  }, []);
-
   return (
     <div className="container my-5">
       <div className="row g-4">
@@ -183,6 +151,7 @@ const CheckoutPage = () => {
               <label className="form-label">Email <span className="text-danger">*</span></label>
               <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} required />
             </div>
+            
             <h5 className="mt-4">Shipping Address</h5>
             <div className="row">
               <div className="col-md-6 mb-3">
@@ -194,10 +163,12 @@ const CheckoutPage = () => {
                 <input type="text" className="form-control" value={lastName} onChange={(e) => setLastName(e.target.value)} />
               </div>
             </div>
+            
             <div className="mb-3">
               <label className="form-label">Address <span className="text-danger">*</span></label>
               <input type="text" className="form-control" value={address} onChange={(e) => setAddress(e.target.value)} required />
             </div>
+            
             <div className="row">
               <div className="col-md-6 mb-3">
                 <label className="form-label">State <span className="text-danger">*</span></label>
@@ -208,20 +179,23 @@ const CheckoutPage = () => {
                 <Select options={cityOptions} onChange={handleCityChange} placeholder="Select city" isDisabled={!state} />
               </div>
             </div>
+            
             <div className="mb-3">
               <label className="form-label">PIN <span className="text-danger">*</span></label>
               <input type="text" className="form-control" value={pin} onChange={(e) => setPin(e.target.value)} placeholder="Enter PIN code" />
             </div>
+            
             <div className="mb-3">
               <label className="form-label">Phone number <span className="text-danger">*</span></label>
               <input type="tel" className="form-control" value={phone} onChange={(e) => setPhone(e.target.value)} required />
             </div>
+            
             <h5>Payment</h5>
             <div className="p-3 border rounded mb-3 bg-light">
               <div className="form-check mb-2">
                 <input className="form-check-input" type="radio" name="paymentMethod" id="razorpayOption" value="razorpay" checked={paymentMethod === 'razorpay'} onChange={() => setPaymentMethod('razorpay')} />
                 <label className="form-check-label" htmlFor="razorpayOption">
-                  Pay with Razorpay
+                  Pay with Razorpay (Coming Soon)
                 </label>
               </div>
               <div className="form-check">
@@ -231,39 +205,36 @@ const CheckoutPage = () => {
                 </label>
               </div>
             </div>
+            
             <button type="button" className="btn btn-primary w-100" onClick={handlePayment}>
               Place Order
             </button>
           </form>
         </div>
-
+        
         <div className="col-md-5">
           <h3>Order Summary</h3>
           <div className="border p-3 rounded bg-light">
-            {cartItems.map((item, index) => {
-              const productDetails = products.find(p => p.name === item.name || p.id === item.id);
-              const imageUrl = productDetails?.imageUrl || (productDetails?.images?.[0]) || 'https://via.placeholder.com/60';
-
-              return (
-                <div key={index} className="d-flex mb-3">
-                  <img
-                    src={imageUrl}
-                    alt={productDetails?.name || item.name}
-                    className="img-fluid"
-                    style={{ width: '60px', height: '60px', objectFit: 'cover' }}
-                  />
-                  <div className="ms-3">
-                    <p>{productDetails?.name || item.name}</p>
-                    <p>Qty: {item.qty} | ₹{item.price * item.qty}</p>
-                    <div className="d-flex align-items-center">
-                      <button onClick={() => updateQty(index, item.qty - 1)} className="btn btn-sm btn-outline-secondary">-</button>
-                      <span className="mx-2">{item.qty}</span>
-                      <button onClick={() => updateQty(index, item.qty + 1)} className="btn btn-sm btn-outline-secondary">+</button>
-                    </div>
+            {cartItems.map((item, index) => (
+              <div key={index} className="d-flex mb-3">
+                <img
+                  src={item.images?.[0] || 'https://via.placeholder.com/60'}
+                  alt={item.name}
+                  className="img-fluid"
+                  style={{ width: '60px', height: '60px', objectFit: 'cover' }}
+                />
+                <div className="ms-3">
+                  <p>{item.name}</p>
+                  <p>Qty: {item.qty} | ₹{item.price * item.qty}</p>
+                  <div className="d-flex align-items-center">
+                    <button onClick={() => updateQty(index, item.qty - 1)} className="btn btn-sm btn-outline-secondary">-</button>
+                    <span className="mx-2">{item.qty}</span>
+                    <button onClick={() => updateQty(index, item.qty + 1)} className="btn btn-sm btn-outline-secondary">+</button>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
+            
             <div className="d-flex justify-content-between">
               <p><strong>Subtotal</strong></p>
               <p>₹{subtotal}</p>
@@ -279,6 +250,25 @@ const CheckoutPage = () => {
           </div>
         </div>
       </div>
+
+      {showErrorPopup && (
+        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Missing Information</h5>
+                <button type="button" className="btn-close" onClick={() => setShowErrorPopup(false)}></button>
+              </div>
+              <div className="modal-body">
+                <p>Please fill in all required fields before placing your order.</p>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowErrorPopup(false)}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

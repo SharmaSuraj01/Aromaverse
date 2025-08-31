@@ -6,7 +6,7 @@ import forHer from '../assets/photo/women.jpg';
 import forKids from '../assets/photo/child.jpg';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../Context/CartContext';
-import { auth } from '../firebase';
+import { useAuth } from '../Context/AuthContext';
 import i1 from '../assets/photo/11.jpg?v=2';
 import i2 from '../assets/photo/12.jpg?v=2';
 import i3 from '../assets/photo/13.jpg?v=2';
@@ -14,7 +14,6 @@ import i4 from '../assets/photo/141.jpg?v=2';
 import i5 from '../assets/photo/151.jpg?v=2';
 import i6 from '../assets/photo/161.jpg?v=2';
 import i7 from '../assets/photo/171.jpg?v=2';
-import { onAuthStateChanged } from 'firebase/auth';
 
 const scents = [
   { id: 1, name: 'Moonlit Desire', price: 799, img: i1, gender: 'her' },
@@ -29,11 +28,10 @@ const scents = [
 const Navbar = () => {
   const [showSearchOverlay, setShowSearchOverlay] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [showLogoutMessage, setShowLogoutMessage] = useState(false);
-  const [userName, setUserName] = useState('');
 
   const { cartItems, setShowCartModal } = useCart();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const toggleSearchOverlay = () => setShowSearchOverlay(!showSearchOverlay);
@@ -47,32 +45,17 @@ const Navbar = () => {
   );
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setIsLoggedIn(true);
-        setUserName(user.displayName || user.email || 'User');
-      } else {
-        setIsLoggedIn(false);
-        setUserName('');
-      }
-    });
-
     const handleEsc = (e) => {
       if (e.key === 'Escape') closeSearchOverlay();
     };
 
     window.addEventListener('keydown', handleEsc);
-
-    return () => {
-      unsubscribe();
-      window.removeEventListener('keydown', handleEsc);
-    };
+    return () => window.removeEventListener('keydown', handleEsc);
   }, []);
 
   const handleLogout = async () => {
     try {
-      await auth.signOut();
-      setIsLoggedIn(false);
+      logout();
       setShowLogoutMessage(true);
       setTimeout(() => {
         setShowLogoutMessage(false);
@@ -100,7 +83,7 @@ const Navbar = () => {
               </button>
 
               <a className="navbar-brand mx-lg-0 mx-auto" href="/">
-                <img src={logo} alt="Kizu Perfumes" className="logo-img" />
+                <img src={logo} alt="Aromaverse Perfumes" className="logo-img" />
               </a>
 
               <div className="d-flex gap-2">
@@ -108,7 +91,6 @@ const Navbar = () => {
                   <i className="bi bi-search fs-5"></i>
                 </button>
 
-                {/* Wishlist button - Mobile */}
                 <button className="btn btn-link text-dark p-0 d-none d-md-block" onClick={() => navigate('/wishlist')}>
                   <i className="bi bi-heart fs-5"></i>
                 </button>
@@ -127,9 +109,9 @@ const Navbar = () => {
                     <i className="bi bi-person-circle fs-5"></i>
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="mobileUserMenu">
-                    {isLoggedIn ? (
+                    {user ? (
                       <>
-                        <li className="dropdown-header fw-semibold text-dark px-3">Welcome, {userName}</li>
+                        <li className="dropdown-header fw-semibold text-dark px-3">Welcome, {user.displayName || user.name}</li>
                         <li><Link className="dropdown-item" to="/profile"><i className="bi bi-person me-2"></i>My Profile</Link></li>
                         <li><Link className="dropdown-item" to="/orders"><i className="bi bi-box-seam me-2"></i>My Orders</Link></li>
                         <li><Link className="dropdown-item" to="/wishlist"><i className="bi bi-heart me-2"></i>Wishlist</Link></li>
@@ -196,7 +178,6 @@ const Navbar = () => {
                   <i className="bi bi-search fs-5"></i>
                 </button>
 
-                {/* Wishlist button - Desktop */}
                 <button className="btn btn-link text-dark p-0 d-none d-md-block" onClick={() => navigate('/wishlist')}>
                   <i className="bi bi-heart fs-5"></i>
                 </button>
@@ -215,9 +196,9 @@ const Navbar = () => {
                     <i className="bi bi-person-circle fs-5"></i>
                   </button>
                   <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="desktopUserMenu">
-                    {isLoggedIn ? (
+                    {user ? (
                       <>
-                        <li className="dropdown-header fw-semibold text-dark px-3">Welcome, {userName}</li>
+                        <li className="dropdown-header fw-semibold text-dark px-3">Welcome, {user.displayName || user.name}</li>
                         <li><Link className="dropdown-item" to="/my-profile"><i className="bi bi-person me-2"></i>My Profile</Link></li>
                         <li><Link className="dropdown-item" to="/orders"><i className="bi bi-box-seam me-2"></i>My Orders</Link></li>
                         <li><Link className="dropdown-item" to="/wishlist"><i className="bi bi-heart me-2"></i>Wishlist</Link></li>

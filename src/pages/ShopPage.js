@@ -1,25 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';  // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import '../css/Shop.css';
-
 import AddToCartModal from '../components/AddToCartModal';
 import { useCart } from '../Context/CartContext';
-
-import { auth, db } from '../firebase';
-import {
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-  collection,
-  getDocs,
-  onSnapshot
-} from 'firebase/firestore';
+import { useAuth } from '../Context/AuthContext';
+import { products } from '../data/products';
 
 function ShopPage() {
-  const [products, setProducts] = useState([]);
+  const [productList, setProductList] = useState([]);
   const [loadingIds, setLoadingIds] = useState([]);
   const [wishlist, setWishlist] = useState([]);
 
@@ -32,35 +20,18 @@ function ShopPage() {
     setShowCartModal,
   } = useCart();
 
-  const user = auth.currentUser;
-  const navigate = useNavigate();  // Hook for navigation
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  // Fetch products with real-time updates
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
-      const productDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setProducts(productDocs);
-    }, (error) => {
-      console.error("Error fetching products:", error);
-    });
-
-    // Cleanup the listener when the component unmounts
-    return () => unsubscribe();
+    setProductList(products);
   }, []);
 
-  // Fetch wishlist data
   useEffect(() => {
-    const fetchWishlist = async () => {
-      if (user) {
-        const docRef = doc(db, 'wishlists', user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setWishlist(docSnap.data().items || []);
-        }
-      }
-    };
-
-    fetchWishlist();
+    if (user) {
+      const savedWishlist = JSON.parse(localStorage.getItem(`wishlist_${user.uid}`) || '[]');
+      setWishlist(savedWishlist);
+    }
   }, [user]);
 
   const handleAddToCart = (product) => {
@@ -75,25 +46,24 @@ function ShopPage() {
     }, 300);
   };
 
-  const toggleWishlist = async (productId) => {
-    if (!user) return alert("Login to use wishlist");
-
-    const docRef = doc(db, 'wishlists', user.uid);
-    let updated;
-
-    if (wishlist.includes(productId)) {
-      await updateDoc(docRef, { items: arrayRemove(productId) });
-      updated = wishlist.filter(id => id !== productId);
-    } else {
-      await setDoc(docRef, { items: arrayUnion(productId) }, { merge: true });
-      updated = [...wishlist, productId];
+  const toggleWishlist = (productId) => {
+    if (!user) {
+      alert("Login to use wishlist");
+      return;
     }
 
-    setWishlist(updated);
+    let updatedWishlist;
+    if (wishlist.includes(productId)) {
+      updatedWishlist = wishlist.filter(id => id !== productId);
+    } else {
+      updatedWishlist = [...wishlist, productId];
+    }
+
+    setWishlist(updatedWishlist);
+    localStorage.setItem(`wishlist_${user.uid}`, JSON.stringify(updatedWishlist));
   };
 
   const handleProductClick = (productId) => {
-    // Navigate to the product detail page when an image or product is clicked
     navigate(`/product/${productId}`);
   };
 
@@ -102,7 +72,7 @@ function ShopPage() {
       <section className="container py-5">
         <h2 className="text-center mb-5 best-seller-heading">All Perfumes</h2>
         <div className="row g-4">
-          {products.map((item) => {
+          {productList.map((item) => {
             const isLoading = loadingIds.includes(item.id);
             const isWishlisted = wishlist.includes(item.id);
             const imageUrl = (item.images && item.images[0]) || 'https://via.placeholder.com/300';
@@ -112,7 +82,7 @@ function ShopPage() {
                 <div className="featured-card h-100 d-flex flex-column">
                   <div
                     className="img-hover-wrap position-relative"
-                    onClick={() => handleProductClick(item.id)}  // Navigate to product detail page
+                    onClick={() => handleProductClick(item.id)}
                     style={{ cursor: 'pointer' }}
                   >
                     <img src={imageUrl} alt={item.name} className="w-100" />
@@ -124,8 +94,8 @@ function ShopPage() {
                       }}
                       style={{
                         position: 'absolute',
-                        top: '5px',  // Adjust the distance from the top of the card
-                        right: '5px',  // Adjust the distance from the right of the card
+                        top: '5px',
+                        right: '5px',
                         cursor: 'pointer',
                         zIndex: 2,
                       }}

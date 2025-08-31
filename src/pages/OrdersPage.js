@@ -1,47 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { auth, db } from '../firebase';
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-} from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
+import { useAuth } from '../Context/AuthContext';
 import '../css/Shop.css';
-import '../css/OrderStatus.css'; // for tracker styles
+import '../css/OrderStatus.css';
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-
-        const q = query(collection(db, 'orders'), where('userId', '==', currentUser.uid));
-        const unsubscribeOrders = onSnapshot(q, (snapshot) => {
-          const updatedOrders = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          setOrders(updatedOrders);
-          setLoading(false);
-        });
-
-        // Clean up Firestore listener
-        return () => unsubscribeOrders();
-      } else {
-        setUser(null);
-        setOrders([]);
-        setLoading(false);
-      }
-    });
-
-    // Clean up Auth listener
-    return () => unsubscribeAuth();
-  }, []);
+    if (user) {
+      // Get orders from localStorage for this user
+      const userOrders = JSON.parse(localStorage.getItem(`orders_${user.uid}`) || '[]');
+      setOrders(userOrders);
+    }
+    setLoading(false);
+  }, [user]);
 
   const statusSteps = ['Ordered', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered'];
 
@@ -63,10 +37,7 @@ const OrdersPage = () => {
             <div key={index} className="card shadow-sm p-3 mb-4">
               <h5>Order #{order.id}</h5>
               <p className="mb-1 text-muted">
-                Date:{' '}
-                {order.timestamp?.seconds
-                  ? new Date(order.timestamp.seconds * 1000).toLocaleString()
-                  : 'N/A'}
+                Date: {new Date(order.timestamp).toLocaleString()}
               </p>
 
               <div className="order-tracker my-3">
@@ -98,8 +69,7 @@ const OrdersPage = () => {
               </ul>
 
               <div className="text-end fw-bold">
-                Total: ₹
-                {order.items?.reduce((acc, item) => acc + item.qty * item.price, 0)}
+                Total: ₹{order.total || order.items?.reduce((acc, item) => acc + item.qty * item.price, 0)}
               </div>
             </div>
           );

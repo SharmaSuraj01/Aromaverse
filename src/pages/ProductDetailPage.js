@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { db } from '../firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useCart } from '../Context/CartContext';
-import { getAuth } from 'firebase/auth'; // Import Firebase Auth
+import { useAuth } from '../Context/AuthContext';
+import { products } from '../data/products';
 import '../css/ProductDetailPage.css';
-
-// Feature Icons
 import parabenFree from '../assets/photo/paraben-free.png';
 import sulphateFree from '../assets/photo/sulphate-free.png';
 import crueltyFree from '../assets/photo/cruelty-free.png';
@@ -16,49 +13,15 @@ import ShopPage from './ShopPage';
 
 function ProductDetailPage() {
   const { id } = useParams();
+  const { user } = useAuth();
+  const { addToCart, setShowCartModal } = useCart();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [reviewText, setReviewText] = useState('');
-  const [reviews, setReviews] = useState([]);
-  const [userName, setUserName] = useState(''); // State to store the username
-  const navigate = useNavigate();
-  const { addToCart, setShowCartModal } = useCart();
-
-  const productDescriptions = {
-    'TEJASI': 'A luxurious fragrance for women...',
-    'AQUA': 'A refreshing fragrance for men...',
-    'YODHA': 'An oriental fragrance for men...',
-    'VAHINI': 'A sweet and gentle fragrance for kids...',
-    'VAASNA': 'A sophisticated fragrance for men...',
-    'SENORA': 'A floral fragrance for women...',
-    'TANTRA': 'A dynamic and bold fragrance for men...',
-  };
-
-  // Fetch the logged-in user details
-  useEffect(() => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (user) {
-      setUserName(user.displayName || 'Anonymous'); // Set username if logged in, otherwise fallback to 'Anonymous'
-    }
-  }, []);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const productDoc = await getDoc(doc(db, 'products', id));
-        if (productDoc.exists()) {
-          const fetchedProduct = productDoc.data();
-          setProduct({
-            ...fetchedProduct,
-            description: productDescriptions[fetchedProduct.name] || 'No description available.',
-          });
-        }
-      } catch (err) {
-        console.error('Error loading product:', err);
-      }
-    };
-
-    fetchProduct();
+    const foundProduct = products.find(p => p.id === id);
+    setProduct(foundProduct);
   }, [id]);
 
   const handleAddToCart = () => {
@@ -71,58 +34,33 @@ function ProductDetailPage() {
     navigate('/checkout');
   };
 
-  const handleReviewChange = (e) => {
-    setReviewText(e.target.value);
-  };
-
-  const handleSubmitReview = async () => {
-    if (reviewText.trim() === '') {
+  const handleSubmitReview = () => {
+    if (!reviewText.trim()) {
       return alert('Please write a review before submitting.');
     }
-
-    try {
-      const reviewData = {
-        text: reviewText,
-        author: userName, // Use the logged-in username
-        date: new Date(),
-      };
-
-      const productRef = doc(db, 'products', id);
-      const productDoc = await getDoc(productRef);
-
-      if (productDoc.exists()) {
-        const productReviews = productDoc.data().reviews || [];
-        await updateDoc(productRef, {
-          reviews: [...productReviews, reviewData],
-        });
-
-        setReviews([...productReviews, reviewData]);
-        setReviewText('');
-      }
-    } catch (error) {
-      console.error('Error submitting review:', error);
+    
+    if (!user) {
+      return alert('Please login to submit a review.');
     }
+
+    const newReview = {
+      text: reviewText,
+      author: user.displayName || user.name || 'Anonymous',
+      date: new Date().toLocaleDateString()
+    };
+
+    setProduct(prev => ({
+      ...prev,
+      reviews: [...(prev.reviews || []), newReview]
+    }));
+    
+    setReviewText('');
+    alert('Review submitted successfully!');
   };
 
-  const displayReviews = () => {
-    return reviews.map((review, index) => (
-      <div className="review-item" key={index}>
-        <p>{review.text}</p>
-        <p className="review-author">- {review.author}</p>
-      </div>
-    ));
-  };
+  if (!product) return <p>Product not found</p>;
 
-  if (!product) return <p>Loading...</p>;
-
-  // Feature icons array
-  const features = [
-    parabenFree,
-    sulphateFree,
-    crueltyFree,
-    non,
-    siliconFree,
-  ];
+  const features = [parabenFree, sulphateFree, crueltyFree, non, siliconFree];
 
   return (
     <div className="product-detail-page">
@@ -137,7 +75,6 @@ function ProductDetailPage() {
           <h3 className="product-title">{product.name}</h3>
           <p className="product-price">₹{product.price}</p>
           <p className="product-description">{product.description}</p>
-
           <div className="star-rating">
             <i className="bi bi-star-fill"></i>
             <i className="bi bi-star-fill"></i>
@@ -145,7 +82,6 @@ function ProductDetailPage() {
             <i className="bi bi-star-half"></i>
             <i className="bi bi-star"></i>
           </div>
-
           <div className="product-actions">
             <button className="btn btn-dark add-to-cart-btn" onClick={handleAddToCart}>
               Add to Cart
@@ -153,8 +89,6 @@ function ProductDetailPage() {
             <button className="btn btn-danger buy-now-btn" onClick={handleBuyNow}>
               Buy Now
             </button>
-
-            {/* Horizontal Features Icons */}
             <div className="features-icons">
               {features.map((img, idx) => (
                 <img src={img} key={idx} alt={`feature-${idx}`} className="feature-icon-img" />
@@ -163,22 +97,35 @@ function ProductDetailPage() {
           </div>
         </div>
       </div>
-
+      
       <div className="review-section">
         <h3>Write a Review</h3>
-        <textarea
-          className="review-form"
-          placeholder="Write your review here..."
-          value={reviewText}
-          onChange={handleReviewChange}
-          rows="4"
-        ></textarea>
-        <button onClick={handleSubmitReview}>Submit Review</button>
-
-        <div className="review-list">{displayReviews()}</div>
+        {user ? (
+          <>
+            <textarea
+              className="review-form"
+              placeholder="Write your review here..."
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+              rows="4"
+            />
+            <button onClick={handleSubmitReview}>Submit Review</button>
+          </>
+        ) : (
+          <p>Please <button onClick={() => navigate('/login')} className="btn btn-link">login</button> to write a review.</p>
+        )}
+        
+        <div className="review-list">
+          {product.reviews?.map((review, index) => (
+            <div className="review-item" key={index}>
+              <p>{review.text}</p>
+              <p className="review-author">- {review.author} ({review.date})</p>
+            </div>
+          ))}
+        </div>
       </div>
+      
       <ShopPage categoryTitle="Similar Products" />
-
     </div>
   );
 }

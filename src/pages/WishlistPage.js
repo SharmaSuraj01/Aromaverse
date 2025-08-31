@@ -1,77 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import '../css/Shop.css';
-
-import { auth, db } from '../firebase';
-import { doc, getDoc, setDoc, collection, getDocs } from 'firebase/firestore';
+import { useAuth } from '../Context/AuthContext';
+import { products } from '../data/products';
 
 const WishlistPage = () => {
   const [wishlist, setWishlist] = useState([]);
-  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
   const navigate = useNavigate();
+
   useEffect(() => {
-    const fetchWishlist = async () => {
-      try {
-        const user = auth.currentUser;
-        if (!user) {
-          setWishlist([]);
-          setLoading(false);
-          return;
-        }
+    if (user) {
+      const savedWishlist = JSON.parse(localStorage.getItem(`wishlist_${user.uid}`) || '[]');
+      setWishlist(savedWishlist);
+    }
+    setLoading(false);
+  }, [user]);
 
-        const docRef = doc(db, 'wishlists', user.uid);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setWishlist(data.items || []);
-        } else {
-          setWishlist([]);
-        }
-      } catch (err) {
-        console.error('Error fetching wishlist:', err);
-        setWishlist([]);
-      }
-    };
-
-    fetchWishlist();
-  }, []);
-
-  // Fetch all products from Firestore
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'products'));
-        const allProducts = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setProducts(allProducts);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  // Remove from wishlist
-  const handleRemove = async (id) => {
-    const user = auth.currentUser;
+  const handleRemove = (id) => {
     if (!user) return;
 
     const updatedWishlist = wishlist.filter((itemId) => itemId !== id);
     setWishlist(updatedWishlist);
-
-    try {
-      await setDoc(doc(db, 'wishlists', user.uid), { items: updatedWishlist });
-    } catch (err) {
-      console.error('Error removing item from wishlist:', err);
-    }
+    localStorage.setItem(`wishlist_${user.uid}`, JSON.stringify(updatedWishlist));
   };
 
   // Match wishlist IDs with product data
@@ -83,6 +35,8 @@ const WishlistPage = () => {
 
       {loading ? (
         <p className="text-center">Loading wishlist...</p>
+      ) : !user ? (
+        <p className="text-center">Please login to view your wishlist 🔒</p>
       ) : wishlistItems.length === 0 ? (
         <p className="text-center">Your wishlist is empty 😔</p>
       ) : (
