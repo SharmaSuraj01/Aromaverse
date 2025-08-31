@@ -4,7 +4,6 @@ import '../styles/Auth.css';
 
 const Login = () => {
   const navigate = useNavigate();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,13 +16,9 @@ const Login = () => {
 
     if (email === validEmail && password === validPassword) {
       setError('');
-      alert('Login successful! Welcome Admin 😎');
-    
       localStorage.setItem('isAdminLoggedIn', 'true');
-    
-      setTimeout(() => {
-        navigate('/admin/dashboard');
-      }, 100);
+      alert('Login successful! Welcome Admin 😎');
+      navigate('/admin/dashboard'); // Direct navigation
     } else {
       setError('Invalid email or password ❌');
     }
@@ -38,7 +33,7 @@ const Login = () => {
             <label>Email</label>
             <input
               type="email"
-              placeholder="Enter your email"
+              placeholder="admin@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -49,7 +44,7 @@ const Login = () => {
             <label>Password</label>
             <input
               type="password"
-              placeholder="Enter your password"
+              placeholder="admin123"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -71,6 +66,13 @@ const Login = () => {
             Don't have an account? <a href="/admin/signup">Sign up</a>
           </p>
         </form>
+        
+        {/* Demo Credentials */}
+        <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '5px' }}>
+          <p><strong>Demo Credentials:</strong></p>
+          <p>Email: admin@gmail.com</p>
+          <p>Password: admin123</p>
+        </div>
       </div>
     </div>
   );

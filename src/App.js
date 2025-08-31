@@ -34,6 +34,9 @@ import Features from './components/Features';
 import ProductDetailPage from './pages/ProductDetailPage';
 import MaroonTextSection from './components/MaroonTextSection';
 
+// Admin Routes Import
+import AdminRoutes from './admin/adminRoutes';
+
 function AppContent() {
   const location = useLocation();
   const {
@@ -99,6 +102,9 @@ function AppContent() {
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/support" element={<Support />} />
         <Route path="/returns" element={<Returns />} />
+        
+        {/* Admin Routes - IMPORTANT! */}
+        <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>
       
       {!hideNavbar && <Footer />}
